@@ -70,7 +70,20 @@ bool Goal_Test(Painter current_state);
 
 int main()
 {
+  //declare variables
 	string painting;
+  int i,j;
+ 	int prows, pcols;
+  int * goal;
+ 	vector<Painter> Explored_Painters;
+ 	vector<Painter> Unexplored_Painters;
+	int Explored_Painter_counter = 0;
+	int Unexplored_Painter_counter = 0;
+	int cycle_counter = 0;
+	int current_painter_cost;
+	int current_painter_index = 0;
+  int minimum_painter_cost;
+  
 	cout << "What shall we paint today? \n";
 	getline(cin,painting);
 	cout << "\n Let's Begin \n";
@@ -83,21 +96,23 @@ int main()
 		return 0;
 	}
 
-	int prows, pcols;
 	in_stream >> prows >> pcols;
 
-	int goal[prows * pcols];
+	goal = new (nothrow) int [prows * pcols];
 
-	for(int i=0; i < prows*pcols; i++)
+  if( goal == NULL) {
+    cout << "Could not allocate space for goal array" << endl;
+  }
+	for(i=0; i < prows*pcols; i++)
 	{
 		in_stream >> goal[i];
 	}
 	int u=0;
 	//display goal canvas state
 	cout << "Goal State:" << endl;
-	for(int i=0; i<prows; i++)
+	for(i=0; i<prows; i++)
 	{
-		for(int j=0; j<pcols; j++)
+		for(j=0; j<pcols; j++)
 		{
 			cout << goal[u] << " " ;
 			u++;
@@ -110,28 +125,21 @@ int main()
 	cout << endl << "Initial State:" << endl;
 	davinci.Print();
 
-	vector<Painter> Explored_Painters;
-	int Explored_Painter_counter = 0;
-	vector<Painter> Unexplored_Painters;
-	int Unexplored_Painter_counter = 0;
-
 	Unexplored_Painters.push_back(davinci);	//add painter to end of vector
 	Unexplored_Painter_counter++;
 
 	Painter Current_Painter = davinci;
 	Painter Child_Painter = davinci;
-	int cycle_counter = 0;
 
 	stringstream string_stream;	//generate string stream for creating action commands
 
 	while (Goal_Test(Current_Painter) && (cycle_counter < 100000))
 	{
-	   	int current_painter_cost;
-	   	int current_painter_index = 0;
-	   	int minimum_painter_cost = Unexplored_Painters[0].Cost() + Unexplored_Painters[0].Heur();
+	   	current_painter_index = 0;
+	   	minimum_painter_cost = Unexplored_Painters[0].Cost() + Unexplored_Painters[0].Heur();
 	   	Current_Painter = Unexplored_Painters[0];
 	   	//select painter for expansion
-	   	for(int i = 0; i < Unexplored_Painter_counter; i++)
+	   	for(i = 0; i < Unexplored_Painter_counter; i++)
 	   	{
 	   		current_painter_cost = Unexplored_Painters[i].Cost() + Unexplored_Painters[i].Heur();
 	   		if(current_painter_cost < minimum_painter_cost)
@@ -170,7 +178,7 @@ int main()
   				//first claim that no elements need a color
   				bool elements_dont_need_color = 1;
   				//loop through all elements
-  				for(int j = 0; j < Current_Painter.getSize(); j++)
+  				for(j = 0; j < Current_Painter.getSize(); j++)
   				{
   					//check if current color on brush is same as a goal element
   					if(Current_Painter.Color() == goal[j])
@@ -353,7 +361,7 @@ int main()
 	    		*/
 
 	    		//loop through all elements in canvas and check if element color matches brush color
-	    		for(int i=0; i<Current_Painter.getSize(); i++)
+	    		for(i=0; i<Current_Painter.getSize(); i++)
 	    		{
 	    			//check if current color on brush is same as a goal element
 	    			if(Current_Painter.Color() == goal[i])
