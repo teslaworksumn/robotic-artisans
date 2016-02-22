@@ -14,7 +14,7 @@ def getArrayOfPixels(image): #Return list of rgb values for each pixel in the im
     return a
 
 def writeToFile(oArray, filePath, rows, cols): #Writes a list of single digits to a txt file in .ptg format
-    file = open(filePath+"\\out.ptg",'a')
+    file = open(filePath,'a')
     file.write("Rows: "+str(rows)+", Cols: "+str(cols)+", Encoder: X\n")
     oArrayPointer = 0
     for j in range(rows):
@@ -23,8 +23,8 @@ def writeToFile(oArray, filePath, rows, cols): #Writes a list of single digits t
             oArrayPointer+=1
         file.write("\n")
     file.close()
-    print(filePath+"\\out.ptg")
-    return "out.ptg"
+    print(filePath)
+    #return "out.ptg"
 
 def rgb2lab( inputColor ) :
 #Found @ https://stackoverflow.com/questions/13405956/convert-an-image-rgb-lab-with-python
@@ -109,15 +109,15 @@ def matchColor(lab):#mathces color to one of 8 paint colors
         count+=1
     return pos
 
-def getPTG(imagePath, outputPath, fRows, fCols):
+def getPTG(imagePath, fRows, fCols):
     im = Image.open(imagePath).resize((fCols,fRows))
     pixels = getArrayOfPixels(im)
+    outputPath = imagePath[:len(imagePath)-4]+".ptg"
     paints = [matchColor(rgb2lab(px)) for px in pixels]
     writeToFile(paints, outputPath, fRows, fCols)
     
 def getPTGInput():
     a = input("Enter Image(Use double slashes): ")
-    b = input("Enter where to output the file: ")
     c = input("Enter number of rows: ")
     d = input("Enter number of columns: ")
-    getPTG(a,b,int(c),int(d))
+    getPTG(a,int(c),int(d))
