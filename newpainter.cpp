@@ -5,15 +5,8 @@
 #include <vector>
 #include <istream>
 using namespace std;
-
 int initialize_original(ifstream &iFile, int ** original_img, int row, int col);
-
 void initialize_final( int ** final_img, int row, int col );
-
-
-
-
-
 
 
 
@@ -24,9 +17,9 @@ int main(){
 	int col;
 	int **original_img;
 	int **final_img;
-	char * iFileName = "test.ptg";
+	char iFileName[64];
 	ifstream iFile;
-	char * oFileName ;
+	char oFileName[64];
 	ofstream oFile;
 	vector<int[2]> patch;//patch is the color patch
 	
@@ -90,7 +83,10 @@ int initialize_original(ifstream &iFile, int ** original_img, int row, int col)
 {
 	for(int i=0; i<=row; i++){
 		for(int j=0; j<=col; i++){
-			iFile>>original_img[i][j];
+			if(iFile.eof())
+				return -1;
+			else
+				iFile>>original_img[i][j];
 		}
 	}
 	return 0; //SUCCESS
