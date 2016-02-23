@@ -30,6 +30,12 @@ int main(){
 	ofstream oFile;
 	vector<int[2]> patch;//patch is the color patch
 	int a[5][3];
+	
+	
+	
+	
+	
+	
 	/*
 	for(int i=0; i<5; i++){
 		for(int j=0; j<3;j++){
@@ -40,6 +46,7 @@ int main(){
 	}
 	*/
 	
+	
 	//read the file and make sure the file is open.
 	//put image into source image
 	//int rows, int columns, int original[rows][columns];
@@ -48,6 +55,9 @@ int main(){
 	
 	//findConsecutivePosition(vector, color, original)
 	//output vector
+	
+	//Split up the vector into instructions 
+	//Output the instructions. 
 	
 
 	return 0;
@@ -60,7 +70,7 @@ int main(){
 //return -1 if problem with reading in img
 int initialize_original(istream &iFile, int ** original_img, int row, int col)
 {
-
+	
 	return 0; //SUCCESS
 }
 
