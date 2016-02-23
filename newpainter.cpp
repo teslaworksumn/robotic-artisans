@@ -24,12 +24,13 @@ int main(){
 	int col;
 	int **original_img;
 	int **final_img;
-	char* iFileName;
+	char * iFileName = "test.ptg";
 	ifstream iFile;
-	char* oFileName;
+	char * oFileName ;
 	ofstream oFile;
 	vector<int[2]> patch;//patch is the color patch
-	int a[5][3];
+	
+
 
 	cout<<"Input the original image file: ";
 	cin>>iFileName;
@@ -53,6 +54,7 @@ int main(){
 	initialize_original(iFile, original_img, row, col);
 	initialize_final(final_img, row, col);
 
+
 	/*
 	for(int i=0; i<5; i++){
 		for(int j=0; j<3;j++){
@@ -63,6 +65,7 @@ int main(){
 	}
 	*/
 	
+
 	//put image into source image
 	//int rows, int columns, int original[rows][columns];
 	//int altered[rows][columns];
@@ -70,6 +73,9 @@ int main(){
 	
 	//findConsecutivePosition(vector, color, original)
 	//output vector
+	
+	//Split up the vector into instructions 
+	//Output the instructions. 
 	
 
 	return 0;
