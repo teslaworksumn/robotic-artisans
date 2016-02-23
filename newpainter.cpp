@@ -6,7 +6,7 @@
 #include <istream>
 using namespace std;
 
-int initialize_original();
+int initialize_original(ifstream &iFile, int ** original_img, int row, int col);
 
 void initialize_final( int ** final_img, int row, int col );
 
@@ -24,9 +24,9 @@ int main(){
 	int col;
 	int **original_img;
 	int **final_img;
-	string iFileName;
+	char* iFileName;
 	ifstream iFile;
-	string oFileName;
+	char* oFileName;
 	ofstream oFile;
 	vector<int[2]> patch;//patch is the color patch
 	int a[5][3];
@@ -41,7 +41,17 @@ int main(){
 		cout<<"Input file opening failed."<<endl;
 		return -1;
 	}
-
+	
+	oFile.open(oFileName); //open the desired output file.
+	if(oFile.fail()){
+		cout<<"Output file opening failed."<<endl;
+		return -1;
+	}
+	
+	iFile>>row>>col;
+	
+	initialize_original(iFile, original_img, row, col);
+	initialize_final(final_img, row, col);
 
 	/*
 	for(int i=0; i<5; i++){
@@ -72,8 +82,8 @@ int main(){
 //return -1 if problem with reading in img
 int initialize_original(ifstream &iFile, int ** original_img, int row, int col)
 {
-	for(int i=0, i<=row, i++){
-		for(int j=0, j<=col, i++){
+	for(int i=0; i<=row; i++){
+		for(int j=0; j<=col; i++){
 			iFile>>original_img[i][j];
 		}
 	}
