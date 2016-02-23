@@ -20,13 +20,14 @@ void initialize_final( int ** final_img, int row, int col );
 
 int main(){
 	//declare variables
+	int i;
 	int row;
 	int col;
 	int **original_img;
 	int **final_img;
-	char * iFileName = "test.ptg";
+	char iFileName[64] = "test.ptg";
 	ifstream iFile;
-	char * oFileName ;
+	char oFileName[64] = "test.txt";
 	ofstream oFile;
 	vector<int[2]> patch;//patch is the color patch
 	
@@ -50,6 +51,23 @@ int main(){
 	}
 	
 	iFile>>row>>col;
+	original_img = new (nothrow) int * [row];
+	if (original_img==NULL){
+		cout<<"Could not allocate space for original" << endl;
+		return -1;
+	}
+	final_img = new (nothrow) int * [row];
+	if (final_img==NULL){
+		cout<<"Could not allocate space for original" << endl;
+		return -1;
+	}
+	for (i=0; i<row;i++){
+		original_img[row] = new (nothrow) int[col];
+		if (original_img[row]==NULL){
+				cout<<"Could not allocate space for original" << endl;
+				return -1;
+		}
+	}
 	
 	initialize_original(iFile, original_img, row, col);
 	initialize_final(final_img, row, col);
