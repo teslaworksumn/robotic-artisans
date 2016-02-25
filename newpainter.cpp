@@ -7,6 +7,8 @@
 using namespace std;
 int initialize_original(ifstream &iFile, int ** original_img, int row, int col);
 void initialize_final( int ** final_img, int row, int col );
+void freeimgptrs( int ** original_img , int ** final_img , int row, int column);
+
 
 
 
@@ -16,8 +18,8 @@ int main(){
 	int i;
 	int row;
 	int col;
-	int **original_img;
-	int **final_img;
+	int **original_img = NULL;
+	int **final_img = NULL;
 	char iFileName[64] = "test.ptg";
 	ifstream iFile;
 	char oFileName[64] = "test.txt";
@@ -28,7 +30,7 @@ int main(){
 
 	cout<<"Input the original image file: ";
 	cin>>iFileName;
-	cout<<"Input the desired output file name:";
+	cout<<"Input the desired output file name: ";
 	cin>>oFileName;
 	
 	iFile.open(iFileName); //read the file and make sure the file is open.
@@ -42,40 +44,21 @@ int main(){
 		cout<<"Output file opening failed."<<endl;
 		return -1;
 	}
-	
+ 
 	iFile>>row>>col;
-	original_img = new (nothrow) int * [row];
-	if (original_img==NULL){
-		cout<<"Could not allocate space for original" << endl;
-		return -1;
-	}
+ 
+  original_img = new int* [row];
+  for( i = 0 ; i < row ; i++ ) {
+    original_img[i] = new int [col];
+  }
+
 	final_img = new (nothrow) int * [row];
-	if (final_img==NULL){
-		cout<<"Could not allocate space for original" << endl;
-		return -1;
-	}
 	for (i=0; i<row;i++){
-		original_img[row] = new (nothrow) int[col];
-		if (original_img[row]==NULL){
-				cout<<"Could not allocate space for original" << endl;
-				return -1;
-		}
+		final_img[i] = new (nothrow) int[col];
 	}
 	
 	initialize_original(iFile, original_img, row, col);
 	initialize_final(final_img, row, col);
-
-
-	/*
-	for(int i=0; i<5; i++){
-		for(int j=0; j<3;j++){
-			a[i][j]=0;
-			cout << a[i][j];
-		}
-		cout << endl;
-	}
-	*/
-	
 
 	//put image into source image
 	//int rows, int columns, int original[rows][columns];
@@ -87,8 +70,9 @@ int main(){
 	
 	//Split up the vector into instructions 
 	//Output the instructions. 
-	
-
+  iFile.close();
+  //
+  oFile.close();
 	return 0;
 }
 
@@ -99,19 +83,28 @@ int main(){
 //return -1 if problem with reading in img
 int initialize_original(ifstream &iFile, int ** original_img, int row, int col)
 {
-	for(int i=0; i<=row; i++){
-		for(int j=0; j<=col; i++){
+  int test;
+	for(int i=0; i<row; i++){
+		for(int j=0; j<col; j++){
 			if(iFile.eof())
 				return -1;
 			else
-				iFile>>original_img[i][j];
-		}
+				iFile>> original_img[i][j];
+    }
 	}
 	return 0; //SUCCESS
 }
 
 void initialize_final( int ** final_img, int row, int col ){
-	
 
 }
 
+void freeimgptrs( int *** original_img , int *** final_img , int row ){
+  int i;
+  for( i = 0 ; i < row ; i++ ) {
+    delete[] original_img[i];
+    delete[] original_img[i];
+  }
+  delete[] original_img;
+  delete[] original_img;
+}
