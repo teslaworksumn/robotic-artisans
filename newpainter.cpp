@@ -7,7 +7,6 @@
 using namespace std;
 int initialize_original(ifstream &iFile, int ** original_img, int row, int col);
 void initialize_final( int ** final_img, int row, int col );
-void freeimgptrs( int ** original_img , int ** final_img , int row, int column);
 
 
 
@@ -15,7 +14,7 @@ void freeimgptrs( int ** original_img , int ** final_img , int row, int column);
 
 int main(){
 	//declare variables
-	int i;
+	int i,j;
 	int row;
 	int col;
 	int **original_img = NULL;
@@ -47,9 +46,9 @@ int main(){
  
 	iFile>>row>>col;
  
-  original_img = new int* [row];
+  original_img = new (nothrow)int * [row];
   for( i = 0 ; i < row ; i++ ) {
-    original_img[i] = new int [col];
+    original_img[i] = new (nothrow) int [col];
   }
 
 	final_img = new (nothrow) int * [row];
@@ -59,6 +58,12 @@ int main(){
 	
 	initialize_original(iFile, original_img, row, col);
 	initialize_final(final_img, row, col);
+  for ( i = 0 ; i < row ; i++ ){
+    for ( j = 0 ; j < col ; j++ ){
+      cout << original_img[i][j] << " ";
+    }
+    cout << endl;
+  }
 
 	//put image into source image
 	//int rows, int columns, int original[rows][columns];
@@ -69,10 +74,21 @@ int main(){
 	//output vector
 	
 	//Split up the vector into instructions 
-	//Output the instructions. 
+	//Output the instructions.
+  
+  //free up pointers
+  for ( i = 0 ; i < row ; i++ ){
+    delete [] original_img [i];
+    delete [] final_img [i];
+  }  
+  delete [] original_img ;
+  delete [] final_img;
+  
+  //close files
   iFile.close();
-  //
   oFile.close();
+  
+  //return sucess
 	return 0;
 }
 
@@ -97,14 +113,4 @@ int initialize_original(ifstream &iFile, int ** original_img, int row, int col)
 
 void initialize_final( int ** final_img, int row, int col ){
 
-}
-
-void freeimgptrs( int *** original_img , int *** final_img , int row ){
-  int i;
-  for( i = 0 ; i < row ; i++ ) {
-    delete[] original_img[i];
-    delete[] original_img[i];
-  }
-  delete[] original_img;
-  delete[] original_img;
 }
