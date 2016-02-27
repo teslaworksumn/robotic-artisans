@@ -5,25 +5,51 @@
 #include <vector>
 #include <istream>
 using namespace std;
-int initialize_original(ifstream &iFile, int ** original_img, int row, int col);
-void initialize_final( int ** final_img, int row, int col );
+
+//Pixel struct 
+struct pixel{
+  int x;
+  int y; 
+  int color;
+};
+
+struct stroke{
+  int action;
+  pixel start;
+  pixel end;
+  int color;
+};
+
+//Global constants
+#define MAX_COLORS 9 // including no paint 0 + 1-8 colors =9
+
+#define PAINT -1
+#define LIFT -2
+#define LOWER -3
+#define REFILL -4
+
+//function prototypes
+int initialize_original( ifstream &iFile, int ** original_img, int row, int col );
+//void initialize_final( int ** final_img, int row, int col );
+bool find_patch( int ** img , int row , int col , vector<pixel> * patch , int color );
+bool make_stroke( vector<pixel> * patch , stroke * strk );
+void output_stroke ( stroke * strk , bool flag );
+void USAGE_STATEMENT();
 
 
 
-
-
-int main(){
+int main( int argc , char *argv[] ){
 	//declare variables
 	int i,j;
 	int row;
 	int col;
-	int **original_img = NULL;
-	int **final_img = NULL;
+	int **img = NULL;
+	//int **final_img = NULL;
 	char iFileName[64] = "test.ptg";
 	ifstream iFile;
 	char oFileName[64] = "test.txt";
 	ofstream oFile;
-	vector<int[2]> patch;//patch is the color patch
+	vector<pixel> patch;//patch is the color patch
 	
 
 
@@ -46,30 +72,38 @@ int main(){
  
 	iFile>>row>>col;
  
-  original_img = new (nothrow)int * [row];
+  img = new (nothrow)int * [row];
   for( i = 0 ; i < row ; i++ ) {
-    original_img[i] = new (nothrow) int [col];
+    img[i] = new (nothrow) int [col];
   }
-
+  /*
 	final_img = new (nothrow) int * [row];
 	for (i=0; i<row;i++){
 		final_img[i] = new (nothrow) int[col];
 	}
+	*/
+  //puts image from source file into original_img
+	initialize_original(iFile, img, row, col);
+  //initializes the final_img to all 0
+	//initialize_final(final_img, row, col);
 	
-	initialize_original(iFile, original_img, row, col);
-	initialize_final(final_img, row, col);
-  for ( i = 0 ; i < row ; i++ ){
-    for ( j = 0 ; j < col ; j++ ){
-      cout << original_img[i][j] << " ";
-    }
-    cout << endl;
-  }
-
-	//put image into source image
-	//int rows, int columns, int original[rows][columns];
-	//int altered[rows][columns];
-	//output txt.
-	
+ 
+ 
+ 
+ /*Just commenting it out so it doesn't interfere with compiling. 
+  //will loop through to check for every color
+  for ( i = 1 ; i < MAX_COLORS ; ++i ){
+    //will loop through until every patch of color i is found
+    while( find_patch() != -1 ){
+      //will loop through until all strokes are a made from patch 
+      while( make_stroke() != -1 ){
+        //output instruction to file 
+        output_stroke();
+      }
+    }//end: while(find_patch() != -1)
+  }//end: for ( i = 1 ; i < MAX_COLORS ; ++i )
+  */
+  
 	//findConsecutivePosition(vector, color, original)
 	//output vector
 	
@@ -78,11 +112,11 @@ int main(){
   
   //free up pointers
   for ( i = 0 ; i < row ; i++ ){
-    delete [] original_img [i];
-    delete [] final_img [i];
+    delete [] img [i];
+    //delete [] final_img [i];
   }  
-  delete [] original_img ;
-  delete [] final_img;
+  delete [] img ;
+  //delete [] final_img;
   
   //close files
   iFile.close();
@@ -111,6 +145,7 @@ int initialize_original(ifstream &iFile, int ** original_img, int row, int col)
 	return 0; //SUCCESS
 }
 
+/*
 void initialize_final( int ** final_img, int row, int col ){
 
-}
+}*/
