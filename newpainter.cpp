@@ -17,7 +17,8 @@ struct stroke{
   int action;
   pixel start;
   pixel end;
-  int color;
+  int oldcolor;
+  int newcolor;
 };
 
 //Global constants
@@ -25,17 +26,18 @@ struct stroke{
 #define MAX_TANK 5
 
 #define EMPTY 0
-#define PAINT -1
-#define LIFT -2
-#define LOWER -3
-#define REFILL -4
+#define MOVE -1 // -1 x0 y0 xf yf
+#define LIFT -2 // -2 
+#define DROP -3 // -3
+#define REFILL -4 // -4 x0 y0 color
+#define SWITCH_BRUSH -5 // -5 x0 y0 color_prev color_next 
 
 //function prototypes
 int initialize_original( ifstream &iFile, int ** original_img, int row, int col );
 //void initialize_final( int ** final_img, int row, int col );
 bool find_patch( int ** img , int row , int col , vector<pixel> &patch , int color );
 bool make_stroke( vector<pixel> &patch , stroke &prv_strk , vector<stroke> &strks , int &tank , int color);
-void output_stroke ( stroke * strk , bool flag );
+void output_stroke( ofstream &oFile , vector<stroke> stks , bool flag );
 void USAGE_STATEMENT();
 
 
@@ -46,7 +48,7 @@ int main( int argc , char *argv[] ){
 	int row;
 	int col;
 	int **img = NULL;
-  int tank = 0;
+  int tank = MAX_TANK;
 	//int **final_img = NULL;
 	char iFileName[64] = "test.ptg";
 	ifstream iFile;
@@ -88,8 +90,9 @@ int main( int argc , char *argv[] ){
     //will loop through until every patch of color i is found
     while( find_patch() != -1 ){
       //will loop through until all strokes are a made from patch 
-      while( make_stroke() != -1 ){
+      while( find_stroke() != -1 ){
         //output instruction to file 
+        prepare_for_stroke();
         output_stroke();
       }
     }//end: while(find_patch() != -1)
@@ -184,7 +187,7 @@ bool find_patch( int ** img , int row , int col , vector<pixel> &patch , int col
   return found_patch;
 }//end find_patch
 
-bool make_stroke( vector<pixel> &patch , stroke &prv_strk , vector<stroke> &strks , int &tank, int color ){
+bool find_strokes( vector<pixel> &patch , stroke &prv_strk , vector<stroke> &strks , int &tank, int color ){
   bool made_stroke = false;
   bool lifted = false;
   stroke tmp_strk;
@@ -193,10 +196,10 @@ bool make_stroke( vector<pixel> &patch , stroke &prv_strk , vector<stroke> &strk
   if(!patch.empty()){
     made_stroke = true;
     if( tank == EMPTY ){
-      if( prv_strk.action == PAINT ){
+      if( prv_strk.action == MOVE ){
         tmp_strk.action = LIFT;
         strks.push_back(tmp_strk);
-      }//if( prv_strk.action == PAINT )
+      }//if( prv_strk.action == MOVE )
       tmp_strk.action = REFILL;
       strks.push_back(tmp_strk);
       tank = MAX_TANK; 
@@ -205,13 +208,17 @@ bool make_stroke( vector<pixel> &patch , stroke &prv_strk , vector<stroke> &strk
     
     if( prv_strk.action == EMPTY ){
       
-    }//if( prv_strk.action == PAINT )
+    }//if( prv_strk.action == MOVE )
     
     
   }//if(!patch.empty())
   
   return made_stroke;
 }//end make_stroke
+
+void output_stroke( ofstream &oFile , vector<stroke> stks , bool flag ){
+	
+	}
 
 
 
