@@ -4,7 +4,6 @@
 #include <math.h>
 #include <vector>
 #include <istream>
-#include <algorithm>
 using namespace std;
 
 //Pixel struct 
@@ -255,14 +254,32 @@ bool left_right_stroke(vector<pixel> &patch , stroke &prv_strk , vector<stroke> 
 {
 	bool found_stroke = false;
 	vector<pixel> line;
-	vector<int> line_indexs; 
-	int row; 
+	vector<int> line_indexes; 
+	int row,i; 
 	
 	if( !patch.empty() )
 	{
 		found_stroke = true;
-		line.push_back(patch[0]);
+		if(prv_strk == EMPTY){
+			line.push_back(patch[0]);
+			line_index.push_back (-1);
+			patch.erase(0);
+		}
+		else
+		{
+			line.push_back(prv_strk.end);
+			line_indexes = -1;
+		}
 		
+		row = line[0].x;
+		
+		for(i = 0 ; i < patch.size ; i++ )
+		{
+			if( patch[i].x == row )
+			{
+				line.pushback(patch[i]);
+			}
+		}
 	}
 
 	return found_stroke;
