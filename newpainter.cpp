@@ -204,7 +204,9 @@ bool find_strokes( vector<pixel> &patch , stroke &prv_strk , vector<stroke> &str
       strks.push_back(tmp_strk);
       tank = MAX_TANK; 
       lifted = true;
-    }//if( tank == 0 )
+    }//if( 
+    
+    tank == 0 )
     
     if( prv_strk.action == EMPTY ){
       
@@ -217,7 +219,19 @@ bool find_strokes( vector<pixel> &patch , stroke &prv_strk , vector<stroke> &str
 }//end make_stroke
 
 void output_stroke( ofstream &oFile , vector<stroke> stks , bool flag ){
-	
+	for(i=0; i<stks.size(); i++){
+		switch(stks[i].action){
+			case MOVE:
+				oFile<<-1<<" "<<stks[i].end.x<<" "<<stks[i].end.y<<endl;
+				break;
+			case LIFT:
+				oFile<<-2<<endl;
+				break;
+			case DROP:
+				oFile<<-3<<endl;
+				break;
+			case REFILL:
+				oFile<<-4<<" "<<stks[i].
 	}
 
 
@@ -226,9 +240,33 @@ void output_stroke( ofstream &oFile , vector<stroke> stks , bool flag ){
 
 
 
+/*
+//Pixel struct 
+struct pixel{
+  int x;
+  int y; 
+  int color;
+};
 
+struct stroke{
+  int action;
+  pixel start;
+  pixel end;
+  int oldcolor;
+  int newcolor;
+};
 
+//Global constants
+#define MAX_COLORS 9 // including no paint 0 + 1-8 colors =9
+#define MAX_TANK 5
 
+#define EMPTY 0
+#define MOVE -1 // -1 xf yf
+#define LIFT -2 // -2 
+#define DROP -3 // -3
+#define REFILL -4 // -4 x0 y0 color
+#define SWITCH_BRUSH -5 // -5 x0 y0 color_prev color_next 
+*/
 
 
 
