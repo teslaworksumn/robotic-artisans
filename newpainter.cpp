@@ -1,7 +1,7 @@
 //This program is to alter ptg to txt.
 #include <iostream>
 #include <fstream>
-#include <string>
+#include <math.h>
 #include <vector>
 #include <istream>
 using namespace std;
@@ -137,11 +137,70 @@ int initialize_original(ifstream &iFile, int ** original_img, int row, int col)
 	return 0; //SUCCESS
 }
 
-bool find_patch( int ** img , int row , int col , vector<pixel> * patch , int color ){
+bool find_patch( int ** img , int row , int col , vector<pixel> &patch , int color ){
   vector<pixel> unexplored_pixels;
   int i,j;
   bool found_patch = false;
-  pixel curr; 
+  pixel curr , edge , temp; 
+  
+  //find the first pixel of indicated color in image
+  for ( i = 0 ; i < row && !found_patch ; ++i ){
+    for ( j = 0 ; j < col && !found_patch ; ++j ) {
+      if( img[i][j] == color ){
+        //set 
+        found_patch = true; 
+        
+        curr.x = i ; 
+        curr.y = j ;
+        curr.color = color ; 
+        unexplored_pixels.push_back(curr);
+        img[i][j] = 0 ;
+      }//if( img[i][j] == color )
+    }//for ( j = 
+  }//for ( i=
+  
+  while( !unexplored_pixels.empty() ){
+    temp = unexplored_pixels.back() ;
+    curr.x = temp.x;
+    curr.y = temp.y;
+    curr.color = temp.color;
+    unexplored_pixels.pop_back() ;
+    patch.push_back(curr) ;
+    
+    for( i = fmax( (float) (curr.y - 1) , 0.0 ) ; i < fmin( (float) (curr.y - 1) , (float) row ) ; ++i ){
+      for( j = fmax( (float) (curr.y - 1) , 0.0 ) ; j < fmin( (float) (curr.x - 1) , (float) col ) ; ++j ){
+        if( img[i][j] == color ){
+          found_patch = true; 
+          edge.x = i ; 
+          edge.y = j ;
+          edge.color = color ; 
+          unexplored_pixels.push_back(edge);
+          img[i][j] = 0 ;
+        }//if( img[i][j] == color )
+      }//for( j =
+    }//for( i =
+  }//while( !unexplored_pixels.empty() )
   
   return found_patch;
-}
+}//end find_patch
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
