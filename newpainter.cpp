@@ -10,7 +10,6 @@ using namespace std;
 struct pixel{
   int x;
   int y; 
-  int color;
 };
 
 struct stroke{
@@ -26,7 +25,7 @@ struct stroke{
 #define MAX_TANK 5
 
 #define EMPTY 0
-#define MOVE -1 // -1 x0 y0 xf yf
+#define MOVE -1 // -1 x y
 #define LIFT -2 // -2 
 #define DROP -3 // -3
 #define REFILL -4 // -4 x0 y0 color
@@ -154,8 +153,7 @@ bool find_patch( int ** img , int row , int col , vector<pixel> &patch , int col
         found_patch = true; 
         
         curr.x = i ; 
-        curr.y = j ;
-        curr.color = color ; 
+        curr.y = j ; 
         unexplored_pixels.push_back(curr);
         img[i][j] = 0 ;
       }//if( img[i][j] == color )
@@ -166,7 +164,6 @@ bool find_patch( int ** img , int row , int col , vector<pixel> &patch , int col
     temp = unexplored_pixels.back() ;
     curr.x = temp.x;
     curr.y = temp.y;
-    curr.color = temp.color;
     unexplored_pixels.pop_back() ;
     patch.push_back(curr) ;
     
@@ -176,7 +173,6 @@ bool find_patch( int ** img , int row , int col , vector<pixel> &patch , int col
           found_patch = true; 
           edge.x = i ; 
           edge.y = j ;
-          edge.color = color ; 
           unexplored_pixels.push_back(edge);
           img[i][j] = 0 ;
         }//if( img[i][j] == color )
@@ -186,7 +182,7 @@ bool find_patch( int ** img , int row , int col , vector<pixel> &patch , int col
   
   return found_patch;
 }//end find_patch
-
+/*
 bool find_strokes( vector<pixel> &patch , stroke &prv_strk , vector<stroke> &strks , int &tank, int color ){
   bool made_stroke = false;
   bool lifted = false;
@@ -217,6 +213,7 @@ bool find_strokes( vector<pixel> &patch , stroke &prv_strk , vector<stroke> &str
   
   return made_stroke;
 }//end make_stroke
+*/
 
 void output_stroke( ofstream &oFile , vector<stroke> stks , bool flag ){
 	for(i=0; i<stks.size(); i++){
@@ -232,7 +229,20 @@ void output_stroke( ofstream &oFile , vector<stroke> stks , bool flag ){
 				break;
 			case REFILL:
 				oFile<<-4<<" "<<stks[i].
+
+bool left_right_stroke(vector<pixel> &patch , stroke &prv_strk , vector<stroke> &strks , int &tank)
+{
+	bool found_stroke = false;
+	vector<pixel> line 
+	if( !patch.empty() )
+	{
+		
 	}
+	
+	return found_stroke;
+}
+
+	
 
 
 
