@@ -47,7 +47,7 @@ int main( int argc , char *argv[] ){
 	int row;
 	int col;
 	int **img = NULL;
-  int tank = MAX_TANK;
+	int tank = MAX_TANK;
 	//int **final_img = NULL;
 	char iFileName[64] = "test.ptg";
 	ifstream iFile;
@@ -127,7 +127,6 @@ int main( int argc , char *argv[] ){
 //return -1 if problem with reading in img
 int initialize_original(ifstream &iFile, int ** original_img, int row, int col)
 {
-  int test;
 	for(int i=0; i<row; i++){
 		for(int j=0; j<col; j++){
 			if(iFile.eof())
@@ -216,12 +215,17 @@ bool find_strokes( vector<pixel> &patch , stroke &prv_strk , vector<stroke> &str
 bool left_right_stroke(vector<pixel> &patch , stroke &prv_strk , vector<stroke> &strks , int &tank)
 {
 	bool found_stroke = false;
-	vector<pixel> line 
+	vector<pixel> line;
+	vector<int> line_indexs; 
+	int row; 
+	
 	if( !patch.empty() )
 	{
+		found_stroke = true;
+		line.push_back(patch[0]);
 		
 	}
-	
+
 	return found_stroke;
 }
 void output_stroke( ofstream &oFile , vector<stroke> stks , bool flag ){
