@@ -36,7 +36,7 @@ int initialize_original( ifstream &iFile, int ** original_img, int row, int col 
 //void initialize_final( int ** final_img, int row, int col );
 bool find_patch( int ** img , int row , int col , vector<pixel> &patch , int color );
 bool make_stroke( vector<pixel> &patch , stroke &prv_strk , vector<stroke> &strks , int &tank , int color);
-void output_stroke( ofstream &oFile , vector<stroke> stks , bool flag );
+bool output_stroke( ofstream &oFile , vector<stroke> stks , bool flag );
 void USAGE_STATEMENT();
 
 
@@ -199,7 +199,9 @@ bool find_strokes( vector<pixel> &patch , stroke &prv_strk , vector<stroke> &str
       strks.push_back(tmp_strk);
       tank = MAX_TANK; 
       lifted = true;
-    }//if( tank == 0 )
+    }//if( 
+    
+    tank == 0 )
     
     if( prv_strk.action == EMPTY ){
       
@@ -211,6 +213,31 @@ bool find_strokes( vector<pixel> &patch , stroke &prv_strk , vector<stroke> &str
   return made_stroke;
 }//end make_stroke
 */
+
+bool output_stroke( ofstream &oFile , vector<stroke> stks , bool flag ){
+	for(i=0; i<stks.size(); i++){
+		switch(stks[i].action){
+			case MOVE:
+				oFile<<-1<<" "<<stks[i].end.x<<" "<<stks[i].end.y<<endl;
+				break;
+			case LIFT:
+				oFile<<-2<<endl;
+				break;
+			case DROP:
+				oFile<<-3<<endl;
+				break;
+			case REFILL:
+				oFile<<-4<<" "<<stks[i].start.x<<" "<<stks[i].start.y<<" "<<stks[i].oldcolor<<endl;
+				break;
+			case SWTICH_BRUSH:
+				oFile<<-5<<" "<<stks[i].start.x<<" "<<stks[i].start.y<<" "<<stks[i].oldcolor<<" "<<stks[i].newcolor<<endl;
+				break;
+			default:
+				return false;
+		}
+	}
+	return true;
+}
 
 bool left_right_stroke(vector<pixel> &patch , stroke &prv_strk , vector<stroke> &strks , int &tank)
 {
@@ -228,22 +255,6 @@ bool left_right_stroke(vector<pixel> &patch , stroke &prv_strk , vector<stroke> 
 
 	return found_stroke;
 }
-void output_stroke( ofstream &oFile , vector<stroke> stks , bool flag ){
-
-	}
-	
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
