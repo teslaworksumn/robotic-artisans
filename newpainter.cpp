@@ -36,7 +36,7 @@ int initialize_original( ifstream &iFile, int ** original_img, int row, int col 
 //void initialize_final( int ** final_img, int row, int col );
 bool find_patch( int ** img , int row , int col , vector<pixel> &patch , int color );
 bool make_stroke( vector<pixel> &patch , stroke &prv_strk , vector<stroke> &strks , int &tank , int color);
-void output_stroke( ofstream &oFile , vector<stroke> stks , bool flag );
+bool output_stroke( ofstream &oFile , vector<stroke> stks , bool flag );
 void USAGE_STATEMENT();
 
 
@@ -215,7 +215,7 @@ bool find_strokes( vector<pixel> &patch , stroke &prv_strk , vector<stroke> &str
 }//end make_stroke
 */
 
-void output_stroke( ofstream &oFile , vector<stroke> stks , bool flag ){
+bool output_stroke( ofstream &oFile , vector<stroke> stks , bool flag ){
 	for(i=0; i<stks.size(); i++){
 		switch(stks[i].action){
 			case MOVE:
@@ -228,7 +228,17 @@ void output_stroke( ofstream &oFile , vector<stroke> stks , bool flag ){
 				oFile<<-3<<endl;
 				break;
 			case REFILL:
-				oFile<<-4<<" "<<stks[i].
+				oFile<<-4<<" "<<stks[i].start.x<<" "<<stks[i].start.y<<" "<<stks[i].oldcolor<<endl;
+				break;
+			case SWTICH_BRUSH:
+				oFile<<-5<<" "<<stks[i].start.x<<" "<<stks[i].start.y<<" "<<stks[i].oldcolor<<" "<<stks[i].newcolor<<endl;
+				break;
+			default:
+				return false;
+		}
+	}
+	return true;
+}
 
 bool left_right_stroke(vector<pixel> &patch , stroke &prv_strk , vector<stroke> &strks , int &tank)
 {
@@ -241,44 +251,6 @@ bool left_right_stroke(vector<pixel> &patch , stroke &prv_strk , vector<stroke> 
 	
 	return found_stroke;
 }
-
-	
-
-
-
-
-
-
-
-/*
-//Pixel struct 
-struct pixel{
-  int x;
-  int y; 
-  int color;
-};
-
-struct stroke{
-  int action;
-  pixel start;
-  pixel end;
-  int oldcolor;
-  int newcolor;
-};
-
-//Global constants
-#define MAX_COLORS 9 // including no paint 0 + 1-8 colors =9
-#define MAX_TANK 5
-
-#define EMPTY 0
-#define MOVE -1 // -1 xf yf
-#define LIFT -2 // -2 
-#define DROP -3 // -3
-#define REFILL -4 // -4 x0 y0 color
-#define SWITCH_BRUSH -5 // -5 x0 y0 color_prev color_next 
-*/
-
-
 
 
 
