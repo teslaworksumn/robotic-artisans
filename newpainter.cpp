@@ -4,6 +4,7 @@
 #include <math.h>
 #include <vector>
 #include <istream>
+#include <algorithm>
 using namespace std;
 
 //Pixel struct 
@@ -54,9 +55,20 @@ int main( int argc , char *argv[] ){
 	char oFileName[64] = "test.txt";
 	ofstream oFile;
 	vector<pixel> patch;//patch is the color patch
+/* Test for sorting=====
+	vector <pixel> line;
+	vector <int> line_indexes;
 
-
-
+	for ( i = 10 ; i >= 0 ; i-- ){
+		pixel temp;
+		temp.x = 0 ;
+		temp.y = y ; 
+		 
+		line.push_back( temp );
+		line_indexes.push_back( i );
+	}
+*/
+	
   cout<<"Input the original image file: ";
 	cin>>iFileName;
 	iFile.open(iFileName); //read the file and make sure the file is open.
@@ -215,7 +227,7 @@ bool find_strokes( vector<pixel> &patch , stroke &prv_strk , vector<stroke> &str
 */
 
 bool output_stroke( ofstream &oFile , vector<stroke> stks , bool flag ){
-	for(i=0; i<stks.size(); i++){
+	for(int i=0; i<stks.size(); i++){
 		switch(stks[i].action){
 			case MOVE:
 				oFile<<-1<<" "<<stks[i].end.x<<" "<<stks[i].end.y<<endl;
@@ -256,10 +268,20 @@ bool left_right_stroke(vector<pixel> &patch , stroke &prv_strk , vector<stroke> 
 	return found_stroke;
 }
 
-
-
-
-
-
-
-
+void sort_line(vector<pixel>& line, vector<int>& line_indexes){
+	for(int i=0; i<line.size(); i++){
+		for(int j=0; j<line.size()-1; j++){
+			if(line[j].y>line[j+1].y){
+				int temp=line[j+1].y;
+				line[j+1].y=line[j].y;
+				line[j].y=temp;
+				int temp2=line_indexes[j+1];
+				line_indexes[j+1]=line[j];
+				line_indexes[j]=temp2;
+			}
+			else
+				break;
+		}
+	}
+	return;
+}
