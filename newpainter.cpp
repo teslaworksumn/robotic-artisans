@@ -24,6 +24,7 @@ struct stroke{
 #define MAX_COLORS 9 // including no paint 0 + 1-8 colors =9
 #define MAX_TANK 5
 
+#define EMPTY 0
 #define PAINT -1
 #define LIFT -2
 #define LOWER -3
@@ -32,8 +33,8 @@ struct stroke{
 //function prototypes
 int initialize_original( ifstream &iFile, int ** original_img, int row, int col );
 //void initialize_final( int ** final_img, int row, int col );
-bool find_patch( int ** img , int row , int col , vector<pixel> * patch , int color );
-bool make_stroke( vector<pixel> * patch , stroke * strk , int tank );
+bool find_patch( int ** img , int row , int col , vector<pixel> &patch , int color );
+bool make_stroke( vector<pixel> &patch , stroke &prv_strk , vector<stroke> &strks , int &tank , int color);
 void output_stroke ( stroke * strk , bool flag );
 void USAGE_STATEMENT();
 
@@ -45,8 +46,7 @@ int main( int argc , char *argv[] ){
 	int row;
 	int col;
 	int **img = NULL;
-  int max_tank = 5;
-  int tank = MAX_TANK;
+  int tank = 0;
 	//int **final_img = NULL;
 	char iFileName[64] = "test.ptg";
 	ifstream iFile;
@@ -184,6 +184,34 @@ bool find_patch( int ** img , int row , int col , vector<pixel> &patch , int col
   return found_patch;
 }//end find_patch
 
+bool make_stroke( vector<pixel> &patch , stroke &prv_strk , vector<stroke> &strks , int &tank, int color ){
+  bool made_stroke = false;
+  bool lifted = false;
+  stroke tmp_strk;
+  
+  //if patch isn't empty then procede with making the stroke instructions
+  if(!patch.empty()){
+    made_stroke = true;
+    if( tank == EMPTY ){
+      if( prv_strk.action == PAINT ){
+        tmp_strk.action = LIFT;
+        strks.push_back(tmp_strk);
+      }//if( prv_strk.action == PAINT )
+      tmp_strk.action = REFILL;
+      strks.push_back(tmp_strk);
+      tank = MAX_TANK; 
+      lifted = true;
+    }//if( tank == 0 )
+    
+    if( prv_strk.action == EMPTY ){
+      
+    }//if( prv_strk.action == PAINT )
+    
+    
+  }//if(!patch.empty())
+  
+  return made_stroke;
+}//end make_stroke
 
 
 
