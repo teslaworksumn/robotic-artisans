@@ -22,6 +22,7 @@ struct stroke{
 
 //Global constants
 #define MAX_COLORS 9 // including no paint 0 + 1-8 colors =9
+#define MAX_TANK 5
 
 #define PAINT -1
 #define LIFT -2
@@ -32,7 +33,7 @@ struct stroke{
 int initialize_original( ifstream &iFile, int ** original_img, int row, int col );
 //void initialize_final( int ** final_img, int row, int col );
 bool find_patch( int ** img , int row , int col , vector<pixel> * patch , int color );
-bool make_stroke( vector<pixel> * patch , stroke * strk );
+bool make_stroke( vector<pixel> * patch , stroke * strk , int tank );
 void output_stroke ( stroke * strk , bool flag );
 void USAGE_STATEMENT();
 
@@ -44,26 +45,27 @@ int main( int argc , char *argv[] ){
 	int row;
 	int col;
 	int **img = NULL;
+  int max_tank = 5;
+  int tank = MAX_TANK;
 	//int **final_img = NULL;
 	char iFileName[64] = "test.ptg";
 	ifstream iFile;
 	char oFileName[64] = "test.txt";
 	ofstream oFile;
 	vector<pixel> patch;//patch is the color patch
-	
 
 
-	cout<<"Input the original image file: ";
+
+  cout<<"Input the original image file: ";
 	cin>>iFileName;
-	cout<<"Input the desired output file name: ";
-	cin>>oFileName;
-	
 	iFile.open(iFileName); //read the file and make sure the file is open.
 	if(iFile.fail()){
 		cout<<"Input file opening failed."<<endl;
 		return -1;
 	}
-	
+ 
+	cout<<"Input the desired output file name: ";
+	cin>>oFileName;
 	oFile.open(oFileName); //open the desired output file.
 	if(oFile.fail()){
 		cout<<"Output file opening failed."<<endl;
@@ -76,20 +78,10 @@ int main( int argc , char *argv[] ){
   for( i = 0 ; i < row ; i++ ) {
     img[i] = new (nothrow) int [col];
   }
-  /*
-	final_img = new (nothrow) int * [row];
-	for (i=0; i<row;i++){
-		final_img[i] = new (nothrow) int[col];
-	}
-	*/
+
   //puts image from source file into original_img
 	initialize_original(iFile, img, row, col);
-  //initializes the final_img to all 0
-	//initialize_final(final_img, row, col);
-	
- 
- 
- 
+
  /*Just commenting it out so it doesn't interfere with compiling. 
   //will loop through to check for every color
   for ( i = 1 ; i < MAX_COLORS ; ++i ){
@@ -145,7 +137,11 @@ int initialize_original(ifstream &iFile, int ** original_img, int row, int col)
 	return 0; //SUCCESS
 }
 
-/*
-void initialize_final( int ** final_img, int row, int col ){
-
-}*/
+bool find_patch( int ** img , int row , int col , vector<pixel> * patch , int color ){
+  vector<pixel> unexplored_pixels;
+  int i,j;
+  bool found_patch = false;
+  pixel curr; 
+  
+  return found_patch;
+}
