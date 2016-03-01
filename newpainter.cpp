@@ -29,15 +29,18 @@ struct stroke{
 #define DROP -3 // -3
 #define REFILL -4 // -4 x0 y0 color
 #define SWITCH_BRUSH -5 // -5 x0 y0 color_prev color_next 
+#define INIT -99 // -99
+#define END -100 // -100
 
 //function prototypes
-int initialize_original( ifstream &iFile, int ** original_img, int row, int col );
-//void initialize_final( int ** final_img, int row, int col );
+int initialize_original(ifstream &iFile, int ** original_img, int row, int col);
 bool find_patch( int ** img , int row , int col , vector<pixel> &patch , int color );
-bool make_stroke( vector<pixel> &patch , stroke &prv_strk , vector<stroke> &strks , int &tank , int color);
 bool output_stroke( ofstream &oFile , vector<stroke> stks , bool flag );
+bool left_right_stroke(vector<pixel> &patch , stroke &prv_strk , vector<stroke> &strks , int &tank);
+void fill_stroke( stroke &new_strk , const int action , pixel p , int oldcolor , int newcolor );
+void find_xline( vector<pixel> &patch , vector<pixel> &line , vector<int> &line_indexes );
+void sort_line(vector<pixel>& line, vector<int>& line_indexes);
 void USAGE_STATEMENT();
-
 
 
 int main( int argc , char *argv[] ){
@@ -53,20 +56,14 @@ int main( int argc , char *argv[] ){
 	char oFileName[64] = "test.txt";
 	ofstream oFile;
 	vector<pixel> patch;//patch is the color patch
-/* Test for sorting=====
-	vector <pixel> line;
-	vector <int> line_indexes;
-
-	for ( i = 10 ; i >= 0 ; i-- ){
-		pixel temp;
-		temp.x = 0 ;
-		temp.y = y ; 
-		 
-		line.push_back( temp );
-		line_indexes.push_back( i );
-	}
-*/
-	
+	stroke prv_strk;
+  vector<stroke> strks;
+  pixel start;
+  start.x = -1;
+  start.y = -1;
+  
+  fill_stroke(prv_strk,INIT,start,0,0);
+   
   cout<<"Input the original image file: ";
 	cin>>iFileName;
 	iFile.open(iFileName); //read the file and make sure the file is open.
@@ -93,25 +90,31 @@ int main( int argc , char *argv[] ){
   //puts image from source file into original_img
 	initialize_original(iFile, img, row, col);
 
- /*Just commenting it out so it doesn't interfere with compiling. 
   //will loop through to check for every color
   for ( i = 1 ; i < MAX_COLORS ; ++i ){
+    if( prv_strk.action != INIT){
+      fill_stroke( prv_strk , LIFT , prv_strk.end , prv_strk.newcolor , prv_strk.newcolor );
+      strks.push_back(prv_strk);
+    }
+    fill_stroke( prv_strk , SWITCH_BRUSH , prv_strk.end , prv_strk.newcolor , i );
+    strks.push_back(prv_strk);
+    
     //will loop through until every patch of color i is found
-    while( find_patch() != -1 ){
+    while( find_patch( img , row , col , patch , i ) != -1 )
+    {
       //will loop through until all strokes are a made from patch 
-      while( find_stroke() != -1 ){
+      while( left_right_stroke(patch,prv_strk, strks, tank) != -1 )
+      {
         //output instruction to file 
-        prepare_for_stroke();
-        output_stroke();
+        output_stroke( oFile , strks , false );
+      }
+      //empty strks
+      while(!strks.empty())
+      {
+        strks.pop_back();
       }
     }//end: while(find_patch() != -1)
-  }//end: for ( i = 1 ; i < MAX_COLORS ; ++i )
-  */ 
-	//findConsecutivePosition(vector, color, original)
-	//output vector
-	
-	//Split up the vector into instructions 
-	//Output the instructions.
+  }//end: for ( i = 1 ; i < MAX_COLORS ; ++i ) 
   
   //free up pointers
   for ( i = 0 ; i < row ; i++ ){
@@ -187,41 +190,8 @@ bool find_patch( int ** img , int row , int col , vector<pixel> &patch , int col
       }//for( j =
     }//for( i =
   }//while( !unexplored_pixels.empty() )
-  
   return found_patch;
 }//end find_patch
-/*
-bool find_strokes( vector<pixel> &patch , stroke &prv_strk , vector<stroke> &strks , int &tank, int color ){
-  bool made_stroke = false;
-  bool lifted = false;
-  stroke tmp_strk;
-  
-  //if patch isn't empty then procede with making the stroke instructions
-  if(!patch.empty()){
-    made_stroke = true;
-    if( tank == EMPTY ){
-      if( prv_strk.action == MOVE ){
-        tmp_strk.action = LIFT;
-        strks.push_back(tmp_strk);
-      }//if( prv_strk.action == MOVE )
-      tmp_strk.action = REFILL;
-      strks.push_back(tmp_strk);
-      tank = MAX_TANK; 
-      lifted = true;
-    }//if( 
-    
-    tank == 0 )
-    
-    if( prv_strk.action == EMPTY ){
-      
-    }//if( prv_strk.action == MOVE )
-    
-    
-  }//if(!patch.empty())
-  
-  return made_stroke;
-}//end make_stroke
-*/
 
 bool output_stroke( ofstream &oFile , vector<stroke> stks , bool flag ){
 	for(int i=0; i<stks.size(); i++){
@@ -238,7 +208,7 @@ bool output_stroke( ofstream &oFile , vector<stroke> stks , bool flag ){
 			case REFILL:
 				oFile<<-4<<" "<<stks[i].end.x<<" "<<stks[i].end.y<<" "<<stks[i].oldcolor<<endl;
 				break;
-			case SWTICH_BRUSH:
+			case SWITCH_BRUSH:
 				oFile<<-5<<" "<<stks[i].end.x<<" "<<stks[i].end.y<<" "<<stks[i].oldcolor<<" "<<stks[i].newcolor<<endl;
 				break;
 			default:
@@ -251,6 +221,7 @@ bool output_stroke( ofstream &oFile , vector<stroke> stks , bool flag ){
 bool left_right_stroke(vector<pixel> &patch , stroke &prv_strk , vector<stroke> &strks , int &tank)
 {
 	bool found_stroke = false;
+  bool refill = false;
 	vector<pixel> line;
 	vector<int> line_indexes; 
   stroke new_strk;
@@ -259,35 +230,62 @@ bool left_right_stroke(vector<pixel> &patch , stroke &prv_strk , vector<stroke> 
 	if( !patch.empty() )
 	{
 		found_stroke = true;
-    if( prv_strk.action == PAINT )
+    if( prv_strk.action == MOVE )
     {
       if(tank == EMPTY)
       {
+        refill = true;
         tank = MAX_TANK;
-        fill_in_stroke(new_strk, REFILL, prv_strk.end, prv_strk.oldcolor, prv_strk.newcolor);
+        fill_stroke(new_strk, LIFT, prv_strk.end, prv_strk.newcolor, prv_strk.newcolor);
+        strks.push_back(new_strk);
+        fill_stroke(new_strk, REFILL, prv_strk.end, prv_strk.newcolor, prv_strk.newcolor);
         strks.push_back(new_strk);
       }
-    
+      line.push_back( prv_strk.end );
+      line_indexes.push_back( -1 );
+      find_xline( patch , line , line_indexes );
     }//end if( prv_strk.action == PAINT
-    /*
-		if(prv_strk.action == EMPTY || prv_strk.action == SWITCH_BRUSH){
-			line.push_back(patch[0]);
-			line_index.push_back(-1);
-			patch.erase(0);
-		}
-		else
-		{
-			line.push_back(prv_strk.end);
-			line_indexes = -1;
-		}
-		
-		*/
-	}//end if( !patch.empty() )
-
+    
+    if( prv_strk.action == SWITCH_BRUSH || line.size() == 1 )
+    {
+      if(prv_strk.action == MOVE )
+      {
+        line.pop_back();
+        line_indexes.pop_back();
+        fill_stroke( new_strk , LIFT , line[0] , prv_strk.newcolor , prv_strk.newcolor );
+        strks.push_back( new_strk );
+      }
+      line.push_back( patch[0] );
+      line_indexes.push_back( -1 );
+      find_xline( patch , line , line_indexes );
+      fill_stroke( new_strk , MOVE , line[0] , prv_strk.newcolor , prv_strk.newcolor );
+      strks.push_back( new_strk );
+      fill_stroke( new_strk , DROP , line[0] , prv_strk.newcolor , prv_strk.newcolor );
+      strks.push_back( new_strk );
+    }
+    else
+    {
+      fill_stroke(new_strk, DROP, prv_strk.end, prv_strk.newcolor, prv_strk.newcolor);
+      strks.push_back(new_strk);
+    }
+    sort_line( line , line_indexes );
+    
+    while( tank != EMPTY && line.size() != 0 )
+    {
+      fill_stroke( new_strk , MOVE , line[0] , prv_strk.newcolor , prv_strk.newcolor );
+      line.erase(line.begin());
+      patch.erase(patch.begin() + line_indexes[0]);
+      line_indexes.erase(line_indexes.begin());
+      tank--;
+    }
+    strks.push_back( new_strk );
+    fill_stroke( prv_strk , MOVE , line[0] , prv_strk.newcolor , prv_strk.newcolor );
+  }//end if( !patch.empty() )
 	return found_stroke;
 }
 
-void fill_in_stroke( stroke &new_strk , const int action , pixel p , int oldcolor , int newcolor ){
+void fill_stroke( stroke &new_strk , const int action , pixel p , int oldcolor , int newcolor )
+{
   new_strk.action = action;
   new_strk.end.x = p.x;
   new_strk.end.y = p.y;
@@ -302,7 +300,7 @@ void find_xline( vector<pixel> &patch , vector<pixel> &line , vector<int> &line_
   
   row = line[0].x;
 		
-  for(i = 0 ; i < patch.size ; i++ )
+  for(i = 0 ; i < patch.size() ; i++ )
   {
     if( patch[i].x == row )
     {
@@ -312,7 +310,8 @@ void find_xline( vector<pixel> &patch , vector<pixel> &line , vector<int> &line_
   }//for(i = 0 
 }
 
-void sort_line(vector<pixel>& line, vector<int>& line_indexes){
+void sort_line(vector<pixel>& line, vector<int>& line_indexes)
+{
 	for(int i=0; i<line.size(); i++){
 		for(int j=0; j<line.size()-1; j++){
 			if(line[j].y>line[j+1].y){
@@ -320,7 +319,7 @@ void sort_line(vector<pixel>& line, vector<int>& line_indexes){
 				line[j+1].y=line[j].y;
 				line[j].y=temp;
 				int temp2=line_indexes[j+1];
-				line_indexes[j+1]=line[j];
+				line_indexes[j+1]=line_indexes[j];
 				line_indexes[j]=temp2;
 			}
 			else
