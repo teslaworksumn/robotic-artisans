@@ -309,7 +309,7 @@ void get_consec_xline( vector<pixel> &line , vector<int> &line_indexes , bool de
   bool consec = true;
   int i = 0;
   
-  while(i < ( line.size()-1 ))
+  while(i < ((int) line.size()-1 ))
   {
       if( consec && ( line.at(i).y + 1 ) != line.at(i+1).y )
       {
@@ -335,21 +335,23 @@ void get_consec_xline( vector<pixel> &line , vector<int> &line_indexes , bool de
  *****************************************************************************/
 void sort_line(vector<pixel>& line, vector<int>& line_indexes, bool debug_flag)
 {
-  int i, j;
-	for(i=0; i<(int)line.size(); i++){
-		for(j=0; j<(int)line.size()-1; j++){
-			if(line[j].y>line[j+1].y){
-				int temp=line[j+1].y;
-				line[j+1].y=line[j].y;
-				line[j].y=temp;
-				int temp2=line_indexes[j+1];
-				line_indexes[j+1]=line_indexes[j];
-				line_indexes[j]=temp2;
+  int i, j, temp, temp2;
+
+	for(i=0; i<((int)line.size()-1); i++){
+		cout << "inside for loop1" << endl;
+		for(j=0; j<((int)line.size()-i-1); j++){
+			cout << "inside for loop2" << endl;
+			if(line.at(j).y>line.at(j+1).y){
+				temp=line.at(j+1).y;
+				line.at(j+1).y=line.at(j).y;
+				line.at(j).y=temp;
+				temp2=line_indexes.at(j+1);
+				line_indexes.at(j+1)=line_indexes.at(j);
+				line_indexes.at(j)=temp2;
 			}
-			else//do you need this
-				break;
 		}
 	}
+
 	return;
 }
 
