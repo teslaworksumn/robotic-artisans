@@ -122,23 +122,15 @@ int main( int argc , char *argv[] ){
       while( left_right_stroke(patch,prv_strk, strks, tank , flag[2]) )
       {
 
-        for(k = 0; k < (int) strks.size() ; k++){
-         //cout << "stroke: " << strks.at(k).action << " " << strks.at(k).newcolor << "\t"; 
-        }
-        //cout << endl;
-        //output instruction to file 
-        cout << "trouble is in output stroke" << endl;
-        if( !output_stroke( oFile , strks , flag[2] ) ){ return -1;}
-        cout << "trouble is not in output stroke" << endl;
-        cout << "exit main loop " << endl;
-      }
-      //empty strks
-      while(!strks.empty())
-      {
-        strks.pop_back();
-      }
+        if( !output_stroke( oFile , strks , flag[2] ) )
+			return -1;
+		//empty strks
+		while(!strks.empty())
+			strks.pop_back();
+      }//end strokes for patch
     }//end: while(find_patch() != -1)
   }//end: for ( i = 1 ; i < MAX_COLORS ; ++i ) 
+  
   //free up pointers
   for ( i = 0 ; i < row ; i++ ){
     delete [] img [i];
