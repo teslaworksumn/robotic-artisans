@@ -32,20 +32,24 @@ struct stroke{
 #define INIT -99 // -99
 #define END -100 // -100
 
-
-//function prototypes
+/******************************************************************************
+ * main functions prototypes
+ *****************************************************************************/
 int initialize_original(ifstream &iFile, int ** original_img, int row, int col);
-bool find_patch( int ** img , int row , int col , vector<pixel> &patch , int color , bool debug_flag );
-bool output_stroke( ofstream &oFile , vector<stroke> stks , bool debug_flag );
-bool left_right_stroke(vector<pixel> &patch , stroke &prv_strk , vector<stroke> &strks , int &tank , bool debug_flag);
-void fill_stroke( stroke &new_strk , const int action , pixel p , int oldcolor , int newcolor );
-void set_stroke(stroke &dest, stroke &src);
-void find_xline( vector<pixel> &patch , vector<pixel> &line , vector<int> &line_indexes , bool debug_flag);
-void get_consec_xline( vector<pixel> &line , vector<int> &line_indexes, bool debug_flag);
-void sort_line(vector<pixel>& line, vector<int>& line_indexes,bool debug_flag);
 void USAGE_STATEMENT(char* filename);
+bool output_stroke( ofstream &oFile , vector<stroke> stks , bool debug_flag );
+/******************************************************************************
+ * left_right function prototypes
+ *****************************************************************************/
+bool left_right( ofstream &oFile , int **img , int row , int col , bool debug );
+bool find_left_right_patch( int ** img , int row , int col , vector<pixel> &patch , int color , bool debug );
+bool left_right_stroke(vector<pixel> &patch , stroke &prv_strk , vector<stroke> &strks , int &tank , bool newpatch , bool debug );
+/******************************************************************************
+ * Beginning of possibly helpful function prototypes
+ *****************************************************************************/
+void set_stroke(stroke &dest, stroke &src);
+void rc_to_xy(vector <stroke> &strks, int row , int col);
 void output_image(int ** img , int row , int col);
-int min(int x, int y ) ;
-int max(int x, int y );
-void refill_tank ( int & tank , stroke & prv_strk , vector<stroke> &strks);
-void find_last_strk (stroke &strk , vector<pixel> &patch , vector<pixel> &line , vector<int> &indexes , int &tank) ;
+bool find_patch( int ** img , int row , int col , vector<pixel> &patch , int color , bool debug );
+void sort_line(vector<pixel>& line, vector<int>& line_indexes, bool debug_flag);
+void fill_stroke( stroke &new_strk , const int action , pixel p , int oldcolor , int newcolor  );

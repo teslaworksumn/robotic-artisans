@@ -8,17 +8,19 @@
 
 using namespace std;
 
-
 /******************************************************************************
+ * main funtions
+ *****************************************************************************/
+
+/******************
  * By Chaeeun Lee
  *
- * This will take in the file and the original image pointer 
- * Will take the istream and the original_img array, 
- * the row # and the column #
+ * This will take in the file and the original image pointer will take the 
+ * istream and the original_img array, the row # and the column #
  *
  * return 0   if all of original_img is filled
  * return -1  if problem with reading in img
- *****************************************************************************/
+ *****************/
 int initialize_original(ifstream &iFile, int ** original_img, int row, int col)
 {
 	for(int i=0; i<row; i++){
@@ -32,77 +34,34 @@ int initialize_original(ifstream &iFile, int ** original_img, int row, int col)
 	return 0; //SUCCESS
 }
 
-/******************************************************************************
+/******************
  * By Brooke Padilla
  *
- * This will take in an image (a 2d array of ints representing colors) and will
- * search for the first pixel that matches that color.  Once it has found that
- * pixel it will add it to a vector called.  The function will then go through
- * and find all pixels that are adjacent to that pixel who have the same color.   
- * It will then repeat this process with all the pixels found. At the locations
- * in the original image the pixels will be set to 0 signifying that those 
- * spots no longer need painting.
- *
- * return true   if patch found
- * return false  if no patch is found
- *****************************************************************************/
-bool find_patch( int ** img , int row , int col , vector<pixel> &patch , int color , bool debug ){
-  vector<pixel> unexplored_pixels;
-  int i,j;
-  bool found_patch = false;
-  pixel curr , edge , temp; 
-  
-  //find the first pixel of indicated color in image
-  for ( i = 0 ; i < row && !found_patch ; ++i ){
-    for ( j = 0 ; j < col && !found_patch ; ++j ) {
-      if( img[i][j] == color ){
-        //set 
-        found_patch = true; 
-        
-        curr.x = i ; 
-        curr.y = j ; 
-        unexplored_pixels.push_back(curr);
-        img[i][j] = 0 ;
-      }//if( img[i][j] == color )
-    }//for ( j = 
-  }//for ( i=
+ * Will print out usage statement.
+ *****************/ 
+void USAGE_STATEMENT(char* filename)
+{
+  cout << "Usage: " << filename << " [options]" << endl;
+  cout << "-h \t\tPrint this message and exit" << endl;
+  cout << "-ci\t\tWill ask for input file other than default" << endl;
+  cout << "-co\t\tWill ask for output file other than default" << endl;
+  cout << "-d \t\tWill turn on debug mode" << endl;
+}
 
-  while( !unexplored_pixels.empty() ){
-    temp = unexplored_pixels.back() ;
-    curr.x = temp.x;
-    curr.y = temp.y;
-    unexplored_pixels.pop_back() ;
-    patch.push_back(curr) ;
-    
-    for( i = max( curr.x - 1 , 0.0 ) ; i < min( curr.x + 2 , row ) ; ++i ){
-      for( j = max( curr.y - 1 , 0.0 ) ; j < min( curr.y + 2 , col ) ; ++j ){
-        if( img[i][j] == color ){
-          found_patch = true; 
-          edge.x = i ; 
-          edge.y = j ;
-          unexplored_pixels.push_back(edge);
-          img[i][j] = 0 ;
-        }//if( img[i][j] == color )
-      }//for( j =
-    }//for( i =
-  }//while( !unexplored_pixels.empty() )
-  //if(debug){cout << "util.c:90 function find_patch:\t\t exit " << endl;}
-  return found_patch;
-}//end find_patch
 
-/******************************************************************************
+
+/******************
  * By Chaeeun Lee
  *
  * Will output the vector of actions and their appropriate information
  *
  * return 0   SUCCESS
  * return -1  if action is not valid
- *****************************************************************************/
+ *****************/
 bool output_stroke( ofstream &oFile , vector<stroke> stks , bool debug_flag ){
   int i;
-  cout << "entering output_stroke" << endl;
 	for(i=0; i<(int)stks.size(); i++){
-		switch(stks[i].action){
+		switch(stks.at(i).action){
 			case MOVE:
 				oFile<<-1<<" "<<stks[i].end.x<<" "<<stks[i].end.y<<endl;
 				break;
@@ -122,239 +81,242 @@ bool output_stroke( ofstream &oFile , vector<stroke> stks , bool debug_flag ){
 				return false;
 		}
 	}
-  cout << "exiting output_stroke" << endl;
   //if(debug_flag){cout << "util.c:125 function output_stroke:\t\t exit " << endl;}
 	return true;
 }
 
-
+/******************************************************************************
+ * end main funtions
+ *****************************************************************************/
 
 /******************************************************************************
+ * left_right funtions
+ *****************************************************************************/
+
+/******************
  * By Brooke Padilla
  *
- * This will take in a vector of pixels, the previous stroke, a vector of 
- * strokes, and the paint tank level.  It will then find a stroke that the 
- * robot can do. It will also add on all other commands associated with 
- * stroke such as a refill if the tank is empty and moving to and from 
- * location. All paint strokes outputted will be from left to right. 
+ * Core function for this painting style. Will take in an image and a ofstream
+ * file and will out put instructions to make this image to the specified file.
  * 
- * return true   if stroke found
- * return false  if patch is empty
- *****************************************************************************/
-bool left_right_stroke(vector<pixel> &patch , stroke &prv_strk , vector<stroke> &strks , int &tank , bool debug )
+ * return false      Some instructions were not understood by output_stroke
+ * return true       SUCCESS
+ *****************/ 
+bool left_right( ofstream &oFile , int **img , int row , int col , bool debug ) 
 {
-  /* variable declaration and initialization */
-  bool refill = false;
-	vector<pixel> line;
-	vector<int> line_indexes; 
+  vector<pixel> patch;
+  stroke prv_strk;
+  vector<stroke> strks;
+  int i , tank;
+  bool newpatch;
   pixel start;
-  stroke new_strk;
+  
   start.x = -1;
   start.y = -1;
-  fill_stroke(new_strk,INIT,start, prv_strk.newcolor , prv_strk.newcolor);
+  fill_stroke(prv_strk,INIT,start,0,0);
   
-  /* return false if patch is empty */
-  if ( patch.empty() ) 
-    return false;
-  
-  /* see if the last stroke was to paint */
-  if( prv_strk.action == MOVE )
-  {
-    /* if tank is empty go fill it */ 
-    cout << "inside move " << endl;
-    if(tank == 0)
-    {
-      refill = true;
-      refill_tank (tank , prv_strk , strks);
+  /* Will loop through colors and paint from brightest to darkest */
+  for ( i = 1 ; i < MAX_COLORS ; ++i ){
+    /* Switch brush */
+    if( prv_strk.action != INIT){
+      fill_stroke( prv_strk , LIFT , prv_strk.end , prv_strk.newcolor , prv_strk.newcolor );
+      strks.push_back(prv_strk);  
     }
-    /* check to see if there is a stroke longer then length 1 starting from prv_strk */
-    line.push_back( prv_strk.end );
-    line_indexes.push_back( -1 );
-    find_xline( patch , line , line_indexes , debug );
-    if( line.size() != 1 )
-    {
-      patch.push_back(line[0]);
-      line_indexes.at(0) = patch.size() - 1;
-    }
-  }//end if( prv_strk.action == PAINT
-  
-  /* if previous action was to switch the brush or you could not find a path for the brush */
-  if( prv_strk.action == SWITCH_BRUSH || line.size() == 1 )
-  {
-    cout << "inside bad decisions" << endl;
-    /* add in a lift for if last move was and had to refill */
-    if( prv_strk.action == MOVE && !refill )
-    {
-      line.pop_back();
-      line_indexes.pop_back();
-      fill_stroke( new_strk , LIFT , line[0] ,  prv_strk.newcolor ,  prv_strk.newcolor );
-      strks.push_back( new_strk );
-    }
-    /* find new line to hit up */
-    line.push_back( patch[0] );
-    patch.erase(patch.begin());
-    line_indexes.push_back( -1 );
-    find_xline( patch , line , line_indexes , debug );
-    patch.push_back(line[0]);
-    line_indexes.at(0) = patch.size() - 1;
-    fill_stroke( new_strk , MOVE , line[0] ,  prv_strk.newcolor ,  prv_strk.newcolor );
-    strks.push_back( new_strk );
-    fill_stroke( new_strk , DROP , line[0] ,  prv_strk.newcolor ,  prv_strk.newcolor );
-    strks.push_back( new_strk );
-    cout << "exiting bad decisions" << endl;
-  }
-  else if( refill )
-  {
-    fill_stroke(new_strk, DROP, prv_strk.end,  prv_strk.newcolor ,  prv_strk.newcolor);
-    strks.push_back(new_strk);
-  }
+    fill_stroke( prv_strk , SWITCH_BRUSH , prv_strk.end , prv_strk.newcolor , i );
+    tank = MAX_TANK;
+    strks.push_back(prv_strk);
     
-  sort_line( line , line_indexes , debug );
-  get_consec_xline( line , line_indexes , debug );
-
-  find_last_strk (new_strk , patch , line , line_indexes , tank);
-  if( debug && ( new_strk.oldcolor == 0 || new_strk.oldcolor > 8 )){ 
-    cout << new_strk.action << " " << new_strk.oldcolor << " " << new_strk.newcolor << endl;
-    cout << prv_strk.action << " " << refill << endl << endl;
-  }
-  strks.push_back( new_strk );
-  set_stroke( prv_strk , new_strk );
-
-	return true;
+    /* find all patches of the current color */
+    while( find_left_right_patch( img , row , col , patch , i , debug ) )
+    {
+      newpatch = true;
+      
+      /* create stroke until entire patch is painted */
+      while( left_right_stroke(patch , prv_strk , strks , tank , newpatch , debug ) )
+      {
+        newpatch = false;
+        /* convert the stroke coordinates to xy coordinates instead of row column */
+        rc_to_xy(strks,row,col);
+        /* output strokes */
+        if( !output_stroke( oFile , strks , debug ) ) 
+			    return false;
+        /* empty stroke vector */
+		    while(!strks.empty())
+		    {
+			    strks.pop_back();
+	      }
+      }
+    }//end: while(find_patch() != -1)
+  }//end: for ( i = 1 ; i < MAX_COLORS ; ++i
+  return true; 
 }
 
-
-/******************************************************************************
+/******************
  * By Brooke Padilla
  *
- * Fills given stroke with provided information.
- *****************************************************************************/
-void fill_stroke( stroke &new_strk , const int action , pixel p , int oldcolor , int newcolor  )
-{ 
-  new_strk.action = action;
-  //if(debug_flag){cout << "util.c:210 function fill_stroke:\t\t filled action " << endl;} 
-  new_strk.end.x = p.x;
-  //if(debug_flag){cout << "util.c:210 function fill_stroke:\t\t filled x " << endl;} 
-  new_strk.end.y = p.y;
-  //if(debug_flag){cout << "util.c:210 function fill_stroke:\t\t filled y " << endl;} 
-  new_strk.oldcolor = oldcolor;
-  //if(debug_flag){cout << "util.c:210 function fill_stroke:\t\t filled oldcolor " << endl;} 
-  new_strk.newcolor = newcolor;
+ * Will find a group of (x,y) = (row#,col#) coordinates  
+ * that are of specified color , along the same row, and consecutive.
+ * It will then set those spots to 0 in img.
+ * 
+ * return false      Could not find any coordinates of specified color
+ * return true       Could find coordinates of specified color
+ *****************/
+bool find_left_right_patch( int ** img , int row , int col , vector<pixel> &patch , int color , bool debug )
+{
+  int i,j; 
+  pixel curr;
+  bool found_patch = false;
+  
+  /* find first occurance of color in image */
+  for ( i = 0 ; i < row && !found_patch ; ++i ){
+    for ( j = 0 ; j < col && !found_patch ; ++j ) {
+      if( img[i][j] == color ){
+        //set 
+        found_patch = true; 
+        
+        curr.x = i ; 
+        curr.y = j ; 
+        patch.push_back(curr);
+        img[i][j] = 0 ;
+      }//if( img[i][j] == color )
+    }//for ( j = 
+  }//for ( i=
+  
+  if( found_patch ) 
+  {
+    i = patch.at(0).x;
+    j = patch.at(0).y + 1;
+    /* find all consecutive pixels to its right of the same color */
+    while( ( j < col ) && ( img[i][j] == color ) )
+    {
+      curr.x = i ; 
+      curr.y = j;
+      patch.push_back( curr ) ; 
+      img[i][j] = 0 ;
+    }
+  }
+  
+  return found_patch;
+}
+/******************
+ * By Brooke Padilla
+ *
+ * Will take a patch of coordinates found from the find_left_right_patch
+ * and will attempt to paint along this patch until either the patch
+ * or the tank run out. It will also push on any actions that need to 
+ * take place for the stroke to work.
+ * 
+ * return false  patch is empty
+ * return true   stroke found
+ *****************/
+bool left_right_stroke(vector<pixel> &patch , stroke &prv_strk , vector<stroke> &strks , int &tank , bool newpatch , bool debug )
+{
+  bool lifted = false;
+  bool moved = false;
+  
+  /* return false if patch is empty */
+  if ( patch.empty() )
+    return false;
+  
+  /* if this is the first time the patch is being touch after leaving findlrpatch then...*/
+  if( newpatch ) {
+    /* if last move was to move or drop the brush lift */
+    if( prv_strk.action == MOVE || prv_strk.action == DROP )
+    {
+      fill_stroke(prv_strk, LIFT, prv_strk.end, prv_strk.newcolor, prv_strk.newcolor);
+      strks.push_back(prv_strk);
+    }
+    /* then move to the first position in patch */
+    fill_stroke(prv_strk, MOVE , patch.at(0) , prv_strk.newcolor, prv_strk.newcolor);
+    strks.push_back(prv_strk);
+    patch.erase(patch.begin());
+    lifted = true;
+  }
+  
+  /* if tank is empty refill*/
+  if ( tank == EMPTY ) 
+  {
+    /* if brush is touching canvas lift before refilling */
+    if( !lifted ) 
+    {
+      fill_stroke(prv_strk, LIFT, prv_strk.end, prv_strk.newcolor, prv_strk.newcolor);
+      strks.push_back(prv_strk);
+    }
+    fill_stroke(prv_strk, REFILL , prv_strk.end, prv_strk.newcolor, prv_strk.newcolor);
+    strks.push_back(prv_strk);
+    tank = MAX_TANK;
+    lifted = true;
+  }
+  
+  /* if the brush is currently lifted then drop */ 
+  if( lifted ) 
+  {
+    fill_stroke(prv_strk, DROP , prv_strk.end, prv_strk.newcolor, prv_strk.newcolor);
+    strks.push_back(prv_strk);
+    tank--;
+  }
+  
+  /* find the end of stroke: will be when either the tank is empty or patch is empty */
+  while( tank != EMPTY && !patch.empty() )
+  {
+    tank--;
+    fill_stroke(prv_strk, MOVE , patch.at(0) , prv_strk.newcolor, prv_strk.newcolor);
+    patch.erase(patch.begin());
+    moved = true;
+  }
+  if ( moved )
+    strks.push_back(prv_strk);
+    
+  return true;
 }
 
 /******************************************************************************
+ * End of left_right funtions
+ *****************************************************************************/
+ 
+/******************************************************************************
+ * Beginning of possibly helpful functions
+ *****************************************************************************/
+ 
+/******************
  * By Brooke Padilla
  *
  * Set two strokes equal.
- *****************************************************************************/
- void set_stroke(stroke &dest, stroke &src)
- {
-   dest.action = src.action;
-   dest.end.x = src.end.x;
-   dest.end.y = src.end.y;
-   dest.oldcolor = src.oldcolor;
-   dest.newcolor = src.newcolor;
- }
- 
-void find_last_strk (stroke &strk , vector<pixel> &patch , vector<pixel> &line , vector<int> &indexes , int &tank) 
- {
-   int d_ind,i;
-   while( tank != EMPTY && line.size() != 0 )
-    {
-      d_ind = indexes[0];
-      fill_stroke( strk , MOVE , line[0] , strk.newcolor , strk.newcolor );
-      line.erase(line.begin());
-      patch.erase(patch.begin() + indexes[0]);
-      indexes.erase(indexes.begin());
-      tank--;
-      // redo indexes
-      for (i = 0 ; i < (int) indexes.size() ; i++){
-        if(indexes.at(i) > d_ind){
-          indexes.at(i)--;
-        }
-      }
-    }
- }
- 
- 
-/******************************************************************************
- * By Brooke Padilla
- *
- * Find all pixels in patch that are in the same line as it 
- *****************************************************************************/
-void find_xline( vector<pixel> &patch , vector<pixel> &line , vector<int> &line_indexes , bool debug_flag )
+ *****************/
+void set_stroke(stroke &dest, stroke &src)
 {
-  unsigned int i;
-  int row;
-  
-  row = line[0].x;
-		
-  for(i = 0 ; i < patch.size() ; i++ )
-  {
-    if( patch[i].x == row )
-    {
-		  line.push_back(patch[i]);
-      line_indexes.push_back(i);
-		}//if( patch[i].x
-  }//for(i = 0 
+  dest.action = src.action;
+  dest.end.x = src.end.x;
+  dest.end.y = src.end.y;
+  dest.oldcolor = src.oldcolor;
+  dest.newcolor = src.newcolor;
 }
 
-/******************************************************************************
+/******************
  * By Brooke Padilla
  *
- * Will reduce line to only pixels that are consecutive.
- *****************************************************************************/
-void get_consec_xline( vector<pixel> &line , vector<int> &line_indexes , bool debug_flag )
+ * Will convert vectors that have x = row # y = col # to a regular xy 
+ * coordinate system with the (0,0) on the bottom left corner.
+ *****************/
+void rc_to_xy(vector <stroke> &strks, int row , int col)
 {
-  bool consec = true;
-  int i = 0;
+  int x;
+  int y; 
+  int i;
   
-  while(i < ((int) line.size()-1 ))
-  {
-      if( consec && ( line.at(i).y + 1 ) != line.at(i+1).y )
-      {
-        consec = false;
-        i++;
-      }
-      else if( !consec )
-      {
-        line.erase(line.begin()+i);
-        line_indexes.erase(line_indexes.begin()+i);
-      }
-      else
-      {
-        i++;
-      }
+  for ( i = 0 ; i < (int) strks.size() ; i++ ) {
+    x = strks.at(i).end.y;
+    y = row - 1 - strks.at(i).end.x;
+    strks.at(i).end.x = x;
+    strks.at(i).end.y = y;
   }
 }
 
-/******************************************************************************
- * By Chaeeun Lee
+/******************
+ * By Brooke Padilla
  *
- * Sorts a vector of pixels from lowest y to highest.
- *****************************************************************************/
-void sort_line(vector<pixel>& line, vector<int>& line_indexes, bool debug_flag)
-{
-  int i, j, temp, temp2;
-
-	for(i=0; i<((int)line.size()-1); i++){
-		cout << "inside for loop1" << endl;
-		for(j=0; j<((int)line.size()-i-1); j++){
-			cout << "inside for loop2" << endl;
-			if(line.at(j).y>line.at(j+1).y){
-				temp=line.at(j+1).y;
-				line.at(j+1).y=line.at(j).y;
-				line.at(j).y=temp;
-				temp2=line_indexes.at(j+1);
-				line_indexes.at(j+1)=line_indexes.at(j);
-				line_indexes.at(j)=temp2;
-			}
-		}
-	}
-
-	return;
-}
-
+ * Will output the current image. Useful for debugging.
+ *****************/
 void output_image(int ** img , int row , int col){
   int i , j ; 
   
@@ -366,38 +328,100 @@ void output_image(int ** img , int row , int col){
   }
 }
 
-int min(int x , int y){ 
-  if (x < y){return x;}
-  return y;
-}
-int max(int x , int y){ 
-  if (x > y){return x;}
-  return y;
-}
-void USAGE_STATEMENT(char* filename)
+/******************
+ * By Brooke Padilla
+ *
+ * A general patch finder that will find a group of coordinates (x,y) = (row#,col#) 
+ * of the specified color that are next to eachother.
+ *
+ * return true   if patch found
+ * return false  if no patch is found
+ *****************/
+bool find_patch( int ** img , int row , int col , vector<pixel> &patch , int color , bool debug ){
+  vector<pixel> unexplored_pixels;
+  int i,j;
+  bool found_patch = false;
+  pixel curr , edge , temp; 
+  
+  /* find first occurence of color in img */ 
+  for ( i = 0 ; i < row && !found_patch ; ++i ){
+    for ( j = 0 ; j < col && !found_patch ; ++j ) {
+      if( img[i][j] == color ){
+        //set 
+        found_patch = true; 
+        
+        curr.x = i ; 
+        curr.y = j ; 
+        unexplored_pixels.push_back(curr);
+        img[i][j] = 0 ;
+      }//if( img[i][j] == color )
+    }//for ( j = 
+  }//for ( i=
+  
+  /* find all connected pixels */
+  while( !unexplored_pixels.empty() ){
+    temp = unexplored_pixels.back() ;
+    curr.x = temp.x;
+    curr.y = temp.y;
+    unexplored_pixels.pop_back() ;
+    patch.push_back(curr) ;
+    
+    for( i = fmax( (float)curr.x - 1 , 0.0 ) ; i < fmin( (float)curr.x + 2 , (float) row ) ; ++i ){
+      for( j = fmax( (float) curr.y - 1 , 0.0 ) ; j < fmin( (float) curr.y + 2 , (float) col ) ; ++j ){
+        if( img[i][j] == color ){
+          found_patch = true; 
+          edge.x = i ; 
+          edge.y = j ;
+          unexplored_pixels.push_back(edge);
+          img[i][j] = 0 ;
+        }//if( img[i][j] == color )
+      }//for( j =
+    }//for( i =
+  }//while( !unexplored_pixels.empty() )
+  //if(debug){cout << "util.c:90 function find_patch:\t\t exit " << endl;}
+  return found_patch;
+}//end find_patch
+
+/******************
+ * By Chaeeun Lee
+ *
+ * Will take a vector of pixels and a vector of ints. Each int in the int 
+ * vector cooresponds with a pixel in the pixel vector.  This int represents 
+ * the pixels index within a patch of color. This function sorts the pixels 
+ * by its y value in increasing order. It will also make sure the corresponding
+ * index int is moved with it.  
+ *****************/
+void sort_line(vector<pixel>& line, vector<int>& line_indexes, bool debug_flag)
 {
-  cout << "Usage: " << filename << " [options]" << endl;
-  cout << "-h \t\tPrint this message and exit" << endl;
-  cout << "-ci\t\tWill ask for input file other than default" << endl;
-  cout << "-co\t\tWill ask for output file other than default" << endl;
-  cout << "-d \t\tWill turn on debug mode" << endl;
+  int i, j, temp, temp2;
+
+	for(i=0; i<((int)line.size()-1); i++){
+		for(j=0; j<((int)line.size()-i-1); j++){
+			if(line.at(j).y>line.at(j+1).y){
+				temp=line.at(j+1).y;
+				line.at(j+1).y=line.at(j).y;
+				line.at(j).y=temp;
+				temp2=line_indexes.at(j+1);
+				line_indexes.at(j+1)=line_indexes.at(j);
+				line_indexes.at(j)=temp2;
+			}
+		}
+	}
 }
 
-void refill_tank ( int & tank , stroke & prv_strk , vector<stroke> &strks) {
-  stroke new_strk;
-  tank = MAX_TANK;
-  fill_stroke(new_strk, LIFT, prv_strk.end, prv_strk.newcolor, prv_strk.newcolor );
-  strks.push_back(new_strk);
-  fill_stroke(new_strk, REFILL, prv_strk.end, prv_strk.newcolor, prv_strk.newcolor );
-  strks.push_back(new_strk);
+/******************
+ * By Brooke Padilla
+ *
+ * Fills given stroke with provided information.
+ *****************/
+void fill_stroke( stroke &new_strk , const int action , pixel p , int oldcolor , int newcolor  )
+{ 
+  new_strk.action = action; 
+  new_strk.end.x = p.x; 
+  new_strk.end.y = p.y;
+  new_strk.oldcolor = oldcolor; 
+  new_strk.newcolor = newcolor;
 }
-
-
-
-
-
-
-
 
 
 

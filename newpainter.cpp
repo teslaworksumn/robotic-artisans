@@ -1,3 +1,11 @@
+/******************************************************************************
+ * main functions 
+ * 
+ * This function will take a ptg img and will give out a set of instruction in
+ * the form of a txt file that will hold instruction to how to paint it. 
+ * 
+ *****************************************************************************/
+
 //This program is to alter ptg to txt.
 #include <iostream>
 #include <fstream>
@@ -13,19 +21,13 @@ using namespace std;
 int main( int argc , char *argv[] ){
 	//declare variables
 	int i;
-  int k;
 	int row;
 	int col;
 	int **img = NULL;
-	int tank = MAX_TANK;
-	char iFileName[64] = "test.ptg";
+	char iFileName[64] = "lisa.ptg";
 	ifstream iFile;
 	char oFileName[64] = "newpainter_result.txt";
 	ofstream oFile;
-	vector<pixel> patch;//patch is the color patch
-	stroke prv_strk;
-  vector<stroke> strks;
-  pixel start;
   int flag[] = {false, false, false};
   
 
@@ -56,10 +58,6 @@ int main( int argc , char *argv[] ){
       return -1;
     }  
   }
-  
-  start.x = -1;
-  start.y = -1;
-  fill_stroke(prv_strk,INIT,start,0,0);
   
   if(flag[0])
   {
@@ -96,49 +94,10 @@ int main( int argc , char *argv[] ){
 
   //puts image from source file into original_img
 	initialize_original(iFile, img, row, col);
-  if(flag[2]){cout<<"line 97: \tinitialized img"<<endl;}
-  k = 0 ;
-  cout << prv_strk.action << " " << prv_strk.oldcolor << " " << prv_strk.newcolor << endl;
-  //will loop through to check for every color
-  for ( i = 1 ; i < MAX_COLORS ; ++i ){
-    if( prv_strk.action != INIT){
-      fill_stroke( prv_strk , LIFT , prv_strk.end , prv_strk.newcolor , prv_strk.newcolor );
-      strks.push_back(prv_strk);
-      
-    }
-    fill_stroke( prv_strk , SWITCH_BRUSH , prv_strk.end , prv_strk.newcolor , i );
-    tank = MAX_TANK;
-    strks.push_back(prv_strk);
-    if(flag[2]){
-      cout<<"newpainter.c:110 function main:\t\t able to push SWITCH BRUSH color: " << i <<endl;
- 
-    }
-    
-    //will loop through until every patch of color i is found
-    while( find_patch( img , row , col , patch , i , flag[2] ) )
-    {
+  
+  if( !left_right( oFile , img , row , col , flag[2] ) )
+    return -1;
 
-      //will loop through until all strokes are a made from patch 
-      while( left_right_stroke(patch,prv_strk, strks, tank , flag[2]) )
-      {
-
-        for(k = 0; k < (int) strks.size() ; k++){
-         //cout << "stroke: " << strks.at(k).action << " " << strks.at(k).newcolor << "\t"; 
-        }
-        //cout << endl;
-        //output instruction to file 
-        cout << "trouble is in output stroke" << endl;
-        if( !output_stroke( oFile , strks , flag[2] ) ){ return -1;}
-        cout << "trouble is not in output stroke" << endl;
-        cout << "exit main loop " << endl;
-      }
-      //empty strks
-      while(!strks.empty())
-      {
-        strks.pop_back();
-      }
-    }//end: while(find_patch() != -1)
-  }//end: for ( i = 1 ; i < MAX_COLORS ; ++i ) 
   //free up pointers
   for ( i = 0 ; i < row ; i++ ){
     delete [] img [i];
