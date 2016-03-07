@@ -4,6 +4,7 @@
 #include <math.h>
 #include <vector>
 #include <istream>
+#include <string.h>
 using namespace std;
 
 //Pixel struct 
@@ -37,6 +38,8 @@ struct stroke{
  *****************************************************************************/
 int initialize_original(ifstream &iFile, int ** original_img, int row, int col);
 void USAGE_STATEMENT(char* filename);
+bool set_flags( int argc , char *argv[] , bool flag[]);
+bool open_files( ifstream &iFile, ofstream &oFile, bool flag[] );
 bool output_stroke( ofstream &oFile , vector<stroke> stks , bool debug_flag );
 /******************************************************************************
  * left_right function prototypes

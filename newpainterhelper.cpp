@@ -1,12 +1,6 @@
 //This program is to alter ptg to txt.
-#include <iostream>
-#include <fstream>
-#include <math.h>
-#include <vector>
-#include <istream>
-#include "newpainterhelper.h"
 
-using namespace std;
+#include "newpainterhelper.h"
 
 /******************************************************************************
  * main funtions
@@ -48,7 +42,73 @@ void USAGE_STATEMENT(char* filename)
   cout << "-d \t\tWill turn on debug mode" << endl;
 }
 
+/******************
+ * By Brooke Padilla
+ *
+ * Will set all the flags given to us from the command line arguments
+ *****************/ 
+bool set_flags( int argc , char *argv[] , bool flag[])
+{
+  int i ; 
+  
+  for( i = 1 ; i < argc ; i++)
+  {
+    if(strcmp(argv[i],"-h") == 0 )
+    {
+      USAGE_STATEMENT(argv[0]);
+      return false;   
+    }
+    else if( strcmp(argv[i],"-ci") == 0 )
+    {
+      flag[0]=true;
+    }
+    else if( strcmp(argv[i],"-co") == 0  )
+    {
+      flag[1]=true;
+    }
+    else if( strcmp(argv[i],"-d") == 0  )
+    {
+      flag[2]=true;
+    }
+    else
+    {
+      cout << "ERROR: UNKNOWN ARGUEMENT: " << argv[i] << endl << endl;
+      USAGE_STATEMENT(argv[0]);
+      return false;
+    }  
+  }
+  return true;
+}
 
+bool open_files( ifstream &iFile, ofstream &oFile, bool flag[] )
+{
+	char iFileName[64] = "lisa.ptg";
+	char oFileName[64] = "newpainter_result.txt";
+
+  if(flag[0])
+  {
+    cout<<"Input the original image file: ";
+	  cin>>iFileName;
+  }
+  iFile.open(iFileName); //read the file and make sure the file is open.
+  if(iFile.fail())
+  {
+	  cout<< "ERROR: " << iFileName << " failed to open" << endl;
+	  return false;	  
+  }
+  if(flag[1])
+  {
+	  cout<<"Input the desired output file name: ";
+	  cin>>oFileName;
+  }
+  oFile.open(oFileName); //open the desired output file.
+ 	if(oFile.fail())
+  {
+ 		cout<< "ERROR: " << oFileName << " failed to open" << endl;
+		return false;
+  }
+  return true;
+}
 
 /******************
  * By Chaeeun Lee

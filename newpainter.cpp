@@ -7,16 +7,7 @@
  *****************************************************************************/
 
 //This program is to alter ptg to txt.
-#include <iostream>
-#include <fstream>
-#include <math.h>
-#include <vector>
-#include <istream>
-#include <string.h>
-
 #include "newpainterhelper.h"
-
-using namespace std;
 
 int main( int argc , char *argv[] ){
 	//declare variables
@@ -24,92 +15,44 @@ int main( int argc , char *argv[] ){
 	int row;
 	int col;
 	int **img = NULL;
-	char iFileName[64] = "lisa.ptg";
 	ifstream iFile;
-	char oFileName[64] = "newpainter_result.txt";
 	ofstream oFile;
-  int flag[] = {false, false, false};
+  bool flag[] = {false, false, false};
   
 
+  /* set flags */
+  if( !set_flags(argc,argv,flag ) ) 
+    return -1;
   
-  for( i = 1 ; i < argc ; i++)
-  {
-    if(strcmp(argv[i],"-h") == 0 )
-    {
-      USAGE_STATEMENT(argv[0]);
-      return -1;   
-    }
-    else if( strcmp(argv[i],"-ci") == 0 )
-    {
-      flag[0]=true;
-    }
-    else if( strcmp(argv[i],"-co") == 0  )
-    {
-      flag[1]=true;
-    }
-    else if( strcmp(argv[i],"-d") == 0  )
-    {
-      flag[2]=true;
-    }
-    else
-    {
-      cout << "ERROR: UNKNOWN ARGUEMENT: " << argv[i] << endl << endl;
-      USAGE_STATEMENT(argv[0]);
-      return -1;
-    }  
-  }
+  /* open files */
+  if( !open_files(iFile, oFile, flag) ) 
+    return -1;
   
-  if(flag[0])
-  {
-    cout<<"Input the original image file: ";
-	  cin>>iFileName;
-  }
-  iFile.open(iFileName); //read the file and make sure the file is open.
-  if(iFile.fail())
-  {
-	  cout<< "ERROR: " << iFileName << " failed to open" << endl;
-	  return -1;	  
-  }
-  //if(flag[2]){cout<<"line 73: \tinput file opened"<<endl;}
-  
-  if(flag[1])
-  {
-	  cout<<"Input the desired output file name: ";
-	  cin>>oFileName;
-  }
-  oFile.open(oFileName); //open the desired output file.
- 	if(oFile.fail())
-  {
- 		cout<< "ERROR: " << oFileName << " failed to open" << endl;
-		return -1;
-  }
-  //if(flag[2]){cout<<"line 86: \toutput file opened"<<endl;}
-  
+  /* read in rows and columns */
 	iFile>>row>>col;
  
+  /* initialize img 2d array */
   img = new (nothrow)int * [row];
   for( i = 0 ; i < row ; i++ ) {
     img[i] = new (nothrow) int [col];
   }
-
-  //puts image from source file into original_img
 	initialize_original(iFile, img, row, col);
   
+  /* We will hopefully start being able to switch between styles here */
+  /* run left_right function that will print out instructions of a certain style */
   if( !left_right( oFile , img , row , col , flag[2] ) )
     return -1;
 
-  //free up pointers
+  /* free up pointer */
   for ( i = 0 ; i < row ; i++ ){
     delete [] img [i];
-    //delete [] final_img [i];
   }  
-  delete [] img ;
-  //delete [] final_img;
+  delete [] img;
   
-  //close files
+  /* close files */
   iFile.close();
   oFile.close();
   
-  //return sucess
+  /* return success */
 	return 0;
 }
