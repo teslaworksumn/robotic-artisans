@@ -47,7 +47,7 @@ void USAGE_STATEMENT(char* filename)
  *
  * Will set all the flags given to us from the command line arguments
  *****************/ 
-bool set_flags( int argc , char *argv[] , bool flag[])
+bool set_flags( int argc , char *argv[] , bool debug , char iFileName[] , char oFileName[])
 {
   int i ; 
   
@@ -61,10 +61,17 @@ bool set_flags( int argc , char *argv[] , bool flag[])
     else if( strcmp(argv[i],"-ci") == 0 )
     {
       flag[0]=true;
+      strncpy( iFileName , argv[++i] , 64);
+      if( !flag[1] ) 
+      {
+		strncpy( oFileName , iFileName , strlen( iFileName ) - 3 );
+		strcat( oFileName , "txt" );
+	  }
     }
     else if( strcmp(argv[i],"-co") == 0  )
     {
       flag[1]=true;
+      strncpy( iFileName , argv[++i] , 64);
     }
     else if( strcmp(argv[i],"-d") == 0  )
     {
@@ -80,34 +87,26 @@ bool set_flags( int argc , char *argv[] , bool flag[])
   return true;
 }
 
-bool open_files( ifstream &iFile, ofstream &oFile, bool flag[] )
+bool open_files( ifstream &iFile, ofstream &oFile, bool debug )
 {
 	char iFileName[64] = "lisa.ptg";
 	char oFileName[64] = "newpainter_result.txt";
-
-  if(flag[0])
-  {
-    cout<<"Input the original image file: ";
-	  cin>>iFileName;
-  }
-  iFile.open(iFileName); //read the file and make sure the file is open.
-  if(iFile.fail())
-  {
-	  cout<< "ERROR: " << iFileName << " failed to open" << endl;
-	  return false;	  
-  }
-  if(flag[1])
-  {
-	  cout<<"Input the desired output file name: ";
-	  cin>>oFileName;
-  }
-  oFile.open(oFileName); //open the desired output file.
+	bool changed_oFile = false;
+	
+	iFile.open(iFileName); //read the file and make sure the file is open.
+	if(iFile.fail())
+	{
+		cout<< "ERROR: " << iFileName << " failed to open" << endl;
+		return false;	  
+	}
+	
+	oFile.open(oFileName); //open the desired output file.
  	if(oFile.fail())
-  {
+	{
  		cout<< "ERROR: " << oFileName << " failed to open" << endl;
 		return false;
-  }
-  return true;
+	}
+	return true;
 }
 
 /******************

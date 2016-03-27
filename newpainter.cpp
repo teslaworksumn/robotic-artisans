@@ -17,15 +17,16 @@ int main( int argc , char *argv[] ){
 	int **img = NULL;
 	ifstream iFile;
 	ofstream oFile;
-  bool flag[] = {false, false, false};
-  
+	bool debug = false;
+	char iFileName[64] = "lisa.ptg";
+	char oFileName[64] = "lisa.txt";
 
   /* set flags */
-  if( !set_flags(argc,argv,flag ) ) 
+  if( !set_flags(argc,argv,debug,iFileName,oFileName) ) 
     return -1;
   
   /* open files */
-  if( !open_files(iFile, oFile, flag) ) 
+  if( !open_files(iFile, oFile, debug) ) 
     return -1;
   
   /* read in rows and columns */
@@ -40,7 +41,7 @@ int main( int argc , char *argv[] ){
   
   /* We will hopefully start being able to switch between styles here */
   /* run left_right function that will print out instructions of a certain style */
-  if( !left_right( oFile , img , row , col , flag[2] ) )
+  if( !left_right( oFile , img , row , col , debug ) )
     return -1;
 
   /* free up pointer */
