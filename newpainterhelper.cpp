@@ -47,9 +47,10 @@ void USAGE_STATEMENT(char* filename)
  *
  * Will set all the flags given to us from the command line arguments
  *****************/ 
-bool set_flags( int argc , char *argv[] , bool debug , char iFileName[] , char oFileName[])
+bool set_flags( int argc , char *argv[] , char iFileName[] , char oFileName[], bool &debug )
 {
   int i ; 
+  bool changed_of = false ;
   
   for( i = 1 ; i < argc ; i++)
   {
@@ -60,22 +61,23 @@ bool set_flags( int argc , char *argv[] , bool debug , char iFileName[] , char o
     }
     else if( strcmp(argv[i],"-ci") == 0 )
     {
-      flag[0]=true;
       strncpy( iFileName , argv[++i] , 64);
-      if( !flag[1] ) 
+      if( !changed_of ) 
       {
-		strncpy( oFileName , iFileName , strlen( iFileName ) - 3 );
-		strcat( oFileName , "txt" );
-	  }
+		    strncpy( oFileName , iFileName , 64 );
+		    oFileName[strlen(oFileName)-3] = 't';
+        oFileName[strlen(oFileName)-2] = 'x';
+        oFileName[strlen(oFileName)-1] = 't';
+	    }
     }
     else if( strcmp(argv[i],"-co") == 0  )
     {
-      flag[1]=true;
-      strncpy( iFileName , argv[++i] , 64);
+      changed_of=true;
+      strncpy( oFileName , argv[++i] , 64);
     }
     else if( strcmp(argv[i],"-d") == 0  )
     {
-      flag[2]=true;
+      debug=true;
     }
     else
     {
@@ -87,12 +89,12 @@ bool set_flags( int argc , char *argv[] , bool debug , char iFileName[] , char o
   return true;
 }
 
-bool open_files( ifstream &iFile, ofstream &oFile, bool debug )
+bool open_files( ifstream &iFile, ofstream &oFile,  char iFileName[] , char oFileName[], bool debug )
 {
-	char iFileName[64] = "lisa.ptg";
-	char oFileName[64] = "newpainter_result.txt";
-	bool changed_oFile = false;
-	
+  if( debug )
+  {
+    cout << iFileName << endl << oFileName << endl;
+  }
 	iFile.open(iFileName); //read the file and make sure the file is open.
 	if(iFile.fail())
 	{
@@ -117,7 +119,7 @@ bool open_files( ifstream &iFile, ofstream &oFile, bool debug )
  * return 0   SUCCESS
  * return -1  if action is not valid
  *****************/
-bool output_stroke( ofstream &oFile , vector<stroke> stks , bool debug_flag ){
+bool output_stroke( ofstream &oFile , vector<stroke> stks ){
   int i;
 	for(i=0; i<(int)stks.size(); i++){
 		switch(stks.at(i).action){
@@ -140,7 +142,6 @@ bool output_stroke( ofstream &oFile , vector<stroke> stks , bool debug_flag ){
 				return false;
 		}
 	}
-  //if(debug_flag){cout << "util.c:125 function output_stroke:\t\t exit " << endl;}
 	return true;
 }
 
@@ -197,7 +198,7 @@ bool left_right( ofstream &oFile , int **img , int row , int col , bool debug )
         /* convert the stroke coordinates to xy coordinates instead of row column */
         rc_to_xy(strks,row,col);
         /* output strokes */
-        if( !output_stroke( oFile , strks , debug ) ) 
+        if( !output_stroke( oFile , strks ) ) 
 			    return false;
         /* empty stroke vector */
 		    while(!strks.empty())
@@ -325,7 +326,7 @@ bool left_right_stroke(vector<pixel> &patch , stroke &prv_strk , vector<stroke> 
   }
   if ( moved )
     strks.push_back(prv_strk);
-    
+  
   return true;
 }
 

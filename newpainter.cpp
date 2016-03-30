@@ -22,11 +22,11 @@ int main( int argc , char *argv[] ){
 	char oFileName[64] = "lisa.txt";
 
   /* set flags */
-  if( !set_flags(argc,argv,debug,iFileName,oFileName) ) 
+  if( !set_flags(argc,argv,iFileName,oFileName,debug) ) 
     return -1;
   
   /* open files */
-  if( !open_files(iFile, oFile, debug) ) 
+  if( !open_files(iFile, oFile,iFileName,oFileName, debug) ) 
     return -1;
   
   /* read in rows and columns */
@@ -43,7 +43,9 @@ int main( int argc , char *argv[] ){
   /* run left_right function that will print out instructions of a certain style */
   if( !left_right( oFile , img , row , col , debug ) )
     return -1;
-
+  /* output the output file name */
+  cout << oFileName << endl;
+  oFile << oFileName << endl;
   /* free up pointer */
   for ( i = 0 ; i < row ; i++ ){
     delete [] img [i];
