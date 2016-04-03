@@ -40,4 +40,5 @@ def ptgToImage(ptg):
     output = ptg[:len(ptg)-4]+".jpg"
     a = getArrayFromPTG(ptg)
     writeImage(getRGBList(a[0]),a[1],a[2],output)
-    
+
+ptgToImage(IP1.getPTGInput())
