@@ -5,8 +5,22 @@
 #include <string>
 #include <vector>
 using namespace std;
+//********************************************************************//
+//                          OUTPUT FORMAT                             //
+//********************************************************************//
+/*
+MAX_COLORS 9 // including no paint 0 + 1-8 colors =9
+MAX_TANK 5
+EMPTY 0
 
-
+MOVE -1 // -1 x y
+LIFT -2 // -2 
+DROP -3 // -3
+REFILL -4 // -4 x0 y0 color
+SWITCH_BRUSH -5 // -5 x0 y0 color_prev color_next 
+INIT -99 // -99
+END -100 // -100
+*/
 //********************************************************************//
 //                            CLASSES                                 //
 //********************************************************************//
@@ -240,7 +254,7 @@ int main()
 					{
 						Child_Painter = Current_Painter;
 						Child_Painter.Lift();
-  				   		string_stream << "Lift brush";
+  				   		string_stream << "-2";
   				   		Child_Painter.setAction(string_stream.str());
   				   		string_stream.str("");	//clear the string stream
   				   		//cout << Child_Painter.getAction() << endl;
@@ -292,7 +306,7 @@ int main()
 		    				{
 								Child_Painter = Current_Painter;
 								Child_Painter.GoTo(Current_Painter.XPos()+1,Child_Painter.YPos());
-								string_stream << "Move to " << Child_Painter.XPos() << "," << Child_Painter.YPos() << " painting it " << Child_Painter.Color() << " without lifting";
+								string_stream <<"-1 "<<Child_Painter.XPos()<<""<<Child_Painter.YPos() << "Move to " << Child_Painter.XPos() << "," << Child_Painter.YPos() << " painting it " << Child_Painter.Color() << " without lifting";
 								Child_Painter.setAction(string_stream.str());
 								string_stream.str("");	//clear the string stream
 								//cout << Child_Painter.getAction() << endl;

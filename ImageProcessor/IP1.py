@@ -1,8 +1,8 @@
 from PIL import Image
 import math
 
-COLORS = [(255,255,255),(0,0,0),(255,0,0),(0,255,0),(0,0,255),(255,255,0),(0,128,0),(0,128,128)]
-#WHITE, BLACK, RED, GREEN, BLUE, YELLOW, DARK_GREEN, TEAL
+COLORS = [(255,255,255),(0,0,0),(0,128,128),(255,0,0),(0,255,0),(0,0,255),(255,255,0),(0,128,0)]
+#WHITE, BLACK, TEAL, RED, GREEN, BLUE, YELLOW, DARK_GREEN
 #1      2       3     4     5       6       7          8
 
 def getArrayOfPixels(image): #Return list of rgb values for each pixel in the image
@@ -15,7 +15,7 @@ def getArrayOfPixels(image): #Return list of rgb values for each pixel in the im
 
 def writeToFile(oArray, filePath, rows, cols): #Writes a list of single digits to a txt file in .ptg format
     file = open(filePath,'a')
-    file.write("Rows: "+str(rows)+", Cols: "+str(cols)+", Encoder: X\n")
+    file.write(str(rows)+" "+str(cols)+"\n")
     oArrayPointer = 0
     for j in range(rows):
         for i in range(cols):
@@ -115,9 +115,15 @@ def getPTG(imagePath, fRows, fCols):
     outputPath = imagePath[:len(imagePath)-4]+".ptg"
     paints = [matchColor(rgb2lab(px)) for px in pixels]
     writeToFile(paints, outputPath, fRows, fCols)
+    #print(outputPath)
+    return outputPath
     
 def getPTGInput():
     a = input("Enter Image(Use double slashes): ")
     c = input("Enter number of rows: ")
     d = input("Enter number of columns: ")
-    getPTG(a,int(c),int(d))
+    print("\n")
+    return getPTG(a,int(c),int(d))
+
+getPTGInput()
+    

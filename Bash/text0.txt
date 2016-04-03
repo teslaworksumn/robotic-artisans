@@ -1,0 +1,3 @@
+Enter Image(Use double slashes): Enter number of rows: Enter number of columns: 
+
+/home/ubuntu/Desktop/Moon.ptg
