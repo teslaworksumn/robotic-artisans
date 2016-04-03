@@ -1,8 +1,8 @@
 from PIL import Image
 import math
 
-COLORS = [(255,255,255),(0,0,0),(255,0,0),(0,255,0),(0,0,255),(255,255,0),(0,128,0),(0,128,128)]
-#WHITE, BLACK, RED, GREEN, BLUE, YELLOW, DARK_GREEN, TEAL
+COLORS = [(255,255,255),(0,0,0),(0,128,128),(255,0,0),(0,255,0),(0,0,255),(255,255,0),(0,128,0)]
+#WHITE, BLACK, TEAL, RED, GREEN, BLUE, YELLOW, DARK_GREEN
 #1      2       3     4     5       6       7          8
 
 def getArrayOfPixels(image): #Return list of rgb values for each pixel in the image

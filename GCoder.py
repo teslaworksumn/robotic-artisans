@@ -7,7 +7,9 @@ def makeGCODE(filePathIn, filePathOut):
     fileOut  = open(filePathOut,'a')
     for line in fileIn:
         line = line.replace("\n","")
-        if(line[1] == '1'):#Move
+        if(len(line)==0):
+            print('Not valid line')
+        elif(line[1] == '1'):#Move
             splitLine = line.split(" ")
             fileOut.write(move(splitLine[1],splitLine[2]))
         elif(line[1]=='2'):#Lift
@@ -51,13 +53,13 @@ def changeColor(xi,yi,colori,colorf):
     s+=drop()
     s+=move(COLOR_POS.get(colori)[0]+1,COLOR_POS.get(colori)[1])
     s+=lift()
-    #s+=move(COLOR_POS.get(colorf)[0],COLOR_POS.get(colorf)[1])
+    s+=move(COLOR_POS.get(colorf)[0],COLOR_POS.get(colorf)[1])
     s+=drop()
     s+=lift()
     s+=move(xi,yi)
     return s
 def makeGCodeInput():
-    fi = "text1.txt"
+    fi = "brushstrokes.txt"
     fo = "xyz.gcode"
     makeGCODE(fi, fo)
 makeGCodeInput()

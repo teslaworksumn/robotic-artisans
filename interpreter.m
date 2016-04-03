@@ -56,17 +56,17 @@ Theta1 = angle(p1(2),A0)*180/pi;
 [q2(3),q2(4)] = isect(q3(2),r5,A0,r4);
 Theta2 = angle(q2(1),A0)*180/pi;
 
-hold off;
-iplot(A0,p1(2));
-axis([-3 10 0 7]);
-hold on;
-itriangle(p1(2),p3,q3(1),'b');
-itriangle(p2(4),q1(3),p1(2),'r');
-iplot(p2(4),p4);
-iplot(q1(3),B0);
-iplot(q3(1),q2(1));
-iplot(q2(1),A0);
-itriangle(P,p3,p4,'g');
+%hold off;
+%iplot(A0,p1(2));
+%axis([-3 10 0 7]);
+%hold on;
+%itriangle(p1(2),p3,q3(1),'b');
+%itriangle(p2(4),q1(3),p1(2),'r');
+%iplot(p2(4),p4);
+%iplot(q1(3),B0);
+%iplot(q3(1),q2(1));
+%iplot(q2(1),A0);
+%itriangle(P,p3,p4,'g');
 end
 
 function [ans1,ans2] = isect(comp1,r1,comp2,r2)
