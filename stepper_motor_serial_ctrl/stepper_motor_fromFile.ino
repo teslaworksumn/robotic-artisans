@@ -62,44 +62,34 @@ void serialEvent() {
     }
   }
 }
+
 void loop() {
   //customDelayMapped = speedUp();
   
   if (stateComplete) {
+    if(new1>max1)
+		nex1=max1;
+	else if(new1<min1)
+		new1=min1;
+	if(new2>max2)
+		new2=max2;
+	else if(new2<min2)
+		new2=min2;
+	if(new3>max3)
+		new3=max3;
+	else if(new3<min3)
+		new3=min3;
      
-    if(curr2<new2){
-      curr2=curr2+1.8;
-      digitalWrite(dirPinTwo, LOW);
-      digitalWrite(stepPinTwo,HIGH);
-      delayMicroseconds(customDelayMapped);
-      digitalWrite(stepPinTwo , LOW);
-      delayMicroseconds(customDelayMapped);  
+	while(curr1>=(new1+0.9)){
+		curr1=new1-1.8;
+		digitalWrite(dirPinOne, HIGH);
+		digitalWrite(stepPinOne , HIGH);
+		delayMicroseconds(customDelayMapped);
+		digitalWrite(stepPinOne , LOW);
+		delayMicroseconds(customDelayMapped);
     }
-    else if(curr3>new3){
-      curr3=curr3-1.8;
-      digitalWrite(dirPinThree, HIGH);
-      digitalWrite(stepPinThree , HIGH);
-      delayMicroseconds(customDelayMapped);
-      digitalWrite(stepPinThree , LOW);
-      delayMicroseconds(customDelayMapped);  
-    }
-    else if(curr3<new3){
-      curr3=curr3+1.8;
-      digitalWrite(dirPinThree, LOW);
-      digitalWrite(stepPinThree , HIGH);
-      delayMicroseconds(customDelayMapped);
-      digitalWrite(stepPinThree , LOW);
-      delayMicroseconds(customDelayMapped);
-    }
-    else if(curr1>new1){
-      curr1=new1-1.8;
-      digitalWrite(dirPinOne, HIGH);
-      digitalWrite(stepPinOne , HIGH);
-      delayMicroseconds(customDelayMapped);
-      digitalWrite(stepPinOne , LOW);
-      delayMicroseconds(customDelayMapped);
-    }
-    else if(curr1<new1){
+    
+    while((curr1+0.9)<=new1){
       curr1=new1+1.8;
       digitalWrite(dirPinOne, LOW);
       digitalWrite(stepPinOne , HIGH);
@@ -107,13 +97,41 @@ void loop() {
       digitalWrite(stepPinOne , LOW);
       delayMicroseconds(customDelayMapped);
     }
-    else if(curr2>new2){
+
+   while(curr2>=(new2+0.9)){
 	  curr2=new2-1.8;
       digitalWrite(dirPinTwo, HIGH);
       digitalWrite(stepPinTwo , HIGH);
       delayMicroseconds(customDelayMapped);
       digitalWrite(stepPinTwo , LOW);
       delayMicroseconds(customDelayMapped); 
+    }
+
+	while((curr2+0.9)<=new2){
+		curr2=curr2+1.8;
+		digitalWrite(dirPinTwo, LOW);
+		digitalWrite(stepPinTwo,HIGH);
+		delayMicroseconds(customDelayMapped);
+		digitalWrite(stepPinTwo , LOW);
+		delayMicroseconds(customDelayMapped);  
+	}
+
+	while(curr3>=(new3+0.9)){
+		curr3=curr3-1.8;
+		digitalWrite(dirPinThree, HIGH);
+		digitalWrite(stepPinThree , HIGH);
+		delayMicroseconds(customDelayMapped);
+		digitalWrite(stepPinThree , LOW);
+		delayMicroseconds(customDelayMapped);  
+    }
+    
+	while((curr3+0.9)<=new3){
+		curr3=curr3+1.8;
+		digitalWrite(dirPinThree, LOW);
+		digitalWrite(stepPinThree , HIGH);
+		delayMicroseconds(customDelayMapped);
+		digitalWrite(stepPinThree , LOW);
+		delayMicroseconds(customDelayMapped);
     }
 
     stateComplete = false;
