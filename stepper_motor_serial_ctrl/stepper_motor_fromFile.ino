@@ -92,7 +92,7 @@ void loop() {
     new3=min3;
     while(changed){ 
       changed = false;
-    if(curr1>=(new1+0.9)){
+    if(curr1>=(new1+0.45)){
       Serial.println(-1);
       changed = true;
       curr1=new1-1.8;
@@ -103,7 +103,7 @@ void loop() {
       delayMicroseconds(customDelayMapped);
       }
       
-      if((curr1+0.9)<=new1){
+      if((curr1+0.45)<=new1){
         Serial.println(-2);
         changed = true;
         curr1=new1+1.8;
@@ -114,7 +114,7 @@ void loop() {
         delayMicroseconds(customDelayMapped);
       }
 
-     if(curr2>=(new2+0.9)){
+     if(curr2>=(new2+0.45)){
         changed = true;
       curr2=new2-1.8;
         digitalWrite(dirPinTwo, HIGH);
@@ -124,7 +124,7 @@ void loop() {
         delayMicroseconds(customDelayMapped); 
       }
 
-    if((curr2+0.9)<=new2){
+    if((curr2+0.45)<=new2){
       changed = true;
       curr2=curr2+1.8;
       digitalWrite(dirPinTwo, LOW);
@@ -134,7 +134,7 @@ void loop() {
       delayMicroseconds(customDelayMapped);  
     }
 
-   if(curr3>=(new3+0.9)){
+   if(curr3>=(new3+0.45)){
       changed = true;
       curr3=curr3-1.8;
       digitalWrite(dirPinThree, HIGH);
@@ -144,7 +144,7 @@ void loop() {
       delayMicroseconds(customDelayMapped);  
       }
       
-    if((curr3+0.9)<=new3){
+    if((curr3+0.45)<=new3){
       changed = true;
       curr3=curr3+1.8;
       digitalWrite(dirPinThree, LOW);
