@@ -23,7 +23,7 @@
 int customDelay,customDelayMapped, action; // Defines variables
 String inputString = "";         // a string to hold incoming data
 boolean stateComplete = false;  // whether the string is complete
-double curr1, curr2, curr3, new1, new2, new3; // current and target angles for each motor
+float curr1, curr2, curr3, new1, new2, new3; // current and target angles for each motor
 
 void setup() {
   // digital pins on the Arduino can only be either set as an output or input - in our case we want to send data to the driver, so we choose output
@@ -53,6 +53,11 @@ int speedUp() {
 void serialEvent() {
   while (Serial.available()) {
     // get the new byte:
+    new1 = Serial.parseFloat();
+    new2 = Serial.parseFloat();
+    new3 = Serial.parseFloat();
+    stateComplete = true;
+    /*
     char inChar = (char)Serial.read();
     inputString += inChar;
     if (inChar == '\n') {
@@ -60,6 +65,7 @@ void serialEvent() {
       inputString = "";
       stateComplete = true;
     }
+    */
   }
 }
 
