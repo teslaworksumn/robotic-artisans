@@ -38,17 +38,17 @@ struct stroke{
  *****************************************************************************/
 int initialize_original(ifstream &iFile, int ** original_img, int row, int col);
 void USAGE_STATEMENT(char* filename);
-bool set_flags( int argc , char *argv[] , bool flag[]);
-bool open_files( ifstream &iFile, ofstream &oFile, bool flag[] );
-bool output_stroke( ofstream &oFile , vector<stroke> stks , bool debug_flag );
+bool set_flags( int argc , char *argv[] , char iFileName[] , char oFileName[], bool &debug );
+bool open_files( ifstream &iFile, ofstream &oFile,  char iFileName[] , char oFileName[], bool debug );
+bool output_stroke( ofstream &oFile , vector<stroke> stks );
 /******************************************************************************
- * left_right function prototypes
+ * left_right funtions
  *****************************************************************************/
 bool left_right( ofstream &oFile , int **img , int row , int col , bool debug );
 bool find_left_right_patch( int ** img , int row , int col , vector<pixel> &patch , int color , bool debug );
 bool left_right_stroke(vector<pixel> &patch , stroke &prv_strk , vector<stroke> &strks , int &tank , bool newpatch , bool debug );
 /******************************************************************************
- * Beginning of possibly helpful function prototypes
+ * Beginning of possibly helpful functions
  *****************************************************************************/
 void set_stroke(stroke &dest, stroke &src);
 void rc_to_xy(vector <stroke> &strks, int row , int col);
