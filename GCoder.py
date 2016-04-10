@@ -1,10 +1,15 @@
 LIFT = "1"#z axis value, only has two possible values
-COLOR_POS={"0":(3,3),"1":(0,0),"2":(1,1),"3":(2,2)}# It will look something like this {"Red":(0,0),"Blue":(1,0),...}
+COLOR_POS={"1":(-2,0),"2":(-2,2.5),"3":(-2,5),"4":(-2,7.5),"5":(10,0),"6":(10,2.5),"7":(10,5),"8":(10,7.5)}# It will look something like this {"Red":(0,0),"Blue":(1,0),...}
 #
-cur_XY =(0,0)
+
+ratioFile = open("Ratio.txt",'r')
+R = ratioFile.readline()
+ratioFile.close()
+global cur_XY =(0,0)
 def makeGCODE(filePathIn, filePathOut):
     fileIn = open(filePathIn,'r')
     fileOut  = open(filePathOut,'a')
+    
     for line in fileIn:
         line = line.replace("\n","")
         if(len(line)==0):
@@ -29,7 +34,7 @@ def move(x,y):
     #print("G1X"+str(x)+"Y"+str(y)+"Z"+LIFT+'\n')
     return s
 def lift():
-    LIFT = '1'
+    LIFT = str(1/R)
     s = "G1 X "+str(cur_XY[0])+" Y "+str(cur_XY[1])+" Z "+LIFT+' \n'
     #print("G1X"+str(cur_XY[0])+"Y"+str(cur_XY[1])+"Z"+LIFT+'\n')
     return s
@@ -39,8 +44,8 @@ def drop():
     #print("G1X"+str(cur_XY[0])+"Y"+str(cur_XY[1])+"Z"+LIFT+'\n')
     return s
 def refill(xi,yi,color):
-    x = COLOR_POS.get(color)[0]
-    y = COLOR_POS.get(color)[1]
+    x = COLOR_POS.get(color)[0]/r
+    y = COLOR_POS.get(color)[1]/R
     s = move(x,y)
     s+=drop()
     s+=lift()
@@ -49,11 +54,11 @@ def refill(xi,yi,color):
 def changeColor(xi,yi,colori,colorf):
     print(colori)
     print(colorf)
-    s=move(COLOR_POS.get(colori)[0],COLOR_POS.get(colori)[1])
-    s+=drop()
-    s+=move(COLOR_POS.get(colori)[0]+1,COLOR_POS.get(colori)[1])
-    s+=lift()
-    s+=move(COLOR_POS.get(colorf)[0],COLOR_POS.get(colorf)[1])
+    #s=move(COLOR_POS.get(colori)[0]/R,COLOR_POS.get(colori)[1]/R)
+    #s+=drop()
+    #s+=move(COLOR_POS.get(colori)[0]+1,COLOR_POS.get(colori)[1])
+    #s+=lift()
+    s+=move(COLOR_POS.get(colorf)[0]/R,COLOR_POS.get(colorf)[1]/R)
     s+=drop()
     s+=lift()
     s+=move(xi,yi)

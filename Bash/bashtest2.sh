@@ -1,5 +1,5 @@
 #!/bin/bash
-python3 ImageProcessor/IP1.py | tee text0.txt
+python3 IP1.py | tee text0.txt
 
 PTG=$(tail -1 text0.txt)
 echo ----------

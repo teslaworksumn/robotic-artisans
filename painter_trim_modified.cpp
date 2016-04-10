@@ -86,7 +86,7 @@ int main()
 	int current_painter_index = 0;
   int minimum_painter_cost;
   
-	cout << "What shall we paint today? \n";
+	//cout << "What shall we paint today?;
 	getline(cin,painting);
 	/*
 	cout << "\n Let's Begin \n";
