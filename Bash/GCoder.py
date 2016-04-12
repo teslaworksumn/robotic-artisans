@@ -30,22 +30,22 @@ def makeGCODE(filePathIn, filePathOut):
             
 def move(x,y):
     cur_XY=(x,y)
-    s = "G1 X "+str(x)+" Y "+str(y)+" Z "+LIFT+' \n'
+    s = "G1 X "+str(x*R)+" Y "+str(y*R)+" Z "+LIFT+' \n'
     #print("G1X"+str(x)+"Y"+str(y)+"Z"+LIFT+'\n')
     return s
 def lift():
-    LIFT = str(1/R)
-    s = "G1 X "+str(cur_XY[0])+" Y "+str(cur_XY[1])+" Z "+LIFT+' \n'
+    LIFT = str(1)
+    s = "G1 X "+str(cur_XY[0]*R)+" Y "+str(cur_XY[1]*R)+" Z "+LIFT+' \n'
     #print("G1X"+str(cur_XY[0])+"Y"+str(cur_XY[1])+"Z"+LIFT+'\n')
     return s
 def drop():
     LIFT = '0'
-    s = "G1 X "+str(cur_XY[0])+" Y "+str(cur_XY[1])+" Z "+LIFT+' \n'
+    s = "G1 X "+str(cur_XY[0]*R)+" Y "+str(cur_XY[1]*R)+" Z "+LIFT+' \n'
     #print("G1X"+str(cur_XY[0])+"Y"+str(cur_XY[1])+"Z"+LIFT+'\n')
     return s
 def refill(xi,yi,color):
-    x = COLOR_POS.get(color)[0]/r
-    y = COLOR_POS.get(color)[1]/R
+    x = COLOR_POS.get(color)[0]
+    y = COLOR_POS.get(color)[1]
     s = move(x,y)
     s+=drop()
     s+=lift()
@@ -58,7 +58,7 @@ def changeColor(xi,yi,colori,colorf):
     #s+=drop()
     #s+=move(COLOR_POS.get(colori)[0]+1,COLOR_POS.get(colori)[1])
     #s+=lift()
-    s+=move(COLOR_POS.get(colorf)[0]/R,COLOR_POS.get(colorf)[1]/R)
+    s+=move(COLOR_POS.get(colorf)[0],COLOR_POS.get(colorf)[1])
     s+=drop()
     s+=lift()
     s+=move(xi,yi)
