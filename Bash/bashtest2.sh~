@@ -5,7 +5,9 @@ PTG=$(tail -1 text0.txt)
 echo ----------
 echo $PTG
 echo ----------
-./newpainter -ci $PTG -co brushstrokes.txt
+./painter_trim_modified  > brushstrokes.txt <<END
+$PTG
+END
 
 python3 GCoder.py 
 #> xyz.gcode

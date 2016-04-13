@@ -3,8 +3,7 @@ COLOR_POS={"1":(-2,0),"2":(-2,2.5),"3":(-2,5),"4":(-2,7.5),"5":(10,0),"6":(10,2.
 #
 
 ratioFile = open("Ratio.txt",'r')
-Ra = ratioFile.readline()
-R = float(Ra)
+R = int(ratioFile.readline())
 ratioFile.close()
 def makeGCODE(filePathIn, filePathOut):
     fileIn = open(filePathIn,'r')
