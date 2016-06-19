@@ -122,7 +122,7 @@ def getPTGInput():
     a = input("Enter Image(Use double slashes): ")
     c = input("Enter number of rows: ")
     d = input("Enter number of columns: ")
-    ratioFile = open("Ratio.txt",'w')
+    ratioFile = open("Ratio.txt",'a')
     ratioFile.write(str(8.0/int(c)))
     print("\n")
     return getPTG(a,int(c),int(d))

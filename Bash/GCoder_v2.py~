@@ -48,7 +48,9 @@ def drop(cur_XY):
 def refill(xi,yi,color,cur_XY):
     x = COLOR_POS.get(color)[0]
     y = COLOR_POS.get(color)[1]
-    s = move(x,y)
+    s = ''
+    s+=goHome()
+    s+=move(x,y)
     s+=drop(cur_XY)
     s+=lift(cur_XY)
     s+=move(xi,yi)
@@ -61,6 +63,7 @@ def changeColor(xi,yi,colori,colorf,cur_XY):
     #s+=move(COLOR_POS.get(colori)[0]+1,COLOR_POS.get(colori)[1])
     #s+=lift()
     s=''
+    s+=goHome()
     s+=move(COLOR_POS.get(colorf)[0],COLOR_POS.get(colorf)[1])
     s+=drop(cur_XY)
     s+=lift(cur_XY)
@@ -70,4 +73,7 @@ def makeGCodeInput():
     fi = "brushstrokes.txt"
     fo = "xyz.gcode"
     makeGCODE(fi, fo)
+def goHome():
+    s = "G1 X -99 Y -99 Z -99 \n"
+    return s
 makeGCodeInput()

@@ -9,28 +9,17 @@ function interpreter
     xyzId = fopen('xyz.gcode');
     xyz = textscan(xyzId, '%*s %*s %f %*s %f %*s %f');
     angleID = fopen('angle.gcode','w');
-    angle1 = fopen('angle1.csv','w');
-    angle2 = fopen('angle2.csv','w');
-    angle3 = fopen('angle3.csv','w');
     formatSpec = 'G1 T1 %3.3f T2 %3.3f T3 %3.3f\r\n';
     for n=1:length(xyz{1})
         if(xyz{1}(n)==-99 && xyz{2}(n)==-99 && xyz{3}(n)==-99)
-            t1=0.0;
-            t2=0.0;
-            t3=0.0;
+            t1=144.0;
+            t2=106.0;
+            t3=153.0;
         else
         [t1,t2,t3]=interpreter_123(xyz{1}(n),xyz{2}(n),xyz{3}(n));
         end
         fprintf(angleID,formatSpec,t1,t2,t3);
-        %fprintf(angle1,"{");
-        %fprintf(angle2,"{");
-        %fprintf(angle3,"{");
-        fprintf(angle1,'%f3.1',t1);
-        fprintf(angle2,'%f3.1',t2);
-        fprintf(angle3,'%f3.1',t3);
-        %fprintf(angle1,"};");
-        %fprintf(angle2,"};");
-        %fprintf(angle3,"};");
+        %pause(.125);
     end
     fclose(xyzId);
     fclose(angleID);
@@ -80,16 +69,16 @@ else
     Theta2 = angle(q2,A0);
 end
 
-%hold off;
-%iplot(A0,p1);
-%axis([-5 20 -5 15]);
-%hold on;
-%itriangle(p1,P,q3,'b');
+hold off;
+iplot(A0,p1);
+axis([-5 20 -5 15]);
+hold on;
+itriangle(p1,P,q3,'b');
 %itriangle(p2(4),q1(3),p1(2),'r');
 %iplot(p2(4),p4);
 %iplot(q1(3),B0);
-%iplot(q3,q2);
-%iplot(q2,A0);
+iplot(q3,q2);
+iplot(q2,A0);
 %itriangle(P,p3,p4,'g');
 end
 

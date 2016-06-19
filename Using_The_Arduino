@@ -1,0 +1,15 @@
+1. Download image
+2. In terminal, /home/ubuntu/RoboticArtisans/Bash and type in ./bashtest2.sh
+3. Enter in absolute location of image, then number of rows and then number of columns
+4. It will generate the xyz.gcode file.
+5. Select the correct interpreter, (Droids are R2 and C3)
+6. cd ..
+8. Turn on the arm and reset the arduino.
+7. python serialCom.py and it will start painting
+
+After the painting is done...
+
+1. python SerialClose.py
+2. cd Bash
+3. ./CleanUp.sh
+4. delete the .ptg file which is located in the same directory as the image

@@ -12,7 +12,7 @@ function interpreter
     angle1 = fopen('angle1.csv','w');
     angle2 = fopen('angle2.csv','w');
     angle3 = fopen('angle3.csv','w');
-    formatSpec = 'G1 T1 %3.3f T2 %3.3f T3 %3.3f\r\n';
+    formatSpec = '%3.3f , %3.3f , %3.3f';
     for n=1:length(xyz{1})
         if(xyz{1}(n)==-99 && xyz{2}(n)==-99 && xyz{3}(n)==-99)
             t1=0.0;

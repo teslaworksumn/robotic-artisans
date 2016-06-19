@@ -3,12 +3,13 @@ COLOR_POS={"1":(-2,0),"2":(-2,2.5),"3":(-2,5),"4":(-2,7.5),"5":(10,0),"6":(10,2.
 #
 
 ratioFile = open("Ratio.txt",'r')
-R = ratioFile.readline()
+Ra = ratioFile.readline()
+R = float(Ra)
 ratioFile.close()
-global cur_XY =(0,0)
 def makeGCODE(filePathIn, filePathOut):
     fileIn = open(filePathIn,'r')
     fileOut  = open(filePathOut,'a')
+    cur_XY=(0,0)
     
     for line in fileIn:
         line = line.replace("\n","")
@@ -17,50 +18,52 @@ def makeGCODE(filePathIn, filePathOut):
         elif(line[1] == '1'):#Move
             splitLine = line.split(" ")
             fileOut.write(move(splitLine[1],splitLine[2]))
+            cur_XY=(int(splitLine[1]),int(splitLine[2]))
         elif(line[1]=='2'):#Lift
-            fileOut.write(lift())
+            fileOut.write(lift(cur_XY))
         elif(line[1] =='3'):#Drop brush
-            fileOut.write(drop())
+            fileOut.write(drop(cur_XY))
         elif(line[1] == '4'):#Refill
             splitLine = line.split(" ")
-            fileOut.write(refill(splitLine[1],splitLine[2],splitLine[3]))
+            fileOut.write(refill(splitLine[1],splitLine[2],splitLine[3],cur_XY))
         elif(line[1] =='5'):#change color
             splitLine = line.split(" ")
-            fileOut.write(changeColor(splitLine[1],splitLine[2],splitLine[3],splitLine[4]))
+            fileOut.write(changeColor(splitLine[1],splitLine[2],splitLine[3],splitLine[4],cur_XY))
             
 def move(x,y):
-    cur_XY=(x,y)
-    s = "G1 X "+str(x)+" Y "+str(y)+" Z "+LIFT+' \n'
+    
+    s = "G1 X "+str(int(x)*R)+" Y "+str(int(y)*R)+" Z "+LIFT+' \n'
     #print("G1X"+str(x)+"Y"+str(y)+"Z"+LIFT+'\n')
     return s
-def lift():
-    LIFT = str(1/R)
-    s = "G1 X "+str(cur_XY[0])+" Y "+str(cur_XY[1])+" Z "+LIFT+' \n'
+def lift(cur_XY):
+    LIFT = str(1)
+    s = "G1 X "+str(cur_XY[0]*R)+" Y "+str(cur_XY[1]*R)+" Z "+LIFT+' \n'
     #print("G1X"+str(cur_XY[0])+"Y"+str(cur_XY[1])+"Z"+LIFT+'\n')
     return s
-def drop():
+def drop(cur_XY):
     LIFT = '0'
-    s = "G1 X "+str(cur_XY[0])+" Y "+str(cur_XY[1])+" Z "+LIFT+' \n'
+    s = "G1 X "+str(cur_XY[0]*R)+" Y "+str(cur_XY[1]*R)+" Z "+LIFT+' \n'
     #print("G1X"+str(cur_XY[0])+"Y"+str(cur_XY[1])+"Z"+LIFT+'\n')
     return s
-def refill(xi,yi,color):
-    x = COLOR_POS.get(color)[0]/r
-    y = COLOR_POS.get(color)[1]/R
+def refill(xi,yi,color,cur_XY):
+    x = COLOR_POS.get(color)[0]
+    y = COLOR_POS.get(color)[1]
     s = move(x,y)
-    s+=drop()
-    s+=lift()
+    s+=drop(cur_XY)
+    s+=lift(cur_XY)
     s+=move(xi,yi)
     return s
-def changeColor(xi,yi,colori,colorf):
+def changeColor(xi,yi,colori,colorf,cur_XY):
     print(colori)
     print(colorf)
     #s=move(COLOR_POS.get(colori)[0]/R,COLOR_POS.get(colori)[1]/R)
     #s+=drop()
     #s+=move(COLOR_POS.get(colori)[0]+1,COLOR_POS.get(colori)[1])
     #s+=lift()
-    s+=move(COLOR_POS.get(colorf)[0]/R,COLOR_POS.get(colorf)[1]/R)
-    s+=drop()
-    s+=lift()
+    s=''
+    s+=move(COLOR_POS.get(colorf)[0],COLOR_POS.get(colorf)[1])
+    s+=drop(cur_XY)
+    s+=lift(cur_XY)
     s+=move(xi,yi)
     return s
 def makeGCodeInput():

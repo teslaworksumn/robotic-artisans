@@ -7,7 +7,7 @@ echo $PTG
 echo ----------
 ./newpainter -ci $PTG -co brushstrokes.txt
 
-python3 GCoder.py 
+python3 GCoder_v2.py 
 #> xyz.gcode
 
 #newpainter -ci $PTG
