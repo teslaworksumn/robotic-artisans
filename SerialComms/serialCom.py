@@ -22,9 +22,10 @@ for line in file:
         #ser.reset_out()
     splitLine= line.split(" ")
     #print readlineCR(ser)
-    print ser.read(1)
+    
     ser.write(splitLine[2]+" "+splitLine[4]+" "+splitLine[6])
     print splitLine[2]+" "+splitLine[4]+" "+splitLine[6]
+	print ord(ser.read(1))
     
   
 ser.close()
