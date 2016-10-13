@@ -1,0 +1,10 @@
+The output of the path planners should follow these commands
+
+-1 move
+	ie -1 X Y 
+-2 lift
+-3 drop
+-4 refill
+	ie -4 intitial_x intitial_y color
+-5 change color
+	ie -5 initial_x initial_y initial_color new_color 
