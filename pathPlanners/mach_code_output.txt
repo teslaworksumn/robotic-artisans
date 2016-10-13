@@ -1,10 +1,11 @@
+
 The output of the path planners should follow these commands
 
--1 move
-	ie -1 X Y 
--2 lift
--3 drop
--4 refill
-	ie -4 intitial_x intitial_y color
--5 change color
-	ie -5 initial_x initial_y initial_color new_color 
+-1 : move : `-1 X Y` -- move brush to (X,Y) position
+-2 : lift : -- lift brush up from contact with canvas 
+-3 : drop -- start painting
+-4 : refill : `-4 initial_x initial_y color` -- 
+-5 : change color : `-5 initial_x initial_y initial_color new_color` 
+
+
+The brush does not store its position, so it needs to be passed repeatedly in the refill and change color commands.
