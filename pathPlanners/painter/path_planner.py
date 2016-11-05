@@ -38,11 +38,11 @@ def set_flags(args):
 			USAGE_STATEMENT()
 			return False
 		elif arg[0:3] == "-ci":
-			iFileName = arg[3:]
+			iFileName = arg[4:]
 			if not changeOFileName:
 				# make input file have same encoding as output file, but replace ptg with txt
-				assert iFileName[-4:] == ".ptg"
-				oFileName = iFileName[-4:] + ".txt"
+				# assert iFileName[-4:] == ".ptg"
+				oFileName = iFileName[:-4] + ".txt"
 		elif arg[0:3] == "-co":
 			changeOFileName = True
 			oFileName = arg[4:]
@@ -62,7 +62,7 @@ def try_to_open(filename, mode):
 		result = open(filename, mode)
 	except IOError:
 		print ("%s: No such file or directory" % filename)
-		exit()
+		exit(10)
 	return result
 
 
