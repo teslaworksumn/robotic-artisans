@@ -13,7 +13,8 @@ iFileName = "../../ptg_pictures/lisa.ptg"
 oFileName = "lisa.py.txt"
 debug = False
 
-def USAGE_STATEMENT(filename):
+def USAGE_STATEMENT():
+	"""print a usage statement"""
 	message = """
 	Usage:\t\tpython path_planner.py [options]
 	Options:
@@ -26,6 +27,7 @@ def USAGE_STATEMENT(filename):
 
 	
 def set_flags(args):
+	"""parse command line arguments"""
 	global iFileName
 	global oFileName
 	global debug
@@ -33,7 +35,7 @@ def set_flags(args):
 	args = args[1:]
 	for arg in args:
 		if arg == "-h":
-			USAGE_STATEMENT("foo")
+			USAGE_STATEMENT()
 			return False
 		elif arg[0:3] == "-ci":
 			iFileName = arg[3:]
@@ -43,7 +45,7 @@ def set_flags(args):
 				oFileName = iFileName[-4:] + ".txt"
 		elif arg[0:3] == "-co":
 			changeOFileName = True
-			oFileName = arg[2:]
+			oFileName = arg[4:]
 		elif arg == "-d":
 			debug = True
 		else:
@@ -54,9 +56,22 @@ def set_flags(args):
 	return True
 
 
+def try_to_open(filename, mode):
+	"""open a file with filename and mode, or, if opening fails, exit and print an error message"""
+	try:
+		result = open(filename, mode)
+	except IOError:
+		print ("%s: No such file or directory" % filename)
+		exit()
+	return result
+
+
 def main():
-	set_flags(sys.argv)
-
-
+	if set_flags(sys.argv):
+		oFile = try_to_open(oFileName, 'w')
+		iFile = try_to_open(iFileName, 'r')
+		oFile.close()
+		iFile.close()
+		
 if __name__ == "__main__":
 	main()
