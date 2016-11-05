@@ -8,9 +8,8 @@ arguments:
 
 import sys
 
-# default input/output files
-iFileName = "../../ptg_pictures/lisa.ptg"
-oFileName = "lisa.py.txt"
+DefaultInputFileName = "../../ptg_pictures/lisa.ptg"
+DefaultOutputFileName = "lisa.py.txt"
 debug = False
 
 def USAGE_STATEMENT():
@@ -28,15 +27,16 @@ def USAGE_STATEMENT():
 	
 def set_flags(args):
 	"""parse command line arguments"""
-	global iFileName
-	global oFileName
-	global debug
 	changeOFileName = False
+	debug = False
+	iFileName = DefaultInputFileName
+	oFileName = DefaultOutputFileName
+	# drop script name from arguments
 	args = args[1:]
 	for arg in args:
 		if arg == "-h":
 			USAGE_STATEMENT()
-			return False
+			exit()
 		elif arg[0:3] == "-ci":
 			iFileName = arg[4:]
 			if not changeOFileName:
@@ -49,11 +49,10 @@ def set_flags(args):
 		elif arg == "-d":
 			debug = True
 		else:
-			print ("ERROR: UNKNOWN ARGUMENT")
-			print (arg)
+			print ("ERROR: UNKNOWN ARGUMENT: %s" % arg)
 			USAGE_STATEMENT()
-			return False
-	return True
+			exit(10)
+	return (iFileName, oFileName, debug)
 
 
 def try_to_open(filename, mode):
@@ -67,11 +66,11 @@ def try_to_open(filename, mode):
 
 
 def main():
-	if set_flags(sys.argv):
-		oFile = try_to_open(oFileName, 'w')
-		iFile = try_to_open(iFileName, 'r')
-		oFile.close()
-		iFile.close()
+	iFileName, oFileName, debug	= set_flags(sys.argv)
+	oFile = try_to_open(oFileName, 'w')
+	iFile = try_to_open(iFileName, 'r')
+	oFile.close()
+	iFile.close()
 		
 if __name__ == "__main__":
 	main()
