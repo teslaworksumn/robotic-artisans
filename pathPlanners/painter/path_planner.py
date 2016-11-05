@@ -64,7 +64,10 @@ def try_to_open(filename, mode):
 		exit(10)
 	return result
 
-
+def read_numbers(file):
+	"""take an open ptg file and transform it into a 2D integer array"""
+	return [ map(int, line.split()) for line in file ]
+		
 def main():
 	iFileName, oFileName, debug	= set_flags(sys.argv)
 	oFile = try_to_open(oFileName, 'w')
