@@ -136,6 +136,22 @@ def test_find_left_right_patch_multiple_pixels(sample_matrix):
 	assert len(patch) == 2
 	assert patch == [ planner.Pixel(0,1), planner.Pixel(0,2)]
 
+def test_stroke_stack():
+	start = planner.Pixel(0,0)
+	current = planner.Stroke(
+			action=planner.INIT, # I think this is a garbage value that will be overwritten
+			end=start, 
+			oldcolor=0,
+			newcolor=0	 
+		)
+	strokes = planner.StrokeStack(current)
+	top_before = strokes.peek()
+	strokes.push_instruction(
+		action=planner.LIFT
+		)
+	top_after = strokes.peek()
+	assert top_before.action == planner.INIT
+	assert top_after.action == planner.LIFT
 
 
 
