@@ -36,6 +36,13 @@ def sample_input():
 	# teardown
 	file.close()
 
+@pytest.fixture
+def bad_input():
+	"""sample contents of input file"""
+	file = open("test_planner.py")
+	yield file
+	# teardown
+	file.close()
 
 def test_read_numbers(sample_input):
 	matrix = path_planner.read_numbers(sample_input)
@@ -45,6 +52,15 @@ def test_read_numbers(sample_input):
 		[3, 1, 1, 2],
 		[2, 2, 1, 3]
 	]	
+
+def test_read_numbers(bad_input):
+	""" should exit on invalid file name """
+	try:
+		matrix = path_planner.try_to_read_numbers(bad_input)
+	except SystemExit:
+		pass
+	else:
+		assert False
 
 
 

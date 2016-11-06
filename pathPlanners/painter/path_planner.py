@@ -9,11 +9,11 @@ arguments:
 import sys
 
 DefaultInputFileName = "../../ptg_pictures/lisa.ptg"
-DefaultOutputFileName = "lisa.py.txt"
+DefaultOutputFileName = "lisa.txt"
 debug = False
 
 def USAGE_STATEMENT():
-	"""print a usage statement"""
+	""" Print a usage statement. """
 	message = """
 	Usage:\t\tpython path_planner.py [options]
 	Options:
@@ -26,7 +26,7 @@ def USAGE_STATEMENT():
 
 	
 def set_flags(args):
-	"""parse command line arguments"""
+	""" Parse command line arguments. """
 	changeOFileName = False
 	debug = False
 	iFileName = DefaultInputFileName
@@ -56,22 +56,32 @@ def set_flags(args):
 
 
 def try_to_open(filename, mode):
-	"""open a file with filename and mode, or, if opening fails, exit and print an error message"""
+	""" Open a file with filename and mode, or, if opening fails, exit and print an error message. """
 	try:
 		result = open(filename, mode)
 	except IOError:
-		print ("%s: No such file or directory" % filename)
+		print ("%s: could not open file" % filename)
 		exit(10)
 	return result
 
 def read_numbers(file):
-	"""take an open ptg file and transform it into a 2D integer array"""
+	""" Take an open ptg file and transform it into a 2D integer array. """
 	return [ map(int, line.split()) for line in file ]
+
+def try_to_read_numbers(file):
+	try:
+		read_numbers(file)
+	except ValueError as e:
+		print("invalid ptg file:")
+		print(e)
+		exit(10)
 		
 def main():
 	iFileName, oFileName, debug	= set_flags(sys.argv)
 	oFile = try_to_open(oFileName, 'w')
 	iFile = try_to_open(iFileName, 'r')
+	matrix = try_to_read_numbers(iFile)
+	
 	oFile.close()
 	iFile.close()
 		
