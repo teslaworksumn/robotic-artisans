@@ -1,4 +1,6 @@
 import path_planner
+import planner
+
 import pytest
 
 def test_open_file_test():
@@ -66,6 +68,14 @@ def test_read_numbers(bad_input):
 		pass
 	else:
 		assert False
+
+#### Pixel Tests ####
+
+def test_pixel():
+	pixel = planner.Pixel(3,4)
+	assert pixel.x == 3
+	assert pixel.y == 4
+
 
 
 

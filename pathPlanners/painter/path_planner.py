@@ -8,6 +8,8 @@ arguments:
 
 import sys
 
+import planner
+
 DefaultInputFileName = "../../ptg_pictures/lisa.ptg"
 DefaultOutputFileName = "lisa.txt"
 debug = False
@@ -81,7 +83,8 @@ def main():
 	oFile = try_to_open(oFileName, 'w')
 	iFile = try_to_open(iFileName, 'r')
 	matrix = try_to_read_numbers(iFile)
-	
+	# error-checking is done. We know the user input was valid.
+
 	oFile.close()
 	iFile.close()
 		
