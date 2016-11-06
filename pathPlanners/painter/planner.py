@@ -14,6 +14,43 @@ SWITCH_BRUSH = -5 # -5 x0 y0 color_prev color_next
 INIT = -99 # -99
 END = -100 # -100
 
+
+def find_left_right_patch(image, patch, color, debug):
+	"""
+	Find the first group of one or more (x,y) = (row#,col#) coordinates
+ 	that are of specified color, along the same row, and consecutive.
+ 	Then set those spots to 0 in img.
+ 	Add the locations to the list patch
+ 
+ 	return false  :    Could not find any coordinates of specified color
+ 	return true   :    Could find coordinates of specified color
+ 	"""
+
+	def find_all_consecutive_pixels_to_its_right(i, j):
+		row = image[i]
+		while j < len(row) and image[i][j] == color:
+			patch.append ( Pixel(i,j) )
+			image[i][j] = 0
+			j += 1
+
+	def find_first_occurence_of_color():
+		for i, row in enumerate(image):
+			for j, entry in enumerate(row):
+				if entry == color:
+					find_all_consecutive_pixels_to_its_right(i, j)
+					return True
+		return False
+
+	return find_first_occurence_of_color()
+
+
+
+				
+
+				# this seems like opposite of what it should be.
+
+
+
 class Stroke(object):
 
 	@staticmethod

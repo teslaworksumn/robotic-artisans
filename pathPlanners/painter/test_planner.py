@@ -51,6 +51,16 @@ def bad_input():
 	# teardown
 	file.close()
 
+@pytest.fixture
+def sample_matrix():
+	""" sample image to be processed """
+	return [
+		[3, 4],
+		[1, 2, 3, 1],
+		[3, 1, 1, 2],
+		[2, 2, 1, 3]
+	]	
+
 def test_read_numbers(sample_input):
 	matrix = path_planner.read_numbers(sample_input)
 	assert matrix == [
@@ -99,6 +109,34 @@ def test_stroke_switch_brush_output():
 		newcolor=newcolor
 	)
 	assert stroke.output() == "-5 0 1 10 20\n"
+
+def test_find_left_right_patch_single_pixel(sample_matrix):
+	patch = []
+	color = 1
+	success =  planner.find_left_right_patch(
+		image=sample_matrix,
+		patch=patch,
+		color=color,
+		debug=False
+		)
+	assert success
+	assert len(patch) == 1
+	# this still seems like x should be 0 and y should be 1, but we are wrong and in reverse!
+	assert patch[0] == planner.Pixel(1,0)
+
+def test_find_left_right_patch_multiple_pixels(sample_matrix):
+	patch = []
+	color = 1
+	planner.find_left_right_patch(
+		image=sample_matrix[2:],
+		patch=patch,
+		color=color,
+		debug=False
+		)
+	assert len(patch) == 2
+	assert patch == [ planner.Pixel(0,1), planner.Pixel(0,2)]
+
+
 
 
 
