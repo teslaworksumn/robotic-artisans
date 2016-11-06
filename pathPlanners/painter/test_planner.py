@@ -76,6 +76,32 @@ def test_pixel():
 	assert pixel.x == 3
 	assert pixel.y == 4
 
+def test_stroke__move_output():
+	end = planner.Pixel(0,1)
+	oldcolor = 10
+	newcolor = 20
+	stroke = planner.Stroke(
+		action=planner.MOVE,
+		end=end,
+		oldcolor=oldcolor,
+		newcolor=newcolor
+	)
+	assert stroke.output() == "-1 0 1\n"
+
+def test_stroke_switch_brush_output():
+	end = planner.Pixel(0,1)
+	oldcolor = 10
+	newcolor = 20
+	stroke = planner.Stroke(
+		action=planner.SWITCH_BRUSH,
+		end=end,
+		oldcolor=oldcolor,
+		newcolor=newcolor
+	)
+	assert stroke.output() == "-5 0 1 10 20\n"
+
+
+
 
 
 
