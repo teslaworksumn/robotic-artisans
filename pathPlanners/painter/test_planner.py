@@ -153,6 +153,22 @@ def test_stroke_stack():
 	assert top_before.action == planner.INIT
 	assert top_after.action == planner.LIFT
 
+def test_left_right_stroke():
+
+	patch = []
+	tank = planner.MAX_TANK
+	start = planner.Pixel(0,0)
+	current = planner.Stroke(
+			action=planner.INIT, # I think this is a garbage value that will be overwritten
+			end=start, 
+			oldcolor=0,
+			newcolor=0	 
+		)
+	strokes = planner.StrokeStack(current)
+	newpatch = False
+	# Should return false when the patch was empty
+	assert not planner.left_right_stroke(patch, strokes, tank, newpatch)
+
 
 
 

@@ -46,7 +46,6 @@ def find_left_right_patch(image, patch, color, debug=False):
 
 # IN PROGRESS
 def left_right(oFile, img, row, col, debug):
-	strokes = []
 	patch = []
 	start = Pixel(-1,-1)
 	previous_stroke = Stroke(
@@ -55,27 +54,36 @@ def left_right(oFile, img, row, col, debug):
 		oldcolor=0,
 		newcolor=0
 	)
+	strokes = StrokeStack(previous_stroke)
 
 	# loop through colors from brightest to darkest
 	for color in range(1, MAX_COLORS):
-		previous_stroke = Stroke.copy(previous_stroke)
+		previous_stroke = strokes.peek()
 
 		if previous_stroke.action != INIT:
-			previous_stroke.action = LIFT
-			strokes.add(previous_stroke)
+			strokes.push_instruction(action=LIFT)
 
-		previous_stroke.action = SWITCH_BRUSH;
-		previous_stroke.newcolor = color
 		tank = MAX_TANK
-		strokes.add(previous_stroke)
+		strokes.push_instruction(
+			action=SWITCH_BRUSH,
+			newcolor=color
+		)
 
 		# find all patches of the current color
 		while find_left_right_patch(image,patch,color):
 			newpatch = True
 			# create stroke until the entire patch is painted
 
-def left_right_stroke(patch, previous_stroke, strokes, tank, newpatch):
-	previous_stroke = Stroke.copy(previous_stroke)
+
+
+ # Take a patch of coordinates found from the find_left_right_patch
+ # and attempt to paint along this patch until either the patch
+ # or the tank run out. Execute any other actions needed to do the stroke. 
+ # 
+ # return False : patch is empty
+ # return True  : stroke executed
+def left_right_stroke(patch, strokes, tank, newpatch):
+	previous_stroke = strokes.peek()
 	lifted = False
 	moved = False
 
@@ -83,15 +91,40 @@ def left_right_stroke(patch, previous_stroke, strokes, tank, newpatch):
 	if not patch:
 		return False
 
-	# If this is the first time the patch is being touch after leaving findlrpatch then ...
+	# If this is the first time the patch is being touched after leaving findlrpatch then ...
 	if (newpatch):
 		# If the last action was to MOVE or DROP the brush then LIFT the brush
 		if previous_stroke.action == MOVE or previous_stroke.action == DROP:
-			previous_stroke.action = LIFT
-			strokes.append(previous_stroke)
-			previous_stroke = Stroke.copy(previous_stroke)
+			strokes.push_instruction(action=LIFT)
 		# Then move to the first position in patch.
+		strokes.push_instruction(action=MOVE, end=patch[0])
+		lifted = True
+		patch.pop(0)
 
+	# if tank is empty, refill
+	if (tank == EMPTY):
+
+		# if brush is touching canvas lift before refilling
+		if not lifted:
+			strokes.push_instruction(action=LIFT)
+		strokes.push_instruction(action=REFILL)
+		tank = MAX_TANK
+		lifted = True
+
+	# if brush is lifted than drop
+	if lifted:
+		strokes.push_instruction(action=DROP)
+		tank -= 1
+
+	# find the end of stroke: will be either when the tank is empty or the patch is empty
+	while patch and tank != EMPTY:
+		tank -= 1
+		end = patch.pop(0)
+		moved = True
+	if moved:
+		strokes.push_instruction(action=MOVE,end=end)
+
+	return True
 
 
 
@@ -115,9 +148,8 @@ class Stroke(object):
 		self.oldcolor = oldcolor;
 		self.newcolor = newcolor;
 
-	
 	def output(self):
-		""" Represent stroke as brush comsmand. """
+		""" Represent stroke as brush command. """
 		action = self.action
 		end = self.end
 		if action == MOVE:
@@ -134,11 +166,17 @@ class Stroke(object):
 
 class StrokeStack(object):
 
+	""" Stores strokes that are to be executed.
+		This is a buffer that will be emptied by being written to the output file.
+	"""
+
 	def __init__(self, start_stroke):
 		self.strokes = []
 		self.strokes.append(start_stroke)
 
+	# This is horrible. please simplify.
 	def push_instruction(self, action=None, end=None, oldcolor=None, newcolor=None):
+		""" Push another instruction onto the stack. Arguments default to that of the current instruction"""
 		current = self.strokes[-1]
 		new_stroke = Stroke.copy(current)
 		if action is not None:
