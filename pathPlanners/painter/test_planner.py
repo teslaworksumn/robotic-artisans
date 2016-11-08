@@ -218,6 +218,12 @@ def test_stroke_inequality():
 
 
 
+### Integration test ###
+def test_main():
+	
+
+
+
 
 
 

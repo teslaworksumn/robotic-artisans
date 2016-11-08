@@ -45,7 +45,7 @@ def find_left_right_patch(image, patch, color, debug=False):
 
 
 def left_right_output(image, file):
-	left_right(image).write_to(file)
+	left_right(image).output_strokes(file)
 
 
 # IN PROGRESS
@@ -91,7 +91,6 @@ def left_right(image):
  # 
  # return False : patch is empty
  # return True  : stroke executed
-
 
 def left_right_stroke(patch, strokes, tank, newpatch):
 	previous_stroke = strokes.peek()
@@ -211,9 +210,11 @@ class StrokeStack(object):
 	def peek(self):
 		return self.strokes[-1]
 
-	def output_strokes(file):
+	def output_strokes(self, file):
+		# discard init stroke
+		self.strokes.pop(0)
 		for stroke in self.strokes:
-			out.write(stroke.output())
+			file.write(stroke.output())
 		
 
 

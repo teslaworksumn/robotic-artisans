@@ -71,7 +71,7 @@ def read_numbers(file):
 
 def try_to_read_numbers(file):
 	try:
-		read_numbers(file)
+		return read_numbers(file)
 	except ValueError as e:
 		print("invalid ptg file:")
 		print(e)
