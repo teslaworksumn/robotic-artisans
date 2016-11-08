@@ -164,6 +164,19 @@ class Stroke(object):
 			raise ValueError("stroke.action had invalid value of %d" % action)
 		return output
 
+	def __repr__(self):
+		try:
+			return self.output()
+		except ValueError:
+			if self.action == INIT:
+				return "INIT"
+			else:
+				raise
+
+	def __eq__(self, other):
+		return self.action == other.action and self.end == other.end and self.oldcolor == other.oldcolor and self.newcolor == other.newcolor
+
+
 class StrokeStack(object):
 
 	""" Stores strokes that are to be executed.

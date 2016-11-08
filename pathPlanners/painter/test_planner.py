@@ -169,6 +169,52 @@ def test_left_right_stroke():
 	# Should return false when the patch was empty
 	assert not planner.left_right_stroke(patch, strokes, tank, newpatch)
 
+	patch = [planner.Pixel(0,0), planner.Pixel(0,1), planner.Pixel(0,2)]
+	planner.left_right_stroke(patch, strokes, tank, newpatch)
+	# assert strokes.strokes == [
+	# 	current,
+	# 	planner.Stroke(action=planner.MOVE,
+	# 		end=planner.Pixel(0,2),
+	# 		oldcolor=0,
+	# 		newcolor=1
+	# 	)
+	# ]
+
+def test_stroke_equality():
+	stroke1 = planner.Stroke(
+		action = planner.MOVE,
+		end=planner.Pixel(0,0),
+		oldcolor=0,
+		newcolor=0
+		)
+	stroke2 = planner.Stroke(
+		action=planner.MOVE,
+		end=planner.Pixel(0,0),
+		oldcolor=0,
+		newcolor=0
+	)
+
+	assert stroke1 == stroke2
+
+def test_stroke_inequality():
+	stroke1 = planner.Stroke(
+		action = planner.MOVE,
+		end=planner.Pixel(0,0),
+		oldcolor=0,
+		newcolor=0
+		)
+	stroke2 = planner.Stroke(
+		action=planner.MOVE,
+		end=planner.Pixel(0,0),
+		oldcolor=0,
+		newcolor=0
+	)
+
+	stroke2.end = planner.Pixel(1,1)
+	assert stroke1 != stroke2
+
+
+
 
 
 
