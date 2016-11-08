@@ -94,8 +94,8 @@ def test_read_numbers(bad_input):
 
 def test_pixel():
 	pixel = planner.Pixel(3,4)
-	assert pixel.x == 3
-	assert pixel.y == 4
+	assert pixel.y == 3
+	assert pixel.x == 4
 
 def test_stroke_move_output():
 	end = planner.Pixel(0,1)
@@ -107,7 +107,7 @@ def test_stroke_move_output():
 		oldcolor=oldcolor,
 		newcolor=newcolor
 	)
-	assert stroke.output() == "-1 0 1\n"
+	assert stroke.output() == "-1 1 0\n"
 
 def test_stroke_switch_brush_output():
 	end = planner.Pixel(0,1)
@@ -119,7 +119,7 @@ def test_stroke_switch_brush_output():
 		oldcolor=oldcolor,
 		newcolor=newcolor
 	)
-	assert stroke.output() == "-5 0 1 10 20\n"
+	assert stroke.output() == "-5 1 0 10 20\n"
 
 def test_find_left_right_patch_single_pixel(sample_matrix):
 	patch = []

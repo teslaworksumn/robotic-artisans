@@ -83,7 +83,7 @@ def main():
 	iFile = try_to_open(iFileName, 'r')
 	matrix = try_to_read_numbers(iFile)
 	# Error-checking is done. We know the user input was valid.
-	
+	planner.left_right_output(matrix, oFile)
 	oFile.close()
 	iFile.close()
 		

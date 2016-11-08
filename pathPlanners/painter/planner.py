@@ -1,5 +1,5 @@
 import collections
-Pixel = collections.namedtuple('Pixel', 'x y')
+Pixel = collections.namedtuple('Pixel', 'y x')
 
 # Global constants
 MAX_COLORS = 9 # including no paint 0 + 1-8 colMAX_EMOVE -1 # -1 x y
@@ -44,8 +44,12 @@ def find_left_right_patch(image, patch, color, debug=False):
 	return find_first_occurence_of_color()
 
 
+def left_right_output(image, file):
+	left_right(image).write_to(file)
+
+
 # IN PROGRESS
-def left_right(oFile, img, row, col, debug):
+def left_right(image):
 	patch = []
 	start = Pixel(-1,-1)
 	previous_stroke = Stroke(
@@ -72,6 +76,11 @@ def left_right(oFile, img, row, col, debug):
 		# find all patches of the current color
 		while find_left_right_patch(image,patch,color):
 			newpatch = True
+			while left_right_stroke(patch, strokes, tank, newpatch):
+				newpatch = False
+
+	return strokes
+
 			# create stroke until the entire patch is painted
 
 
@@ -82,6 +91,8 @@ def left_right(oFile, img, row, col, debug):
  # 
  # return False : patch is empty
  # return True  : stroke executed
+
+
 def left_right_stroke(patch, strokes, tank, newpatch):
 	previous_stroke = strokes.peek()
 	lifted = False
@@ -136,11 +147,6 @@ class Stroke(object):
 		""" Copy another stroke. """
 		return cls(other.action, other.end, other.oldcolor, other.newcolor)
 
-	@staticmethod
-	def output_strokes(out, strokes):
-		""" Save list of strokes to a file. """
-		for stroke in strokes:
-			out.write(stroke.output())
 			
 	def __init__(self, action, end, oldcolor, newcolor):
 		self.action = action;
@@ -174,7 +180,7 @@ class Stroke(object):
 				raise
 
 	def __eq__(self, other):
-		return self.action == other.action and self.end == other.end and self.oldcolor == other.oldcolor and self.newcolor == other.newcolor
+		return self.action == other.action 	and self.end == other.end and self.oldcolor == other.oldcolor and self.newcolor == other.newcolor
 
 
 class StrokeStack(object):
@@ -205,6 +211,10 @@ class StrokeStack(object):
 	def peek(self):
 		return self.strokes[-1]
 
+	def output_strokes(file):
+		for stroke in self.strokes:
+			out.write(stroke.output())
+		
 
 
 
