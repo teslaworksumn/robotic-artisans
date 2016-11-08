@@ -61,6 +61,17 @@ def sample_matrix():
 		[2, 2, 1, 3]
 	]	
 
+@pytest.fixture
+def stroke_stack():
+	start = planner.Pixel(0,0)
+	current = planner.Stroke(
+			action=planner.INIT, # I think this is a garbage value that will be overwritten
+			end=start, 
+			oldcolor=0,
+			newcolor=0	 
+		)
+	return planner.StrokeStack(current)
+
 def test_read_numbers(sample_input):
 	matrix = path_planner.read_numbers(sample_input)
 	assert matrix == [
@@ -86,7 +97,7 @@ def test_pixel():
 	assert pixel.x == 3
 	assert pixel.y == 4
 
-def test_stroke__move_output():
+def test_stroke_move_output():
 	end = planner.Pixel(0,1)
 	oldcolor = 10
 	newcolor = 20
@@ -153,32 +164,27 @@ def test_stroke_stack():
 	assert top_before.action == planner.INIT
 	assert top_after.action == planner.LIFT
 
-def test_left_right_stroke():
-
+def test_left_right_stroke_empty(stroke_stack):
+	""" Should return false when the patch was empty. """
 	patch = []
 	tank = planner.MAX_TANK
-	start = planner.Pixel(0,0)
-	current = planner.Stroke(
-			action=planner.INIT, # I think this is a garbage value that will be overwritten
-			end=start, 
-			oldcolor=0,
-			newcolor=0	 
-		)
-	strokes = planner.StrokeStack(current)
 	newpatch = False
-	# Should return false when the patch was empty
-	assert not planner.left_right_stroke(patch, strokes, tank, newpatch)
+	assert not planner.left_right_stroke(patch, stroke_stack, tank, newpatch)
 
-	patch = [planner.Pixel(0,0), planner.Pixel(0,1), planner.Pixel(0,2)]
-	planner.left_right_stroke(patch, strokes, tank, newpatch)
-	# assert strokes.strokes == [
-	# 	current,
-	# 	planner.Stroke(action=planner.MOVE,
-	# 		end=planner.Pixel(0,2),
-	# 		oldcolor=0,
-	# 		newcolor=1
-	# 	)
-	# ]
+def test_left_right_stroke(stroke_stack):
+	""" Should create a stroke going across the patch. """
+	init_stroke = stroke_stack.peek()
+	tank = planner.MAX_TANK
+	patch = [ planner.Pixel(0,0), planner.Pixel(0,1), planner.Pixel(0,2) ]
+	planner.left_right_stroke(patch, stroke_stack, tank, newpatch=False)
+	assert stroke_stack.strokes == [
+		init_stroke,
+		planner.Stroke(action=planner.MOVE,
+			end=planner.Pixel(0,2),
+			oldcolor=0,
+			newcolor=0
+		)
+	]
 
 def test_stroke_equality():
 	stroke1 = planner.Stroke(
@@ -193,7 +199,6 @@ def test_stroke_equality():
 		oldcolor=0,
 		newcolor=0
 	)
-
 	assert stroke1 == stroke2
 
 def test_stroke_inequality():
@@ -205,12 +210,10 @@ def test_stroke_inequality():
 		)
 	stroke2 = planner.Stroke(
 		action=planner.MOVE,
-		end=planner.Pixel(0,0),
+		end=planner.Pixel(1,1),
 		oldcolor=0,
 		newcolor=0
 	)
-
-	stroke2.end = planner.Pixel(1,1)
 	assert stroke1 != stroke2
 
 
