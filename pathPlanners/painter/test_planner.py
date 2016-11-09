@@ -1,7 +1,8 @@
-import path_planner
+import pytest
+
+import main
 import planner
 
-import pytest
 
 def test_open_file_test():
 	"""test how python works"""
@@ -14,20 +15,20 @@ def test_open_file_test():
 
 def test_debug():
 	options = "_ -d".split()
-	_, _, debug = path_planner.set_flags(options)
+	_, _, debug = main.set_flags(options)
 	assert debug
 	options = "_"
-	_, _, debug = path_planner.set_flags(options)
+	_, _, debug = main.set_flags(options)
 	assert not debug
 
 def test_input_file():
 	options = "_ -ci=EXAMPLE".split()
-	input_file, _, _ = path_planner.set_flags(options)
+	input_file, _, _ = main.set_flags(options)
 	assert input_file == "EXAMPLE"
 
 def test_output_file():
 	options = "_ -co=EXAMPLE".split()
-	_, output_file, _ = path_planner.set_flags(options)
+	_, output_file, _ = main.set_flags(options)
 	assert output_file == "EXAMPLE"
 
 
@@ -73,7 +74,7 @@ def stroke_stack():
 	return planner.StrokeStack(current)
 
 def test_read_numbers(sample_input):
-	matrix = path_planner.read_numbers(sample_input)
+	matrix = main.read_numbers(sample_input)
 	assert matrix == [
 		[3, 4],
 		[1, 2, 3, 1],
@@ -84,7 +85,7 @@ def test_read_numbers(sample_input):
 def test_read_numbers(bad_input):
 	""" should exit on invalid file name """
 	try:
-		matrix = path_planner.try_to_read_numbers(bad_input)
+		matrix = main.try_to_read_numbers(bad_input)
 	except SystemExit:
 		pass
 	else:
@@ -217,10 +218,6 @@ def test_stroke_inequality():
 	assert stroke1 != stroke2
 
 
-
-### Integration test ###
-def test_main():
-	
 
 
 
