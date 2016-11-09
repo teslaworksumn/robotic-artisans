@@ -4,14 +4,7 @@ import main
 import planner
 
 
-def test_open_file_test():
-	"""test how python works"""
-	try:
-		with open("__non_existent_file__") as foo:
-			assert False
-	except IOError:
-		assert True
-
+### Test Main ###
 
 def test_debug():
 	options = "_ -d".split()
@@ -33,12 +26,16 @@ def test_output_file():
 
 
 def test_sample_file_exists():
-	""" this file needs to not move """
+	""" This file needs to not move. """
+	# This test may also fail if pytest is exected from the wrong directory.
 	open("../../ptg_pictures/lisa.ptg").close()
+
+
+## Test Planner ###
 
 @pytest.fixture
 def sample_input():
-	""" sample contents of input file """
+	""" Sample contents of input file. """
 	file = open("../../ptg_pictures/lisa.ptg")
 	yield file
 	# teardown
@@ -46,7 +43,7 @@ def sample_input():
 
 @pytest.fixture
 def bad_input():
-	""" non-ptg format file """
+	""" Non-ptg format file. """
 	file = open("test_planner.py")
 	yield file
 	# teardown
@@ -54,7 +51,7 @@ def bad_input():
 
 @pytest.fixture
 def sample_matrix():
-	""" sample image to be processed """
+	""" Sample image to be processed. """
 	return [
 		[3, 4],
 		[1, 2, 3, 1],
@@ -91,7 +88,6 @@ def test_read_numbers(bad_input):
 	else:
 		assert False
 
-#### Pixel Tests ####
 
 def test_pixel():
 	pixel = planner.Pixel(3,4)
