@@ -48,7 +48,6 @@ def left_right_output(image, file):
 	left_right(image).output_strokes(file)
 
 
-# IN PROGRESS
 def left_right(image):
 	patch = []
 	start = Pixel(-1,-1)
@@ -67,7 +66,7 @@ def left_right(image):
 		if previous_stroke.action != INIT:
 			strokes.push_instruction(action=LIFT)
 
-		tank = MAX_TANK
+		tank = Tank()
 		strokes.push_instruction(
 			action=SWITCH_BRUSH,
 			newcolor=color
@@ -112,23 +111,23 @@ def left_right_stroke(patch, strokes, tank, newpatch):
 		patch.pop(0)
 
 	# if tank is empty, refill
-	if (tank == EMPTY):
+	if (tank.empty()):
 
 		# if brush is touching canvas lift before refilling
 		if not lifted:
 			strokes.push_instruction(action=LIFT)
 		strokes.push_instruction(action=REFILL)
-		tank = MAX_TANK
+		tank.refill()
 		lifted = True
 
-	# if brush is lifted than drop
+	# if brush is lifted then drop
 	if lifted:
 		strokes.push_instruction(action=DROP)
-		tank -= 1
+		tank.decrement()
 
 	# find the end of stroke: will be either when the tank is empty or the patch is empty
-	while patch and tank != EMPTY:
-		tank -= 1
+	while patch and not tank.empty():
+		tank.decrement()
 		end = patch.pop(0)
 		moved = True
 	if moved:
@@ -205,6 +204,8 @@ class StrokeStack(object):
 			new_stroke.oldcolor = oldcolor
 		if newcolor is not None:
 			new_stroke.newcolor = newcolor
+		if oldcolor is None and newcolor is None:
+			new_stroke.oldcolor = new_stroke.newcolor
 		self.strokes.append(new_stroke)
 
 	def peek(self):
@@ -212,14 +213,30 @@ class StrokeStack(object):
 
 	def output_strokes(self, file):
 		# discard init stroke
-		self.strokes.pop(0)
-		for stroke in self.strokes:
+		for stroke in self.strokes[1:] :
 			file.write(stroke.output())
-		
 
+	def __str__(self):
+		result = ""
+		for stroke in self.strokes[1:] :
+			result += stroke.output()
+		return result
 
+class Tank(object):
 
+	def __init__(self):
+		self.amount = MAX_TANK
 
+	def decrement(self):
+		if self.amount <= 0:
+			raise ValueError("cannot decrement tank to value less than 0")
+		self.amount -= 1
+
+	def refill(self):
+		self.amount = MAX_TANK
+
+	def empty(self):
+		return self.amount == 0
 
 
 

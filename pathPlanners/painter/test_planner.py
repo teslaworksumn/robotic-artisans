@@ -59,6 +59,17 @@ def sample_matrix():
 		[2, 2, 1, 3]
 	]	
 
+@pytest.fixture()
+def all_ones():
+	""" Simple, easy-to-understand matrix """
+	return [
+	[1, 1, 1, 1, 1],
+	[1, 1, 1, 1, 1],
+	[1, 1, 1, 1, 1],
+	[1, 1, 1, 1, 1],
+	[1, 1, 1, 1, 1]
+	]
+
 @pytest.fixture
 def stroke_stack():
 	start = planner.Pixel(0,0)
@@ -118,6 +129,7 @@ def test_stroke_switch_brush_output():
 	)
 	assert stroke.output() == "-5 1 0 10 20\n"
 
+
 def test_find_left_right_patch_single_pixel(sample_matrix):
 	patch = []
 	color = 1
@@ -161,17 +173,32 @@ def test_stroke_stack():
 	assert top_before.action == planner.INIT
 	assert top_after.action == planner.LIFT
 
+def test_stroke_stack_color():
+	start = planner.Pixel(0,0)
+	current = planner.Stroke(
+			action=planner.INIT, # I think this is a garbage value that will be overwritten
+			end=start, 
+			oldcolor=0,
+			newcolor=0	 
+		)
+	strokes = planner.StrokeStack(current)
+	strokes.push_instruction(
+		action=planner.SWITCH_BRUSH, newcolor=1
+		)
+	strokes.push_instruction(action=planner.MOVE)
+	assert strokes.peek().oldcolor == 1
+
 def test_left_right_stroke_empty(stroke_stack):
 	""" Should return false when the patch was empty. """
 	patch = []
-	tank = planner.MAX_TANK
+	tank = planner.Tank()
 	newpatch = False
 	assert not planner.left_right_stroke(patch, stroke_stack, tank, newpatch)
 
 def test_left_right_stroke(stroke_stack):
 	""" Should create a stroke going across the patch. """
 	init_stroke = stroke_stack.peek()
-	tank = planner.MAX_TANK
+	tank = planner.Tank()
 	patch = [ planner.Pixel(0,0), planner.Pixel(0,1), planner.Pixel(0,2) ]
 	planner.left_right_stroke(patch, stroke_stack, tank, newpatch=False)
 	assert stroke_stack.strokes == [
@@ -182,6 +209,7 @@ def test_left_right_stroke(stroke_stack):
 			newcolor=0
 		)
 	]
+	assert tank.amount == planner.MAX_TANK - 3
 
 def test_stroke_equality():
 	stroke1 = planner.Stroke(
@@ -212,6 +240,39 @@ def test_stroke_inequality():
 		newcolor=0
 	)
 	assert stroke1 != stroke2
+
+
+def test_stroke_string(all_ones):
+	strokes = planner.left_right(all_ones)
+	print strokes
+	assert str(strokes).index(
+	"-5 -1 -1 0 1\n"
+	"-1 0 0\n"
+	"-3\n"
+	"-1 4 0\n"
+	"-2\n"
+	"-4 4 0 1\n"
+	) == 0
+
+
+def test_tank():
+	tank = planner.Tank()
+	assert tank.amount == planner.MAX_TANK
+
+def test_tank_decrement():
+	tank = planner.Tank()
+	tank.decrement()
+	assert tank.amount == planner.MAX_TANK - 1
+
+def test_tank_empty():
+	tank = planner.Tank()
+	assert not tank.empty()
+	tank.amount = 0
+	assert tank.empty()
+	tank.refill()
+	assert not tank.empty()
+
+
 
 
 
