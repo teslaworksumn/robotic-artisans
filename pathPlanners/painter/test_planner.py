@@ -251,7 +251,8 @@ def test_stroke_string(all_ones):
 	"-3\n"
 	"-1 4 0\n"
 	"-2\n"
-	"-4 4 0 1\n"
+	"-1 0 1\n"
+	"-4 0 1 1\n"
 	) == 0
 
 
