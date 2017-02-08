@@ -6,16 +6,19 @@ University of Minnesota-Twin Cities
 
 General Information: 
 
-Form will be rewritten into proper README style into the future. We are currently working on our file management.  New folders are as follows:
+Arduino:
+Holds the current code for the arduino to control the arms
 
-misc : To hold any miscellaneous programs, such as goalie.
+Droids:
+Will eventually be the repos for the droid automated and droid teleoperated 
 
-ptg\_pictures : To hold ptg images.
+ImageProcessor:
+Contains code for transforming a .jpg to .ptg (a matrix of numbers that correspond to a color to a brush placement)
 
-ptg\_to\_strks : To hold the 'painter' programs.
+pathPlanners:
+code that takes the ptg and tries to find an optimal path for the brush to take
 
-strks\_to\_GCode : Turns result from ptg\_to\_strks to GCode.
+strks_to_GCode:
+code that simply converts a text file of brushstrokes to GCode movements
 
-Bash : Will hold executables from all section to go from image to angles for motors.  Run bash to get end result. 
-
-
+Github: https://github.com/teslaworksumn/guild-master.git
