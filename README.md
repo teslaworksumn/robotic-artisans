@@ -1,6 +1,7 @@
 # RoboticArtisans
 
 This repo translates an image file into a Gcode for the robot.
+![](images/master-repo-uml.png?raw=true)
 
 ## General Information: 
 
