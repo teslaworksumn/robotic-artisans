@@ -1,7 +1,7 @@
 # RoboticArtisans
-Robotic Artisans, Tesla Works, University of Minnesota-Twin Cities
 
-This is the master repo for code for the Guild of Robotic Artisans project.
+This repo translates an image file into a Gcode for the robot.
+![](master-repo-uml.png?raw=true)
 
 ## General Information: 
 
