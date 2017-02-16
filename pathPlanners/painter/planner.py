@@ -2,29 +2,29 @@ import collections
 Pixel = collections.namedtuple('Pixel', 'y x')
 
 # Global constants
-MAX_COLORS = 9 # including no paint 0 + 1-8 colMAX_EMOVE -1 # -1 x y
+MAX_COLORS = 9  # including no paint 0 + 1-8 colMAX_EMOVE -1 # -1 x y
 MAX_TANK = 5
 EMPTY = 0
 
-MOVE = -1 # -1 x y
-LIFT = -2 # -2 
-DROP = -3 # -3
-REFILL = -4 # -4 x0 y0 color
-SWITCH_BRUSH = -5 # -5 x0 y0 color_prev color_next 
-INIT = -99 # -99
-END = -100 # -100
-
+MOVE = -1  # -1 x y
+LIFT = -2  # -2
+DROP = -3  # -3
+REFILL = -4  # -4 x0 y0 color
+SWITCH_BRUSH = -5  # -5 x0 y0 color_prev color_next
+INIT = -99  # -99
+END = -100  # -100
+   
 
 def find_left_right_patch(image, patch, color, debug=False):
 	"""
 	Find the first group of one or more (x,y) = (row#,col#) coordinates
- 	that are of specified color, along the same row, and consecutive.
- 	Then set those spots to 0 in img.
- 	Add the locations to the list patch
- 
- 	return false  :    Could not find any coordinates of specified color
- 	return true   :    Could find coordinates of specified color
- 	"""
+	that are of specified color, along the same row, and consecutive.
+	Then set those spots to 0 in img.
+	Add the locations to the list patch
+
+	return false  :    Could not find any coordinates of specified color
+	return true   :    Could find coordinates of specified color
+	"""
 
 	def find_all_consecutive_pixels_to_its_right(i, j):
 		row = image[i]
@@ -53,7 +53,7 @@ def left_right(image):
 	start = Pixel(-1,-1)
 	previous_stroke = Stroke(
 		action=INIT, # I think this is a garbage value that will be overwritten
-		end=start, 
+		end=start,
 		oldcolor=0,
 		newcolor=0
 	)
@@ -86,8 +86,8 @@ def left_right(image):
 
  # Take a patch of coordinates found from the find_left_right_patch
  # and attempt to paint along this patch until either the patch
- # or the tank run out. Execute any other actions needed to do the stroke. 
- # 
+ # or the tank run out. Execute any other actions needed to do the stroke.
+ #
  # return False : patch is empty
  # return True  : stroke executed
 
@@ -145,7 +145,7 @@ class Stroke(object):
 		""" Copy another stroke. """
 		return cls(other.action, other.end, other.oldcolor, other.newcolor)
 
-			
+
 	def __init__(self, action, end, oldcolor, newcolor):
 		self.action = action;
 		self.end = end;
@@ -237,6 +237,3 @@ class Tank(object):
 
 	def empty(self):
 		return self.amount == 0
-
-
-

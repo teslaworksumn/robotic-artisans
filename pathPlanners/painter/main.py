@@ -13,6 +13,7 @@ import planner
 DefaultInputFileName = "../../ptg_pictures/lisa.ptg"
 DefaultOutputFileName = "lisa.txt"
 
+
 def USAGE_STATEMENT():
 	""" Print a usage statement. """
 	message = """
@@ -25,7 +26,7 @@ def USAGE_STATEMENT():
 	"""
 	print (message)
 
-	
+
 def set_flags(args):
 	""" Parse command line arguments. """
 	changeOFileName = False
@@ -53,7 +54,7 @@ def set_flags(args):
 			print ("ERROR: UNKNOWN ARGUMENT: %s" % arg)
 			USAGE_STATEMENT()
 			exit(10)
-	return (iFileName, oFileName, debug)
+		return (iFileName, oFileName, debug)
 
 
 def try_to_open(filename, mode):
@@ -76,7 +77,7 @@ def try_to_read_numbers(file):
 		print("invalid ptg file:")
 		print(e)
 		exit(10)
-		
+
 def main():
 	iFileName, oFileName, debug	= set_flags(sys.argv)
 	oFile = try_to_open(oFileName, 'w')
@@ -86,6 +87,6 @@ def main():
 	planner.left_right_output(matrix, oFile)
 	oFile.close()
 	iFile.close()
-		
+
 if __name__ == "__main__":
 	main()
