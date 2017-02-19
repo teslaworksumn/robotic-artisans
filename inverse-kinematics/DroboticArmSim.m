@@ -150,5 +150,17 @@ function DroboticArmSim(angleC1,angleC2,L1,GL1,L5,L6,angle6,L8,angleC3)
     scatter3(0,0,0);
     hold on
     endpt
+
+    % for GcodeSpitter.m
+    controlAngle3 = atand(endpt(3,1)/endpt(3,2));
+    lengthCarm1 = sqrt(endpt(3,1)^2+endpt(3,2)^2);
+    controlAngle1 = atand(endpt(3,3)/lengthCarm1);
+
+    lengthCarm2 = sqrt(endpt(5,1)^2+endpt(5,2)^2);
+    controlAngle2 = atand(endpt(5,3)/lengthCarm2);
+
+    outputAngles = [controlAngle1, controlAngle2, controlAngle3];
+    GcodeSpitter(outputAngles,0); 
+
     drawnow;
 end 

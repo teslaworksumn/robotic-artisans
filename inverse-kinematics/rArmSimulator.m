@@ -113,3 +113,6 @@ for i=1:50
     DinverseRobotic(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
 end
 
+% finally, add in one more line to rArmSimulator.m at the very end: 
+GcodeSpitter([0 0 0],1);
+
