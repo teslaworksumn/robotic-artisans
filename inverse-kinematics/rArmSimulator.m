@@ -55,12 +55,18 @@ b = L5-groundLink;
 %draw a cube in 3d bitches 
 
 %draw a lower resolution box resolution is 10mm
+
+
+
+% @TODO: change these calls to drawLine function.
 y = 50;
 for i=1:50
     x = 100+i; 
     z = 100;
     DinverseRobotic(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
 end
+% One function call.
+
 for i=1:50
     x = 150; 
     z = 100-i; 
