@@ -31,9 +31,14 @@ def writeToFile(oArray, filePath, rows, cols):
     print(filePath)
 
 
+
+# from https://stackoverflow.com/questions/13405956/convert-an-image-rgb-lab-with-python
 def rgb2lab(inputColor):
-    # Found @ https://stackoverflow.com/questions/
-    # 13405956/convert-an-image-rgb-lab-with-python
+    print inputColor
+
+    # Only use first three attributes of the color.
+    # This makes the function compatible with png files, which apparently have a 4th opacity attribute.
+    inputColor = inputColor[:3]
 
     num = 0
     RGB = [0, 0, 0]
@@ -57,7 +62,7 @@ def rgb2lab(inputColor):
     XYZ[0] = round(X, 4)
     XYZ[1] = round(Y, 4)
     XYZ[2] = round(Z, 4)
-    # ref_X =  95.047 Observer= 2°, Illuminant= D65
+    # ref_X =  95.047 Observer= 2 deg, Illuminant= D65
     XYZ[0] = float(XYZ[0]) / 95.047
     XYZ[1] = float(XYZ[1]) / 100.0          # ref_Y = 100.000
     XYZ[2] = float(XYZ[2]) / 108.883        # ref_Z = 108.883
@@ -121,6 +126,7 @@ def matchColor(lab):  # mathces color to one of 8 paint colors
 def getPTG(imagePath, fRows, fCols):
     im = Image.open(imagePath).resize((fCols, fRows))
     pixels = getArrayOfPixels(im)
+    print pixels
     outputPath = imagePath[:len(imagePath)-4] + ".ptg"
     paints = [matchColor(rgb2lab(px)) for px in pixels]
     writeToFile(paints, outputPath, fRows, fCols)
@@ -129,10 +135,15 @@ def getPTG(imagePath, fRows, fCols):
 
 
 def getPTGInput():
-    a = input("Enter Image(Use double slashes): ")
-    c = input("Enter number of rows: ")
-    d = input("Enter number of columns: ")
-    ratioFile = open("Ratio.txt", 'a') 
+    """
+    Create a PTG file from user provided input.
+    Rows should be number rows in output ptg file.
+    Cols should be number cols in output ptg file.
+    """
+    a = raw_input("Enter relative path to image: ")
+    c = raw_input("Enter number of rows: ")
+    d = raw_input("Enter number of columns: ")
+    ratioFile = open("Ratio.txt", 'a')
     ratioFile.write(str(8.0 / int(c)))
     ratioFile.close()
     print("\n")
