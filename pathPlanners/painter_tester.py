@@ -5,7 +5,9 @@ using a "turtle" image simulation.
 
 import turtle
 
-COLOR = {1: "white", 2: "black", 3: "teal", 4: "red", 5: "green",
+FILENAME = "star.txt"
+
+COLOR = {1: "white", 2: "black", 3: "coral", 4: "red", 5: "green",
          6: "blue", 7: "yellow", 8: "dark green"}
 
 
@@ -47,7 +49,7 @@ CANVAS.penup()
 CANVAS.pensize(10)
 
 CANVAS.pencolor(COLOR.get(1))
-read_strokes("germany.txt")
+read_strokes(FILENAME)
 # for x in range (1,9):
 #    CANVAS.pencolor(COLOR.get(x))
 
