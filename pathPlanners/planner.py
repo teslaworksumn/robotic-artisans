@@ -1,5 +1,5 @@
 """
-This script takes a image file and converts it to a sequence of "stroke"
+This script takes a ptg file and converts it to a sequence of "stroke"
 instructions, which can easily be converted to GCODE.
 """
 
@@ -32,18 +32,26 @@ def find_left_right_patch(image, patch, color):
     return true   :    Could find coordinates of specified color
     """
 
-    def find_all_consecutive_pixels_to_its_right(i, j):
+    def find_consecutive_to_right(i, j):
+        """
+        Find pixels to the right (increasing x coordinate)
+        of the pixel with the same color.
+        """
         row = image[i]
         while j < len(row) and image[i][j] == color:
-            patch.append ( Pixel(i,j) )
+            patch.append(Pixel(i, j))
             image[i][j] = 0
             j += 1
 
     def find_first_occurence_of_color():
+        """
+        Find the first pixel with the color.
+        'First' is evaluated firstly by minimzing x and secondly by minimzing y.
+        """
         for i, row in enumerate(image):
             for j, entry in enumerate(row):
                 if entry == color:
-                    find_all_consecutive_pixels_to_its_right(i, j)
+                    find_consecutive_to_right(i, j)
                     return True
         return False
 
@@ -51,12 +59,26 @@ def find_left_right_patch(image, patch, color):
 
 
 def left_right_output(image, output_file):
+    """
+    (main function). Plan strokes from the ptg file and save
+    to the output file.
+    """
     left_right(image).output_strokes(output_file)
 
 
 def left_right(image):
+    """
+    @param image: a 2D array of python lists of images
+    Return the strokes for the image.
+
+    The algorithm is, in pseudocode:
+      for each color in the image
+        for each contigous block of pixels along the x-axis:
+            output strokes to paint the pixels
+    Returns a list of Stroke objects.
+    """
     patch = []
-    start = Pixel(-1,-1)
+    start = Pixel(-1, -1)
     previous_stroke = Stroke(
         action=INIT, # I think this is a garbage value that will be overwritten
         end=start,
@@ -79,7 +101,7 @@ def left_right(image):
         )
 
         # find all patches of the current color
-        while find_left_right_patch(image,patch,color):
+        while find_left_right_patch(image, patch, color):
             newpatch = True
             while left_right_stroke(patch, strokes, tank, newpatch):
                 newpatch = False
@@ -90,14 +112,15 @@ def left_right(image):
 
 
 
- # Take a patch of coordinates found from the find_left_right_patch
- # and attempt to paint along this patch until either the patch
- # or the tank run out. Execute any other actions needed to do the stroke.
- #
- # return False : patch is empty
- # return True  : stroke executed
-
 def left_right_stroke(patch, strokes, tank, newpatch):
+    """
+    Take a patch of coordinates found from the find_left_right_patch
+    and attempt to paint along this patch until either the patch
+    or the tank run out. Execute any other actions needed to do the stroke.
+
+    return False : patch is empty
+    return True  : stroke executed
+    """
     previous_stroke = strokes.peek()
     lifted = False
     moved = False
@@ -107,7 +130,7 @@ def left_right_stroke(patch, strokes, tank, newpatch):
         return False
 
     # If this is the first time the patch is being touched after leaving findlrpatch then ...
-    if (newpatch):
+    if newpatch:
         # If the last action was to MOVE or DROP the brush then LIFT the brush
         if previous_stroke.action == MOVE or previous_stroke.action == DROP:
             strokes.push_instruction(action=LIFT)
@@ -117,7 +140,7 @@ def left_right_stroke(patch, strokes, tank, newpatch):
         patch.pop(0)
 
     # if tank is empty, refill
-    if (tank.empty()):
+    if tank.empty():
 
         # if brush is touching canvas lift before refilling
         if not lifted:
@@ -137,13 +160,20 @@ def left_right_stroke(patch, strokes, tank, newpatch):
         end = patch.pop(0)
         moved = True
     if moved:
-        strokes.push_instruction(action=MOVE,end=end)
+        strokes.push_instruction(action=MOVE, end=end)
 
     return True
 
 
 
 class Stroke(object):
+    """
+    Single stroke instruction. See mach_code_output.txt for stroke semantics.
+
+    Records a stroke to be executed in the style of python's turtle module.
+    Strokes can lift or drop the brush, move the brush to a different (x,y)
+    position, or change the color.
+    """
 
 
     @classmethod
@@ -183,7 +213,10 @@ class Stroke(object):
             else: raise
 
     def __eq__(self, other):
-        return self.action == other.action and self.end == other.end and self.oldcolor == other.oldcolor and self.newcolor == other.newcolor
+        return self.action == other.action and \
+            self.end == other.end and \
+            self.oldcolor == other.oldcolor and \
+            self.newcolor == other.newcolor
 
 
 class StrokeStack(object):
@@ -198,7 +231,8 @@ class StrokeStack(object):
 
     # This is horrible. please simplify.
     def push_instruction(self, action=None, end=None, oldcolor=None, newcolor=None):
-        """ Push another instruction onto the stack. Arguments default to that of the current instruction"""
+        """ Push another instruction onto the stack.
+            Arguments default to that of the current instruction"""
         current = self.strokes[-1]
         new_stroke = Stroke.copy(current)
         if action is not None:
@@ -214,31 +248,53 @@ class StrokeStack(object):
         self.strokes.append(new_stroke)
 
     def peek(self):
+        """
+        Return the last pushed stroke.
+        """
         return self.strokes[-1]
 
     def output_strokes(self, output_file):
+        """
+        Write all strokes the output_file
+        @param output_file the open file to be written to
+        """
         # discard init stroke
-        for stroke in self.strokes[1:] :
+        for stroke in self.strokes[1:]:
             output_file.write(stroke.output())
 
     def __str__(self):
         result = ""
-        for stroke in self.strokes[1:] :
+        for stroke in self.strokes[1:]:
             result += stroke.output()
         return result
 
 class Tank(object):
+    """
+    Tracks the amount of paint left in the arm's tank of paint.
+
+    The robot's tank must be periodically refiled with the REFILL instruction,
+    so we have to keep track of the amount of paint left.
+    """
 
     def __init__(self):
         self.amount = MAX_TANK
 
     def decrement(self):
+        """
+        Decrement tank by 1.
+        """
         if self.amount <= 0:
             raise ValueError("cannot decrement tank to value less than 0")
         self.amount -= 1
 
     def refill(self):
+        """
+        Refill tank to max value
+        """
         self.amount = MAX_TANK
 
     def empty(self):
+        """
+        Set the tank to be empty.
+        """
         return self.amount == 0
