@@ -1,3 +1,7 @@
+"""
+Some rather incomplete unit tests for planner.py
+Execute with py.test <filename>
+"""
 import pytest
 
 import main
@@ -5,6 +9,8 @@ import planner
 
 
 ### Test Main ###
+
+PTG_FILE = "lisa.ptg"
 
 def test_debug():
     options = "_ -d".split()
@@ -28,15 +34,15 @@ def test_output_file():
 def test_sample_file_exists():
     """ This file needs to not move. """
     # This test may also fail if pytest is exected from the wrong directory.
-    open("../../ptg_pictures/lisa.ptg").close()
+    open(PTG_FILE).close()
 
 
 ## Test Planner ###
 
 @pytest.fixture
 def sample_input():
-    """ Sample contents of input file. """
-    ptg_file = open("../../ptg_pictures/lisa.ptg")
+    """ Return contents of sample input file. """
+    ptg_file = open(PTG_FILE)
     yield ptg_file
     # teardown
     ptg_file.close()
