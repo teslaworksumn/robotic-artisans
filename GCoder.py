@@ -1,73 +1,117 @@
-LIFT = "1"#z axis value, only has two possible values
-COLOR_POS={"1":(-2,0),"2":(-2,2.5),"3":(-2,5),"4":(-2,7.5),"5":(10,0),"6":(10,2.5),"7":(10,5),"8":(10,7.5)}# It will look something like this {"Red":(0,0),"Blue":(1,0),...}
+"""
+Take in strokes file from pathPlanner.py and return cartesian GCode.
+This GCode still needs to be processed with code in inverse-kinematics.
+"""
+
+LIFT = "1" # z axis value, only has two possible values of 1 or 0
+
+# It will look something like this {"Red":(0,0),"Blue":(1,0),...}
+COLOR_POS = {
+    # pylint: disable=C0326
+    "1":(-2,0),
+    "2":(-2,2.5),
+    "3":(-2,5),
+    "4":(-2,7.5),
+    "5":(10,0),
+    "6":(10,2.5),
+    "7":(10,5),
+    "8":(10,7.5)
+}
 #
 
-ratioFile = open("Ratio.txt",'r')
-Ra = ratioFile.readline()
-R = float(Ra)
-ratioFile.close()
-def makeGCODE(filePathIn, filePathOut):
-    fileIn = open(filePathIn,'r')
-    fileOut  = open(filePathOut,'a')
-    cur_XY=(0,0)
-    
-    for line in fileIn:
-        line = line.replace("\n","")
-        if(len(line)==0):
-            print('Not valid line')
-        elif(line[1] == '1'):#Move
-            splitLine = line.split(" ")
-            fileOut.write(move(splitLine[1],splitLine[2]))
-            cur_XY=(int(splitLine[1]),int(splitLine[2]))
-        elif(line[1]=='2'):#Lift
-            fileOut.write(lift(cur_XY))
-        elif(line[1] =='3'):#Drop brush
-            fileOut.write(drop(cur_XY))
-        elif(line[1] == '4'):#Refill
-            splitLine = line.split(" ")
-            fileOut.write(refill(splitLine[1],splitLine[2],splitLine[3],cur_XY))
-        elif(line[1] =='5'):#change color
-            splitLine = line.split(" ")
-            fileOut.write(changeColor(splitLine[1],splitLine[2],splitLine[3],splitLine[4],cur_XY))
-            
-def move(x,y):
-    
+# Read ratio from ratio file
+# TODO: this needs to be refactored into paramater-passing instead
+# of reading and writing from a file.
+ratio_file = open("Ratio.txt", 'r')
+string_ratio = ratio_file.readline()
+R = float(string_ratio)
+ratio_file.close()
+
+def make_gcode(input_file, output_file):
+    """
+    Read strokes from filePathin and write cartesian gcode to filePathOut
+    """
+
+    # TODO close file descriptors
+    input_stream = open(input_file, 'r')
+    out = open(output_file, 'a')
+    position_xy = (0, 0)
+
+    # TODO refactor to reduce complexity
+    for line in input_stream:
+        line = line.replace("\n", "")
+        split_line = line.split(" ")
+        if len(line) == 0:
+            print 'Not valid line'
+        elif line[1] == '1': # Move
+            out.write(move(split_line[1], split_line[2]))
+            position_xy = int(split_line[1]), int(split_line[2])
+        elif line[1] == '2': # Lift
+            out.write(lift(position_xy))
+        elif line[1] == '3': # Drop brush
+            out.write(drop(position_xy))
+        elif line[1] == '4': # Refill
+            out.write(refill(split_line[1], split_line[2], split_line[3], position_xy))
+        elif line[1] == '5': # change color
+            out.write(change_color(split_line[1], split_line[2], split_line[3], split_line[4], position_xy))
+
+def move(x, y):
+    """
+    Move the brush to specified position.
+    """
     s = "G1 X "+str(int(x)*R)+" Y "+str(int(y)*R)+" Z "+LIFT+' \n'
     #print("G1X"+str(x)+"Y"+str(y)+"Z"+LIFT+'\n')
     return s
-def lift(cur_XY):
+
+def lift(position_xy):
+    #FIXME test this bug and fix it.
     LIFT = str(1)
-    s = "G1 X "+str(cur_XY[0]*R)+" Y "+str(cur_XY[1]*R)+" Z "+LIFT+' \n'
-    #print("G1X"+str(cur_XY[0])+"Y"+str(cur_XY[1])+"Z"+LIFT+'\n')
+    s = "G1 X "+str(position_xy[0]*R)+" Y "+str(position_xy[1]*R)+" Z "+LIFT+' \n'
+    #print("G1X"+str(position_xy[0])+"Y"+str(position_xy[1])+"Z"+LIFT+'\n')
     return s
-def drop(cur_XY):
+
+def drop(position_xy):
     LIFT = '0'
-    s = "G1 X "+str(cur_XY[0]*R)+" Y "+str(cur_XY[1]*R)+" Z "+LIFT+' \n'
-    #print("G1X"+str(cur_XY[0])+"Y"+str(cur_XY[1])+"Z"+LIFT+'\n')
+    s = "G1 X "+str(position_xy[0]*R)+" Y "+str(position_xy[1]*R)+" Z "+LIFT+' \n'
+    #print("G1X"+str(position_xy[0])+"Y"+str(position_xy[1])+"Z"+LIFT+'\n')
     return s
-def refill(xi,yi,color,cur_XY):
+
+# TODO add comments
+def refill(xi, yi, color, position_xy):
+    """
+    Refill the tank.
+    """
     x = COLOR_POS.get(color)[0]
     y = COLOR_POS.get(color)[1]
-    s = move(x,y)
-    s+=drop(cur_XY)
-    s+=lift(cur_XY)
-    s+=move(xi,yi)
+    s = move(x, y)
+    s += drop(position_xy)
+    s += lift(position_xy)
+    s += move(xi, yi)
     return s
-def changeColor(xi,yi,colori,colorf,cur_XY):
-    print(colori)
-    print(colorf)
+
+def change_color(xi, yi, colori, colorf, position_xy):
+    """
+    Change the color of the brush.
+    """
+    print colori
+    print colorf
     #s=move(COLOR_POS.get(colori)[0]/R,COLOR_POS.get(colori)[1]/R)
     #s+=drop()
     #s+=move(COLOR_POS.get(colori)[0]+1,COLOR_POS.get(colori)[1])
     #s+=lift()
-    s=''
-    s+=move(COLOR_POS.get(colorf)[0],COLOR_POS.get(colorf)[1])
-    s+=drop(cur_XY)
-    s+=lift(cur_XY)
-    s+=move(xi,yi)
-    return s
-def makeGCodeInput():
-    fi = "brushstrokes.txt"
-    fo = "xyz.gcode"
-    makeGCODE(fi, fo)
-makeGCodeInput()
+    command = ''
+    command += move(COLOR_POS.get(colorf)[0], COLOR_POS.get(colorf)[1])
+    command += drop(position_xy)
+    command += lift(position_xy)
+    command += move(xi, yi)
+    return command
+
+def make_gcode_from_files():
+    """
+    Create the gcode from hard-coded input file and output file
+    """
+    input_file = "brushstrokes.txt"
+    output_file = "xyz.gcode"
+    make_gcode(input_file, output_file)
+
+make_gcode_from_files()
