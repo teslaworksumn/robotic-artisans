@@ -1,5 +1,11 @@
+"""
+From a jpg or png file, generate the ptg file that will be passed
+to pathPlanner. A PTG file compresses the png file to using only 8 colors.
+"""
+
 from PIL import Image
 import math
+import argparse
 
 COLORS = [(255, 255, 255), (0, 0, 0), (0, 128, 128), (255, 0, 0),
           (0, 255, 0), (0, 0, 255), (255, 255, 0), (0, 128, 0)]
@@ -28,13 +34,11 @@ def writeToFile(oArray, filePath, rows, cols):
             oArrayPointer += 1
         file.write("\n")
     file.close()
-    print(filePath)
 
 
 
 # from https://stackoverflow.com/questions/13405956/convert-an-image-rgb-lab-with-python
 def rgb2lab(inputColor):
-    print inputColor
 
     # Only use first three attributes of the color.
     # This makes the function compatible with png files, which apparently have a 4th opacity attribute.
@@ -126,28 +130,23 @@ def matchColor(lab):  # mathces color to one of 8 paint colors
 def getPTG(imagePath, fRows, fCols):
     im = Image.open(imagePath).resize((fCols, fRows))
     pixels = getArrayOfPixels(im)
-    print pixels
     outputPath = imagePath[:len(imagePath)-4] + ".ptg"
     paints = [matchColor(rgb2lab(px)) for px in pixels]
     writeToFile(paints, outputPath, fRows, fCols)
-    # print(outputPath)
+    print 'created', outputPath
     return outputPath
 
 
-def getPTGInput():
-    """
-    Create a PTG file from user provided input.
-    Rows should be number rows in output ptg file.
-    Cols should be number cols in output ptg file.
-    """
-    a = raw_input("Enter relative path to image: ")
-    c = raw_input("Enter number of rows: ")
-    d = raw_input("Enter number of columns: ")
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Convert an image file to 8-color ptg')
+    parser.add_argument('filename', help='input png/jpg file')
+    parser.add_argument('rows', type=int, help='number of rows in the output image')
+    parser.add_argument('cols', type=int, help='number of columns in the output image')
+    args = parser.parse_args()
+    
     ratioFile = open("Ratio.txt", 'a')
-    ratioFile.write(str(8.0 / int(c)))
+    ratioFile.write(str(8.0 / int(args.cols)))
     ratioFile.close()
-    print("\n")
-    return getPTG(a, int(c), int(d))
 
+    getPTG(args.filename, args.rows, args.cols)
 
-getPTGInput()
