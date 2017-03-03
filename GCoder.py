@@ -37,12 +37,11 @@ def make_gcode(input_file, output_file):
     out = open(output_file, 'a')
     position_xy = (0, 0)
 
-    # TODO refactor to reduce complexity
     for line in input_stream:
         line = line.replace("\n", "")
         split_line = line.split(" ")
         if len(line) == 0:
-            print 'Not valid line'
+            print 'error: invalid, empty line'
         elif line[1] == '1': # Move
             out.write(move(split_line[1], split_line[2]))
             position_xy = int(split_line[1]), int(split_line[2])
@@ -64,23 +63,26 @@ def move(x, y):
     return s
 
 def lift(position_xy):
+    """
+    Lift the brush
+    """
     #FIXME test this bug and fix it.
     LIFT = str(1)
-    s = "G1 X "+str(position_xy[0]*R)+" Y "+str(position_xy[1]*R)+" Z "+LIFT+' \n'
+    command = "G1 X "+str(position_xy[0]*R)+" Y "+str(position_xy[1]*R)+" Z "+LIFT+' \n'
     #print("G1X"+str(position_xy[0])+"Y"+str(position_xy[1])+"Z"+LIFT+'\n')
-    return s
+    return command
 
 def drop(position_xy):
+    """
+    Drop the brush
+    """
     LIFT = '0'
-    s = "G1 X "+str(position_xy[0]*R)+" Y "+str(position_xy[1]*R)+" Z "+LIFT+' \n'
+    command = "G1 X "+str(position_xy[0]*R)+" Y "+str(position_xy[1]*R)+" Z "+LIFT+' \n'
     #print("G1X"+str(position_xy[0])+"Y"+str(position_xy[1])+"Z"+LIFT+'\n')
-    return s
+    return command
 
 # TODO add comments
 def refill(xi, yi, color, position_xy):
-    """
-    Refill the tank.
-    """
     x = COLOR_POS.get(color)[0]
     y = COLOR_POS.get(color)[1]
     s = move(x, y)
@@ -106,12 +108,5 @@ def change_color(xi, yi, colori, colorf, position_xy):
     command += move(xi, yi)
     return command
 
-def make_gcode_from_files():
-    """
-    Create the gcode from hard-coded input file and output file
-    """
-    input_file = "brushstrokes.txt"
-    output_file = "xyz.gcode"
-    make_gcode(input_file, output_file)
-
-make_gcode_from_files()
+if __name__ == "__main__":
+    make_gcode("brushstrokes.txt", "xyz.gcode")
