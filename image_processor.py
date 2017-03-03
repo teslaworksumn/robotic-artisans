@@ -3,9 +3,8 @@ From a jpg or png file, generate the ptg file that will be passed
 to pathPlanner. A PTG file compresses the png file to using only 8 colors.
 """
 
-from PIL import Image
 import math
-import argparse
+from PIL import Image
 
 COLORS = [(255, 255, 255), (0, 0, 0), (0, 128, 128), (255, 0, 0),
           (0, 255, 0), (0, 0, 255), (255, 255, 0), (0, 128, 0)]
@@ -13,35 +12,40 @@ COLORS = [(255, 255, 255), (0, 0, 0), (0, 128, 128), (255, 0, 0),
 # 1      2       3     4     5       6       7          8
 
 
-# Return list of rgb values for each pixel in the image
-def getArrayOfPixels(image):
-    a = []
-    p = image.load()
+def get_pixel_array(image):
+    """
+    Return list of rgb values for each pixel in the image
+    """
+    pixels = []
+    img = image.load()
     for i in range(image.size[1]):
         for j in range(image.size[0]):
-            a.append(p[j, i])
-    return a
+            pixels.append(img[j, i])
+    return pixels
 
-
-# Writes a list of single digits to a txt file in .ptg format
-def writeToFile(oArray, filePath, rows, cols):
-    file = open(filePath, 'a')
-    file.write(str(rows)+" "+str(cols)+"\n")
-    oArrayPointer = 0
-    for j in range(rows):
-        for i in range(cols):
-            file.write(str(oArray[oArrayPointer])+" ")
-            oArrayPointer += 1
-        file.write("\n")
-    file.close()
-
+def write_to_file(digits, file_path, rows, cols):
+    """
+    Writes a list of single digits to a txt file in .ptg format
+    """
+    output = open(file_path, 'a')
+    output.write(str(rows)+" "+str(cols)+"\n")
+    index = 0
+    for _ in range(rows):
+        for _ in range(cols):
+            output.write(str(digits[index]) + " ")
+            index += 1
+        output.write("\n")
+    output.close()
 
 
 # from https://stackoverflow.com/questions/13405956/convert-an-image-rgb-lab-with-python
 def rgb2lab(inputColor):
+    #pylint: disable=C0103,C0111
 
+    
     # Only use first three attributes of the color.
-    # This makes the function compatible with png files, which apparently have a 4th opacity attribute.
+    # This makes the function compatible with png files,
+    # which apparently have a 4th opacity attribute.
     inputColor = inputColor[:3]
 
     num = 0
@@ -97,56 +101,67 @@ def rgb2lab(inputColor):
 COLORS_LAB = [rgb2lab(color) for color in COLORS]
 
 
-def getDistance(lab1, lab2):  # Formula for distance found on Wikipedia
+def distance(lab1, lab2):
+    """
+    return distance between 2 lab colors
+    """
+    #pylint: disable=C0103
     l1, a1, b1 = lab1
     l2, a2, b2 = lab2
-    dl = l1 - l2   # delta L
-    # c1 = math.sqrt(a1**2+b1**2)
-    # c2 = math.sqrt(a2**2+b2**2)
-    # dc = c1-c2
+    dl = l1 - l2
     da = a1-a2
     db = b1-b2
-    # dH = math.sqrt(da**2+db**2-dc**2)
-    # SL = 1
-    # SC = 1+.045*c1
-    # SH = 1+.015*c1
-    # dE = math.sqrt((dl/SL)**2+(dc/SC)**2+(dH/SH)**2)
     return math.sqrt(da**2+db**2+dl**2)
 
 
-def matchColor(lab):  # mathces color to one of 8 paint colors
-    distances = [getDistance(lab, color_lab) for color_lab in COLORS_LAB]
+def match_color(lab):
+    """
+    matches color to one of 8 paint colors
+    """
+    distances = [distance(lab, color_lab) for color_lab in COLORS_LAB]
     minimum = distances[0]
     pos = 0  # the color number is its position in the list COLORS
     count = 1
-    for d in distances:
-        if d <= minimum:
-            minimum = d
+    for dist in distances:
+        if dist <= minimum:
+            minimum = dist
             pos = count
         count += 1
     return pos
 
 
-def getPTG(imagePath, fRows, fCols):
-    im = Image.open(imagePath).resize((fCols, fRows))
-    pixels = getArrayOfPixels(im)
-    outputPath = imagePath[:len(imagePath)-4] + ".ptg"
-    paints = [matchColor(rgb2lab(px)) for px in pixels]
-    writeToFile(paints, outputPath, fRows, fCols)
-    print 'created', outputPath
-    return outputPath
+def make_ptg(image_path, num_rows, num_cols):
+    """
+    Create a ptg file from the given path with ptg extension
+    """
+    image = Image.open(image_path).resize((num_cols, num_rows))
+    pixels = get_pixel_array(image)
+    output_path = image_path[:-4] + ".ptg"
+    paints = [match_color(rgb2lab(px)) for px in pixels]
+    write_to_file(paints, output_path, num_rows, num_cols)
+    print 'created', output_path
+    return output_path
 
+def write_ratio(cols):
+    """
+    Write ratio to a file.
+    @TODO I do not know why this method exists.
+    """
+    ratio_file = open("Ratio.txt", 'a')
+    ratio_file.write(str(8.0 / cols))
+    ratio_file.close()
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Convert an image file to 8-color ptg')
+    #pylint: disable=C0103
+    #pylint: disable=C0330
+    import argparse
+    parser = argparse.ArgumentParser(
+        description='Convert an image file to 8-color ptg')
     parser.add_argument('filename', help='input png/jpg file')
-    parser.add_argument('rows', type=int, help='number of rows in the output image')
-    parser.add_argument('cols', type=int, help='number of columns in the output image')
+    parser.add_argument('rows', type=int,
+        help='number of rows in the output image')
+    parser.add_argument('cols', type=int,
+        help='number of columns in the output image')
     args = parser.parse_args()
-    
-    ratioFile = open("Ratio.txt", 'a')
-    ratioFile.write(str(8.0 / int(args.cols)))
-    ratioFile.close()
 
-    getPTG(args.filename, args.rows, args.cols)
-
+    make_ptg(args.filename, args.rows, args.cols)
