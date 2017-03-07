@@ -21,25 +21,25 @@ b = L5-groundLink;
 %     x = 100+i; 
 %     y = 100;
 %     z = 0;
-%     DinverseRobotic(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
+%     InverseKinematicSolver(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
 % end
 % for i=1:100
 %     x = 200; 
 %     y = 100-i; 
 %    z = 0;
-%     DinverseRobotic(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
+%     InverseKinematicSolver(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
 % end
 % for i=1:100
 %     x = 200-i; 
 %     y = 0; 
 %     z = 0;
-%     DinverseRobotic(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
+%     InverseKinematicSolver(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
 % end
 % for i=1:100
 %     x = 100; 
 %     y = 0+i; 
 %     z = 0;
-%     DinverseRobotic(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
+%     InverseKinematicSolver(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
 % end
 % 
 % %draw a circle? oh ya!! XD
@@ -48,7 +48,7 @@ b = L5-groundLink;
 %     x = 75+25*cosd(i);
 %     y =  100+25*sind(i);
 %     z = 0;
-%     DinverseRobotic(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
+%     InverseKinematicSolver(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
 % 
 % end 
 
@@ -59,65 +59,77 @@ b = L5-groundLink;
 
 
 % @TODO: change these calls to drawLine function.
-y = 50;
-for i=1:50
-    x = 100+i; 
-    z = 100;
-    DinverseRobotic(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
-end
-% One function call.
+% y = 50;
+% for i=1:50
+%     x = 100+i; 
+%     z = 100;
+%     InverseKinematicSolver(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
+% end
+% % One function call.
+% 
+% for i=1:50
+%     x = 150; 
+%     z = 100-i; 
+%   
+%     InverseKinematicSolver(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
+% end
+% for i=1:50
+%     x = 150-i; 
+%     z = 50; 
+%    
+%     InverseKinematicSolver(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
+% end
+% for i=1:50
+%     x = 100; 
+%     z = 50+i; 
+%     InverseKinematicSolver(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
+% end
+% for i=1:50
+%     x = 100; 
+%     z=100; 
+%     y = 50-i;
+%     InverseKinematicSolver(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
+% end
+% for i=1:50
+%     x = 100+i; 
+%     z = 100;
+%     InverseKinematicSolver(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
+% end
+% for i=1:50
+%     x = 150; 
+%     z = 100-i; 
+%   
+%     InverseKinematicSolver(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
+% end
+% for i=1:50
+%     x = 150-i; 
+%     z = 50; 
+%    
+%     InverseKinematicSolver(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
+% end
+% for i=1:50
+%     x = 100; 
+%     z = 50+i; 
+%     InverseKinematicSolver(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
+% end
+% for i=1:50
+%     x = 100; 
+%     z=100; 
+%     y = 0+i;
+%     InverseKinematicSolver(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
+% end
 
-for i=1:50
-    x = 150; 
-    z = 100-i; 
-  
-    DinverseRobotic(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
+% Reading in from a file
+file_name = 'xyz.txt';
+file_in = fopen(file_name);
+tline = fgetl(file_in);
+while ischar(tline)
+    line = strsplit(tline);
+    InverseKinematicSolver(line{2}, line{4}, L1, b, groundLink, L5, L6, ...
+                          angle6, L8, line{6});
+    tline = fgetl(file_in);
 end
-for i=1:50
-    x = 150-i; 
-    z = 50; 
-   
-    DinverseRobotic(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
-end
-for i=1:50
-    x = 100; 
-    z = 50+i; 
-    DinverseRobotic(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
-end
-for i=1:50
-    x = 100; 
-    z=100; 
-    y = 50-i;
-    DinverseRobotic(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
-end
-for i=1:50
-    x = 100+i; 
-    z = 100;
-    DinverseRobotic(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
-end
-for i=1:50
-    x = 150; 
-    z = 100-i; 
-  
-    DinverseRobotic(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
-end
-for i=1:50
-    x = 150-i; 
-    z = 50; 
-   
-    DinverseRobotic(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
-end
-for i=1:50
-    x = 100; 
-    z = 50+i; 
-    DinverseRobotic(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
-end
-for i=1:50
-    x = 100; 
-    z=100; 
-    y = 0+i;
-    DinverseRobotic(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
-end
+fclose(file_in);
 
 % finally, add in one more line to rArmSimulator.m at the very end: 
 GcodeSpitter([0 0 0],1);

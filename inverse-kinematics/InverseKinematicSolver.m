@@ -16,7 +16,7 @@
 % I think each point in cartesian space should have a single set of angles to achieve that location. 
 %
 
-function DinverseRobotic(x,y,a,b,Gset1,thatOneLink,L6,angle6,L8,z)
+function InverseKinematicSolver(x,y,a,b,Gset1,thatOneLink,L6,angle6,L8,z)
 
 vLength = sqrt(x^2+y^2+z^2); 
 
@@ -38,7 +38,7 @@ angleBb=180-angleAa-angleCc;
 % The control angles are: 
 controlAngle1 = vAngle+angleBb; 
 controlAngle2 = 180-angleAa+vAngle;
-DroboticArmSim(controlAngle1,controlAngle2,a,Gset1,thatOneLink,L6,angle6,L8,vAngle2);
+ArmGraphics(controlAngle1,controlAngle2,a,Gset1,thatOneLink,L6,angle6,L8,vAngle2);
 
 % I might try to add file output for the motor control angles from this
 % function, otherwise i could just make a copy of this function that handles that.
