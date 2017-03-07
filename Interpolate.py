@@ -1,5 +1,5 @@
 # Imports
-import re
+import math
 
 # Functions to generate more points linearly
 
@@ -15,40 +15,49 @@ def abs(x):
 
 
 def make_gcode(point):
-    return "G1 X " + str(point[0]) + " Y " + str(point[1]) + " Z "
-    + str(point[2])
+    return "G1 X " + str(point[0]) + " Y " + str(point[1]) \
+            + " Z " + str(point[2])
 
 
 def generate_points(p1, p2):
     new_points = []
-    mx = p2[0] - p1[0]  # the slopes for each dimension
-    my = p2[1] - p1[1]
-    mz = p2[2] - p1[2]
-    tend = (p2[0]-p1[0]) / FREQUENCY_OF_POINTS
+    dx = p2[0] - p1[0]   # the slopes for each dimension
+    dy = p2[1] - p1[1]
+    dz = p2[2] - p1[2]
+    distance = math.sqrt(dx**2 + dy**2 + dz**2)
+    mx = dx / distance
+    my = dy / distance
+    mz = dz / distance
     t = 0
-    while(t < tend):
+    while(t < distance - FREQUENCY_OF_POINTS):
         t = t + FREQUENCY_OF_POINTS
         new_points.append((p1[0] + (t * mx), p1[1] + (t * my), p1[2]
                           + (t * mz)))
     return new_points
 
 
-def read_file(file_path_in, file_path_out):
-    file_in = open(file_path_in, 'r')
-    file_out = open(file_path_out, 'a')
+def interpolate(file_in, file_path_out):
+    file_out = open(file_path_out, 'w')
     previous_point = False
     current_point = (0, 0, 0)
     for line in file_in:
-        matchObj = re.match(r'[0-9]+', line)
-        if(!previous_point):
-            previous_point = (matchObj.group(1), matchObj.group(2),
-                              matchObj.group(3))
+        split_line = line.split()
+        if(not previous_point):
+            previous_point = (float(split_line[2]), float(split_line[4]),
+                              float(split_line[6]))
         else:
-            current_point = (matchObj.group(1), matchObj.group(2),
-                             matchObj.group(3))
+            current_point = (float(split_line[2]), float(split_line[4]),
+                             float(split_line[6]))
             new_points = generate_points(previous_point, current_point)
-            file_out.write(make_gcode(previous_point))
+            file_out.write(make_gcode(previous_point) + '\n')
             for point in new_points:
-                file_out.write(make_gcode(point))
-    file_in.close()
+                file_out.write(make_gcode(point) + '\n')
+            previous_point = current_point
+    file_out.write(make_gcode(current_point) + '\n')
     file_out.close()
+
+
+def read_file(file_path_in, file_path_out):
+    file_in = open(file_path_in, 'r')
+    interpolate(file_in, file_path_out)
+    file_in.close()
