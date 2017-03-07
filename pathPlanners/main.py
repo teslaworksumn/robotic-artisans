@@ -54,7 +54,7 @@ def set_flags(args):
 			print ("ERROR: UNKNOWN ARGUMENT: %s" % arg)
 			USAGE_STATEMENT()
 			exit(10)
-		return (iFileName, oFileName, debug)
+	return (iFileName, oFileName, debug)
 
 
 def try_to_open(filename, mode):
@@ -62,7 +62,7 @@ def try_to_open(filename, mode):
 	try:
 		result = open(filename, mode)
 	except IOError:
-		print ("%s: could not open file" % filename)
+                print ("error: could not open file %s" % filename)
 		exit(10)
 	return result
 

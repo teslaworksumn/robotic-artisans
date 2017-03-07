@@ -4,8 +4,8 @@ function DroboticArmSim(angleC1,angleC2,L1,GL1,L5,L6,angle6,L8,angleC3)
     clf;
     title('Parallelagram Robotic arm simulation 1.0');
     
-    %this is cause of a weird thing with the graphing window, see line 121
-    %for explanation
+    % this is cause of a weird thing with the graphing window, see line 121
+    % for explanation
     xlabel('Z');
     ylabel('X');
     zlabel('Y');

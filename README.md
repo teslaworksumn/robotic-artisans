@@ -1,15 +1,16 @@
 # RoboticArtisans
 
 This repo translates an image file into a Gcode for the robot.
+Codestyle: pylint linter should be used for all source files.
 ![](master-repo-uml.png?raw=true)
 
-## General Information: 
+## General Information:
 
 **Arduino**:
 Holds the current code for the arduino to control the arms
 
 **Droids**:
-Will eventually be the repos for the droid automated and droid teleoperated 
+Will eventually be the repos for the droid automated and droid teleoperated
 
 **ImageProcessor**:
 Contains code for transforming a .jpg to .ptg (a matrix of numbers that correspond to a color to a brush placement)
