@@ -124,9 +124,11 @@ file_name = 'xyz.txt';
 file_in = fopen(file_name);
 tline = fgetl(file_in);
 while ischar(tline)
+    disp(line);
     line = strsplit(tline);
-    InverseKinematicSolver(line{2}, line{4}, L1, b, groundLink, L5, L6, ...
-                          angle6, L8, line{6});
+    InverseKinematicSolver(str2double(line{3})*25.4, str2double(line{5})*25.4, L1, b, ...
+                          groundLink, L5, L6, ...
+                          angle6, L8, str2double(line{7})*25.4);
     tline = fgetl(file_in);
 end
 fclose(file_in);

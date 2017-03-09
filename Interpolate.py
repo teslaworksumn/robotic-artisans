@@ -3,7 +3,7 @@ import math
 
 # Functions to generate more points linearly
 
-FREQUENCY_OF_POINTS = 5 / 1000
+FREQUENCY_OF_POINTS = 1
 
 # absolute value function
 
@@ -25,14 +25,19 @@ def generate_points(p1, p2):
     dy = p2[1] - p1[1]
     dz = p2[2] - p1[2]
     distance = math.sqrt(dx**2 + dy**2 + dz**2)
-    mx = dx / distance
-    my = dy / distance
-    mz = dz / distance
-    t = 0
-    while(t < distance - FREQUENCY_OF_POINTS):
-        t = t + FREQUENCY_OF_POINTS
-        new_points.append((p1[0] + (t * mx), p1[1] + (t * my), p1[2]
-                          + (t * mz)))
+    if(distance == 0):
+        print(p1)
+        print(p2)
+        print("ZERO Distance")
+    else:
+        mx = dx / distance
+        my = dy / distance
+        mz = dz / distance
+        t = 0
+        while(t < distance - FREQUENCY_OF_POINTS):
+            t = t + FREQUENCY_OF_POINTS
+            new_points.append((p1[0] + (t * mx), p1[1] + (t * my), p1[2]
+                              + (t * mz)))
     return new_points
 
 
@@ -61,3 +66,15 @@ def read_file(file_path_in, file_path_out):
     file_in = open(file_path_in, 'r')
     interpolate(file_in, file_path_out)
     file_in.close()
+
+
+if __name__ == "__main__":
+    # pylint: disable=C0103
+    # pylint: disable=C0330
+    import argparse
+    parser = argparse.ArgumentParser(
+        description='Convert an image file to 8-color ptg')
+    parser.add_argument('file_in', help='input xyz file')
+    parser.add_argument('file_out', help='output xyz file')
+    args = parser.parse_args()
+    read_file(args.file_in, args.file_out)

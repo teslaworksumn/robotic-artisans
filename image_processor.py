@@ -23,6 +23,7 @@ def get_pixel_array(image):
             pixels.append(img[j, i])
     return pixels
 
+
 def write_to_file(digits, file_path, rows, cols):
     """
     Writes a list of single digits to a txt file in .ptg format
@@ -38,11 +39,10 @@ def write_to_file(digits, file_path, rows, cols):
     output.close()
 
 
-# from https://stackoverflow.com/questions/13405956/convert-an-image-rgb-lab-with-python
+# from https://stackoverflow.com/
+# questions/13405956/convert-an-image-rgb-lab-with-python
 def rgb2lab(inputColor):
-    #pylint: disable=C0103,C0111
-
-    
+    # pylint: disable=C0103,C0111
     # Only use first three attributes of the color.
     # This makes the function compatible with png files,
     # which apparently have a 4th opacity attribute.
@@ -98,6 +98,7 @@ def rgb2lab(inputColor):
 
     return Lab
 
+
 COLORS_LAB = [rgb2lab(color) for color in COLORS]
 
 
@@ -105,7 +106,7 @@ def distance(lab1, lab2):
     """
     return distance between 2 lab colors
     """
-    #pylint: disable=C0103
+    # pylint: disable=C0103
     l1, a1, b1 = lab1
     l2, a2, b2 = lab2
     dl = l1 - l2
@@ -139,29 +140,30 @@ def make_ptg(image_path, num_rows, num_cols):
     output_path = image_path[:-4] + ".ptg"
     paints = [match_color(rgb2lab(px)) for px in pixels]
     write_to_file(paints, output_path, num_rows, num_cols)
-    print 'created', output_path
+    print('created ' + output_path)
     return output_path
+
 
 def write_ratio(cols):
     """
     Write ratio to a file.
-    @TODO I do not know why this method exists.
     """
     ratio_file = open("Ratio.txt", 'a')
     ratio_file.write(str(8.0 / cols))
     ratio_file.close()
 
+
 if __name__ == "__main__":
-    #pylint: disable=C0103
-    #pylint: disable=C0330
+    # pylint: disable=C0103
+    # pylint: disable=C0330
     import argparse
     parser = argparse.ArgumentParser(
         description='Convert an image file to 8-color ptg')
     parser.add_argument('filename', help='input png/jpg file')
     parser.add_argument('rows', type=int,
-        help='number of rows in the output image')
+                        help='number of rows in the output image')
     parser.add_argument('cols', type=int,
-        help='number of columns in the output image')
+                        help='number of columns in the output image')
     args = parser.parse_args()
-
+    write_ratio(args.cols)
     make_ptg(args.filename, args.rows, args.cols)

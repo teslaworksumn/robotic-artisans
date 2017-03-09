@@ -6,7 +6,7 @@ instructions, which can easily be converted to GCODE.
 import collections
 Pixel = collections.namedtuple('Pixel', 'y x')
 
-### global constants
+# global constants
 # Commented are how the commands will operate.
 MAX_COLORS = 9  # including no paint 0 + 1-8 colMAX_EMOVE -1 # -1 x y
 MAX_TANK = 5
@@ -38,7 +38,7 @@ def find_left_right_patch(image, patch, color):
         of the pixel with the same color.
         """
         row = image[i]
-        while j < len(row) and image[i][j] == color:
+        while(j < len(row) and image[i][j] == color):
             patch.append(Pixel(i, j))
             image[i][j] = 0
             j += 1
@@ -46,7 +46,7 @@ def find_left_right_patch(image, patch, color):
     def find_first_occurence_of_color():
         """
         Find the first pixel with the color.
-        'First' is evaluated firstly by minimzing x and secondly by minimzing y.
+        'First' is evaluated first by minimzing x and second by minimzing y.
         """
         for i, row in enumerate(image):
             for j, entry in enumerate(row):
@@ -80,7 +80,7 @@ def left_right(image):
     patch = []
     start = Pixel(-1, -1)
     previous_stroke = Stroke(
-        action=INIT, # I think this is a garbage value that will be overwritten
+        action=INIT,  # I think this is a bad value that will be overwritten
         end=start,
         oldcolor=0,
         newcolor=0
@@ -101,15 +101,14 @@ def left_right(image):
         )
 
         # find all patches of the current color
-        while find_left_right_patch(image, patch, color):
+        while(find_left_right_patch(image, patch, color)):
             newpatch = True
-            while left_right_stroke(patch, strokes, tank, newpatch):
+            while(left_right_stroke(patch, strokes, tank, newpatch)):
                 newpatch = False
 
     return strokes
 
-            # create stroke until the entire patch is painted
-
+# create stroke until the entire patch is painted
 
 
 def left_right_stroke(patch, strokes, tank, newpatch):
@@ -129,7 +128,8 @@ def left_right_stroke(patch, strokes, tank, newpatch):
     if not patch:
         return False
 
-    # If this is the first time the patch is being touched after leaving findlrpatch then ...
+    # If this is the first time the patch is being touched after leaving findlr
+    # patch then ...
     if newpatch:
         # If the last action was to MOVE or DROP the brush then LIFT the brush
         if previous_stroke.action == MOVE or previous_stroke.action == DROP:
@@ -154,8 +154,9 @@ def left_right_stroke(patch, strokes, tank, newpatch):
         strokes.push_instruction(action=DROP)
         tank.decrement()
 
-    # find the end of stroke: will be either when the tank is empty or the patch is empty
-    while patch and not tank.empty():
+    # find the end of stroke: will be either when the tank is empty or the
+    # patch is empty
+    while(patch and not tank.empty()):
         tank.decrement()
         end = patch.pop(0)
         moved = True
@@ -163,7 +164,6 @@ def left_right_stroke(patch, strokes, tank, newpatch):
         strokes.push_instruction(action=MOVE, end=end)
 
     return True
-
 
 
 class Stroke(object):
@@ -175,12 +175,10 @@ class Stroke(object):
     position, or change the color.
     """
 
-
     @classmethod
     def copy(cls, other):
         """ Copy another stroke. """
         return cls(other.action, other.end, other.oldcolor, other.newcolor)
-
 
     def __init__(self, action, end, oldcolor, newcolor):
         self.action = action
@@ -197,7 +195,8 @@ class Stroke(object):
         elif action == REFILL:
             output = "%d %d %d %d\n" % (action, end.x, end.y, self.oldcolor)
         elif action == SWITCH_BRUSH:
-            output = "%d %d %d %d %d\n" % (action, end.x, end.y, self.oldcolor, self.newcolor)
+            output = "%d %d %d %d %d\n" % (action, end.x, end.y, self.oldcolor,
+                                           self.newcolor)
         elif action == LIFT or action == DROP:
             output = "%d\n" % action
         else:
@@ -210,7 +209,8 @@ class Stroke(object):
         except ValueError:
             if self.action == INIT:
                 return "INIT"
-            else: raise
+            else:
+                raise
 
     def __eq__(self, other):
         return self.action == other.action and \
@@ -222,7 +222,8 @@ class Stroke(object):
 class StrokeStack(object):
 
     """ Stores strokes that are to be executed.
-        This is a buffer that will be emptied by being written to the output file.
+        This is a buffer that will be emptied by being written to the output
+        file.
     """
 
     def __init__(self, start_stroke):
@@ -230,7 +231,8 @@ class StrokeStack(object):
         self.strokes.append(start_stroke)
 
     # This is horrible. please simplify.
-    def push_instruction(self, action=None, end=None, oldcolor=None, newcolor=None):
+    def push_instruction(self, action=None, end=None, oldcolor=None,
+                         newcolor=None):
         """ Push another instruction onto the stack.
             Arguments default to that of the current instruction"""
         current = self.strokes[-1]
@@ -267,6 +269,7 @@ class StrokeStack(object):
         for stroke in self.strokes[1:]:
             result += stroke.output()
         return result
+
 
 class Tank(object):
     """
