@@ -4,12 +4,12 @@
 %them to roboticArmSim to draw the arm in the new position 
 
 %so now we need to carry variables into each program -__-
-groundLink = 114.3;
-L1=261.5;
-L5= 285.75; 
-L6 = 50.8; % this is the start of the 3rd box, 114.3
+groundLink = sqrt(4000);
+L1=292.1;
+L5= 350.3; 
+L6 = 40; % this is the start of the 3rd box, 114.3
 angle6 =45; %need to set its angle too 
-L8 = 25; % this is the length of the bottom part of the end effector 
+L8 = 50; % this is the length of the bottom part of the end effector 
 b = L5-groundLink; 
 
 %start working from here, just include all the parameters after x and y in
@@ -58,20 +58,20 @@ b = L5-groundLink;
 
 
 % @TODO: change these calls to drawLine function.
-y = 50;
-for i=1:50
-    x = 100+i; 
-    z = 100;
-    InverseKinematicSolver(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
-end
-% One function call.
-
-for i=1:50
-    x = 150; 
-    z = 100-i; 
-  
-    InverseKinematicSolver(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
-end
+% y = 50;
+% for i=1:50
+%     x = 100+i; 
+%     z = 100;
+%     InverseKinematicSolver(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
+% end
+% % One function call.
+% 
+% for i=1:50
+%     x = 150; 
+%     z = 100-i; 
+%   
+%     InverseKinematicSolver(x,y,L1,b,groundLink,L5,L6,angle6,L8,z);
+% end
 % for i=1:50
 %     x = 150-i; 
 %     z = 50; 
@@ -119,18 +119,18 @@ end
 % end
 
 % Reading in from a file
-% file_name = 'xyz.txt';
-% file_in = fopen(file_name);
-% tline = fgetl(file_in);
-% while ischar(tline)
-%     disp(line);
-%     line = strsplit(tline);
-%     InverseKinematicSolver(str2double(line{3})*25.4, str2double(line{7})*25.4, L1, b, ...
-%                           groundLink, L5, L6, ...
-%                           angle6, L8, str2double(line{5})*25.4);
-%     tline = fgetl(file_in);
-% end
-% fclose(file_in);
+file_name = 'xyz.txt';
+file_in = fopen(file_name);
+tline = fgetl(file_in);
+while ischar(tline)
+    disp(line);
+    line = strsplit(tline);
+    InverseKinematicSolver(str2double(line{3})*25.4, str2double(line{7})*25.4, L1, b, ...
+                          groundLink, L5, L6, ...
+                          angle6, L8, str2double(line{5})*25.4);
+    tline = fgetl(file_in);
+end
+fclose(file_in);
 
 % finally, add in one more line to rArmSimulator.m at the very end: 
 GcodeSpitter([0 0 0],1);

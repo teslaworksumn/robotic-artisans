@@ -125,21 +125,21 @@ function ArmGraphics(angleC1,angleC2,L1,GL1,L5,L6,angle6,L8,angleC3)
     endpt(:,2)=endpt(:,3);
     endpt(:,3)=temp;
     
-    %control link is red 
+    %control link is red
     line([endpt(1,1) endpt(3,1)],[endpt(1,2) endpt(3,2)],[endpt(1,3) endpt(3,3)] ,'color',[1 0 0]);
     line([endpt(2,1) endpt(4,1)],[endpt(2,2) endpt(4,2)],[endpt(2,3) endpt(4,3)]); 
     % ground link is black
     line([endpt(1,1) endpt(2,1)], [endpt(1,2) endpt(2,2)],[endpt(1,3) endpt(2,3)],'color',[0 0 0]);
     line([endpt(3,1) endpt(4,1)], [endpt(3,2) endpt(4,2)],[endpt(3,3) endpt(4,3)],'color',[0 0 0]);
     %control link 2 is red 
-    line([endpt(1,1) endpt(5,1)],[endpt(1,1) endpt(5,2)],[endpt(1,1) endpt(5,3)],'color',[1 0 0]);
+    line([endpt(1,1) endpt(5,1)],[endpt(1,1) endpt(5,2)],[endpt(1,1) endpt(5,3)],'color',[0 1 1]);
     line([endpt(5,1) endpt(6,1)],[endpt(5,2) endpt(6,2)],[endpt(5,3) endpt(6,3)]);
     % just connect the last link, this link leads into box3
     line([endpt(6,1) endpt(3,1)],[endpt(6,2) endpt(3,2)],[endpt(6,3) endpt(3,3)],'color',[0 1 0]);
     line([endpt(6,1) endpt(7,1)],[endpt(6,2) endpt(7,2)],[endpt(6,3) endpt(7,3)],'color', [1 0 0]);
     line([endpt(3,1) endpt(8,1)],[endpt(3,2) endpt(8,2)],[endpt(3,3) endpt(8,3)],'color',[0 0 0]);
     % connect the mid link 
-    line([endpt(4,1) endpt(8,1)],[endpt(4,2) endpt(8,2)],[endpt(4,3) endpt(8,3)],'color',[0 0 0]);
+    line([endpt(4,1) endpt(8,1)],[endpt(4,2) endpt(8,2)],[endpt(4,3) endpt(8,3)],'color',[0 0 1]);
     line([endpt(8,1) endpt(9,1)],[endpt(8,2) endpt(9,2)],[endpt(8,3) endpt(9,3)]);
     %fill in end effector link 
     line([endpt(7,1) endpt(9,1)],[endpt(7,2) endpt(9,2)],[endpt(7,3) endpt(9,3)],'color',[0 0 0]);
