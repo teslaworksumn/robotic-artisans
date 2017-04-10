@@ -49,7 +49,7 @@ function finalOutput = GCodeSpitter2(totalOutput,outputAngles,flag)
         fprintf(fid,'; designed by Nathan Aswege and Michael Rosplock\n');
 
         %this is the line that actually writes the Gcode
-        fprintf(fid,'G1 X%f  Y%f Z%f \n',finalOutput);
+        fprintf(fid,'G1 X%f  Y%f Z%f \n',transpose(finalOutput));
 
         %close the file so nothing else can access it,
         fclose(fid);
