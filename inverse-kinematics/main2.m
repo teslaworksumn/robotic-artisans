@@ -8,9 +8,9 @@ totalOutput = [0 0 0];
 l1 = 261.5;
 l5 = 285.75;
 
-y = 50;
-for i=1:50
-    x = 100+i; 
+y = -(0*25.4);
+for i=1:150
+    x = 270+i; 
     z = 100;
     
     [angle1, angle2, angle3] = ...
