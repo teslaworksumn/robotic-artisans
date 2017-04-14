@@ -5,19 +5,36 @@
 
 totalOutput = [0 0 0];
 % Setting the link lengths
-l1 = 261.5;
-l5 = 285.75;
+l1 = 257.2;%261.5;
+l5 = 279.4;%285.75;
 
-y = -(0*25.4);
-for i=1:150
-    x = 270+i; 
-    z = 100;
-    
+ y = 40;
+% for i=1:150
+%     x = 270+i; 
+%     z = -100 + (2 * i);
+%     
+%     [angle1, angle2, angle3] = ...
+%         InverseKinematicsSolverLITE(l1, l5, x, y, z);
+%     
+%     totalOutput = GCodeSpitter2(totalOutput,[angle1 angle2 angle3],0); 
+% end
+%[a1, a2, a3] = InverseKinematicsSolverLITE(l1, l5, 18*25.4, 40, -5.5*25.4);
+%totalOutput = GCodeSpitter2(totalOutput, [a1, a2, a3], 0);
+
+% Reading in from a file 
+file_name = 'penultimate.txt';
+file_in = fopen(file_name);
+tline = fgetl(file_in);
+while ischar(tline)
+    disp(line);
+    line = strsplit(tline);
     [angle1, angle2, angle3] = ...
-        InverseKinematicsSolverLITE(l1, l5, x, y, z);
-    
-    totalOutput = GCodeSpitter2(totalOutput,[angle1 angle2 angle3],0); 
+        InverseKinematicsSolverLITE(l1, l5, (17-str2double(line{5}))*25.4, ...
+        (str2double(line{7})*50.8)+15, (str2double(line{3})-3.5)*25.4);
+    totalOutput = GCodeSpitter2(totalOutput,[angle1 angle2 angle3],0);
+    tline = fgetl(file_in);
 end
+fclose(file_in);
 
 totalOutput = GCodeSpitter2(totalOutput, [0 0 0], 0);
 

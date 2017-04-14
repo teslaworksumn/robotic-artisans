@@ -6,10 +6,10 @@ to pathPlanner. A PTG file compresses the png file to using only 8 colors.
 import math
 from PIL import Image
 
-COLORS = [(255, 255, 255), (0, 0, 0), (0, 128, 128), (255, 0, 0),
-          (0, 255, 0), (0, 0, 255), (255, 255, 0), (0, 128, 0)]
+COLORS = [(255, 255, 255), (255, 255, 0), (0, 128, 128), (255, 0, 0),
+          (0, 255, 0), (0, 0, 255), (0, 128, 0), (0, 0, 0)]
 # WHITE, BLACK, TEAL, RED, GREEN, BLUE, YELLOW, DARK_GREEN
-# 1      2       3     4     5       6       7          8
+# 1      8       3     4     5       6       2          7
 
 
 def get_pixel_array(image):
@@ -149,7 +149,7 @@ def write_ratio(cols):
     Write ratio to a file.
     """
     ratio_file = open("Ratio.txt", 'a')
-    ratio_file.write(str(8.0 / cols))
+    ratio_file.write(str(10.0 / cols))
     ratio_file.close()
 
 

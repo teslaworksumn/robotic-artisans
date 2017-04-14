@@ -3,19 +3,19 @@ Take in strokes file from pathPlanner.py and return cartesian GCode.
 This GCode still needs to be processed with code in inverse-kinematics.
 """
 
-LIFT = "1"  # z axis value, only has two possible values of 1 or 0
+LIFT = "2"  # z axis value, only has two possible values of 1 or 0
 
 # It will look something like this {"Red":(0,0),"Blue":(1,0),...}
 COLOR_POS = {
     # pylint: disable=C0326
-    "1": (-2, 0),
-    "2": (-2, 2.5),
-    "3": (-2, 5),
-    "4": (-2, 7.5),
-    "5": (10, 0),
-    "6": (10, 2.5),
-    "7": (10, 5),
-    "8": (10, 7.5)
+    "1": (-1, 0),
+    "2": (-1, 2.5),
+    "3": (-1, 5),
+    "4": (-1, 7.5),
+    "5": (11, 0),
+    "6": (11, 2.5),
+    "7": (11, 5),
+    "8": (11, 7.5)
 }
 #
 
@@ -55,7 +55,9 @@ def make_gcode(input_file, output_file):
                              position_xy))
         elif line[1] == '5':  # change color
             out.write(change_color(split_line[1], split_line[2], split_line[3],
-                      split_line[4], position_xy))
+                                   position_xy))
+    input_stream.close()
+    out.close()
 
 
 def move(x, y):
@@ -72,7 +74,7 @@ def lift(position_xy):
     Lift the brush
     """
     # FIXME test this bug and fix it.
-    LIFT = str(1)
+    LIFT = str(2)
     command = "G1 X " + str(position_xy[0]*R) + " Y " + \
               str(position_xy[1]*R) + " Z " + LIFT+' \n'
     # print("G1X"+str(position_xy[0])+"Y"+str(position_xy[1])+"Z"+LIFT+'\n')
@@ -94,20 +96,21 @@ def drop(position_xy):
 def refill(xi, yi, color, position_xy):
     x = COLOR_POS.get(color)[0]
     y = COLOR_POS.get(color)[1]
-    s = move(x, y)
-    s += drop(position_xy)
-    s += lift(position_xy)
+    s = lift(position_xy)
+    s += move(x, y)
+    s += drop((x, y))
+    s += lift((x, y))
     s += move(xi, yi)
+    print s
     return s
 
 
-def change_color(xi, yi, colori, colorf, position_xy):
+def change_color(xi, yi, colorf, position_xy):
     """
     Change the color of the brush.
     """
-    print colori
     print colorf
-    command = ''
+    command = lift(position_xy)
     command += move(COLOR_POS.get(colorf)[0], COLOR_POS.get(colorf)[1])
     command += drop(position_xy)
     command += lift(position_xy)
@@ -116,4 +119,4 @@ def change_color(xi, yi, colori, colorf, position_xy):
 
 
 if __name__ == "__main__":
-    make_gcode("brushstrokes.txt", "xyz.gcode")
+    make_gcode("apx2.txt", "xyzi.txt")

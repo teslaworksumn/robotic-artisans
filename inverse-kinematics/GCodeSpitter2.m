@@ -39,7 +39,7 @@ function finalOutput = GCodeSpitter2(totalOutput,outputAngles,flag)
         %open the file for writing, change it from .txt to .Gcode before use
         %you can change the file name here, eventually this will probably
         %be made into a call to the user to enter a name
-        fid = fopen('mygcode.txt','w');
+        fid = fopen('mygcode.GCODE','w');
 
         %add in the header cuz you gotta give credit where credit is due ;)
         fprintf(fid,'; this Gcode was produced by rArmSimulator\n');

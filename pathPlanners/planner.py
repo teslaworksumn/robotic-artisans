@@ -195,8 +195,7 @@ class Stroke(object):
         elif action == REFILL:
             output = "%d %d %d %d\n" % (action, end.x, end.y, self.oldcolor)
         elif action == SWITCH_BRUSH:
-            output = "%d %d %d %d %d\n" % (action, end.x, end.y, self.oldcolor,
-                                           self.newcolor)
+            output = "%d %d %d %d\n" % (action, end.x, end.y, self.newcolor)
         elif action == LIFT or action == DROP:
             output = "%d\n" % action
         else:
