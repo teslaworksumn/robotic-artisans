@@ -6,9 +6,9 @@ to pathPlanner. A PTG file compresses the png file to using only 8 colors.
 import math
 from PIL import Image
 
-COLORS = [(255, 255, 255), (255, 255, 0), (0, 128, 128), (255, 0, 0),
+COLORS = [(255, 255, 255), (255, 255, 0), (255, 20, 147), (50, 60, 150),
           (0, 255, 0), (0, 0, 255), (0, 128, 0), (0, 0, 0)]
-# WHITE, BLACK, TEAL, RED, GREEN, BLUE, YELLOW, DARK_GREEN
+# WHITE, BLACK, skyblue, RED, GREEN, BLUE, YELLOW, DARK_GREEN
 # 1      8       3     4     5       6       2          7
 
 
@@ -46,7 +46,7 @@ def rgb2lab(inputColor):
     # Only use first three attributes of the color.
     # This makes the function compatible with png files,
     # which apparently have a 4th opacity attribute.
-    inputColor = inputColor[:3]
+    inputColor  # = inputColor[:3]
 
     num = 0
     RGB = [0, 0, 0]

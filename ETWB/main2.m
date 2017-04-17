@@ -29,8 +29,8 @@ while ischar(tline)
     disp(line);
     line = strsplit(tline);
     [angle1, angle2, angle3] = ...
-        InverseKinematicsSolverLITE(l1, l5, (17-str2double(line{5}))*25.4, ...
-        (str2double(line{7})*50.8)+15, (str2double(line{3})-3.5)*25.4);
+        InverseKinematicsSolverLITE(l1, l5, (16.5-str2double(line{5}))*25.4, ...
+        (str2double(line{7})*50.8)+30, (str2double(line{3})-3.875)*20.4);
     totalOutput = GCodeSpitter2(totalOutput,[angle1 angle2 angle3],0);
     tline = fgetl(file_in);
 end

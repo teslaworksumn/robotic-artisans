@@ -119,4 +119,4 @@ def change_color(xi, yi, colorf, position_xy):
 
 
 if __name__ == "__main__":
-    make_gcode("apx2.txt", "xyzi.txt")
+    make_gcode("strokes.txt", "xyz.txt")
