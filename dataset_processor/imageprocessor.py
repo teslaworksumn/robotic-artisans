@@ -3,6 +3,8 @@ from __future__ import print_function
 from PIL import Image
 import os, sys
 
+SHAPE_LABELS = {'triangle': 1, 'square': 2, 'circle': 3}
+
 # Resize all the images in the data folder and put them in a new sub-directory
 def batch_resize(folders, w, h):
     for folder in folders:
@@ -21,13 +23,13 @@ def batch_resize(folders, w, h):
 
 # creates a file with all the pixels of each image written out with ' ' delimiter
 # images parameter is an array of PIL Images
-def createDS(images):
+def createDataset(images):
     f = open('shapes_data.txt', 'w+')
     f.truncate()
     for image in images:
         pixels = list(image[1].getdata())
         pixels_string = ' '.join(map(str, pixels))
-        classification = getShape(image[0])
+        classification = SHAPE_LABELS(image[0])
         print(pixels_string + classification, file = f)
 
 # make a PIL Image instance for each image and return a list of images
@@ -42,20 +44,8 @@ def createImages(folders):
                 images = images + [(folder, new_image)]
     return images
 
-# returns an integer value associated with a shape in a given folder to append to the end of each data row
-def getShape(folder):
-    # triangles are classification 1
-    if (folder == 'triangle'):
-        return ' 1'
-    # squares are classification 2
-    elif(folder == 'square'):
-        return ' 2'
-    # circles are classification 3
-    elif (folder == 'circle'):
-        return ' 3'
-
 # create a list of file names where the images are stored
 folders = ['triangle', 'circle', 'square']
 
 batch_resize(folders, 500, 500)
-createDS(createImages(folders))
+createDataset(createImages(folders))
