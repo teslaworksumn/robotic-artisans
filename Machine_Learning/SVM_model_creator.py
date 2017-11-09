@@ -8,7 +8,7 @@ import numpy as np
 # Location of the shapes dataset
 dataset = '../dataset_processor/shapes_data.txt'
 # load the CSV file as a numpy matrix
-dataset = np.loadtxt(dataset, delimiter=" ")
+dataset = np.loadtxt(dataset, delimiter=",")
 # separate the data from the target attributes
 X = dataset[:,0:249999]
 y = dataset[:,250000]
