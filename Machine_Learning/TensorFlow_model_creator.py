@@ -50,4 +50,4 @@ for _ in range(1):
     tf.train.start_queue_runners(sess)
     images_batch = images_batch.eval()
     labels_batch = labels_batch.eval()
-    sess.run(train_step, feed_dict={x: images_batch, y_: [[1,0,0]]*10})
+    sess.run(train_step, feed_dict={x: images_batch, y_: labels_batch})
