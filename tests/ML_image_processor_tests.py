@@ -1,21 +1,12 @@
 import unittest
-
+from PIL import Image
 class Image_processor_test(unittest.TestCase):
+    def ImageFileSize_test(self):
+        img = Image.open('data/circle_resized/banner-9_resized.png')
+        assert(img.size == (500,500))
     def runTest(self):
         # run tests
-
-    def ImageFileSize_test(self):
-        
-        for image in images
-
-
-def suite():
-    suite = unittest.TestSuite()
-    # add all the tests to suite
-    suite.addTest(Image_processor_test)
-    return suite
+        self.ImageFileSize_test()
 
 if __name__ == '__main__':
-    runner = unittest.TextTestRunner()
-    test_suite = suite()
-    runner.run(test_suite)
+    unittest.main()

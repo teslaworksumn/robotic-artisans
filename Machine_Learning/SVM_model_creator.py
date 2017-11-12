@@ -5,6 +5,8 @@ import numpy as np
 import pickle
 import numpy as np
 
+''' Old model. Use TensorFlow_model_creator instead'''
+
 # Location of the shapes dataset
 dataset = '../dataset_processor/shapes_data.txt'
 # load the CSV file as a numpy matrix
