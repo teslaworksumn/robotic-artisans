@@ -44,6 +44,7 @@ def write_to_file(digits, file_path, rows, cols):
 def rgb2lab(inputColor):
     # pylint: disable=C0103,C0111
     # Only use first three attributes of the color.
+
     # This makes the function compatible with png files,
     # which apparently have a 4th opacity attribute.
     inputColor  # = inputColor[:3]
