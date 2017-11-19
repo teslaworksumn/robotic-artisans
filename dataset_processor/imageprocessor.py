@@ -15,7 +15,7 @@ def batch_resize(folders, w, h):
         if not os.path.exists(resized_img_path):
             os.makedirs(resized_img_path)
         for item in dirs:
-            if os.path.isfile(path + item):
+            if os.path.isfile(path + item) and item.:
                 im = Image.open(path + item)
                 imResize = im.resize((w,h), Image.ANTIALIAS)
                 filename = os.path.basename(path + item)
@@ -67,8 +67,9 @@ def createImages(folders):
                 images = images + [(folder, new_image)]
     return images
 
-# create a list of file names where the images are stored
-folders = ['triangle', 'circle', 'square']
+if __name__ == '__main__':
+    # create a list of file names where the images are stored
+    folders = ['triangle', 'circle', 'square']
 
-batch_resize(folders, 100, 100)
-createDataset(createImages(folders))
+    batch_resize(folders, 500, 500)
+    createDataset(createImages(folders))
