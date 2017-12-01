@@ -1,16 +1,15 @@
 from PIL import Image
 import numpy as np
+import model_creator as model #import shape predictor
 
 # split an image up into x quadrants, then check for a shape in that quadrant
-def blockshaped(imgPath, nrows, ncols):
-    """
-    Return an array of shape (n, nrows, ncols) where
-    n * nrows * ncols = arr.size
+def split_pic(nrows, ncols, imgPath = None, PILimg = None):
+    img = None
+    if (imgPath == None):
+        img = PILimg
+    else:
+        img = Image.open(imgPath)
 
-    If arr is a 2D array, the returned array should look like n subblocks with
-    each subblock preserving the "physical" layout of arr.
-    """
-    img = Image.open(imgPath)
     img = img.convert('L')
     imgArr = np.array(img)
     width, height = img.size
@@ -21,9 +20,17 @@ def blockshaped(imgPath, nrows, ncols):
                .swapaxes(1,2)
                .reshape(-1, nrows, ncols))
 
-if __name__ == '__main__':
-    imgPath = 'pictures/quadrant_test.png'
-    r = blockshaped(imgPath, int(height/2), int(width/2))
-    for i in r:
-        imgPart = Image.fromarray(i, 'L')
-        imgPart.show()
+def predict_quadrant_shapes(nrows, ncols, imgPath = None, PILimg = None):
+    split_arr = []
+    # try with one input, and use other if needed
+    try:
+        split_arr = split_pic(nrows, ncols, imgPath = imgPath)
+    except(ValueError):
+        split_arr = split_pic(nrows, ncols, PILimg = PILimg)
+
+    # predict shapes in each quadrant
+    shapes_arr = []
+    for i in split_arr:
+        shapes_arr += model.predict(i)
+    # should return array of size nrows*ncols
+    return shapes_arr

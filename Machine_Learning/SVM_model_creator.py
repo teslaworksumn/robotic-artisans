@@ -8,7 +8,7 @@ import numpy as np
 ''' Old model. Use TensorFlow_model_creator instead'''
 
 # Location of the shapes dataset
-dataset = '../dataset_processor/shapes_data.txt'
+dataset = 'train/images_test.csv'
 # load the CSV file as a numpy matrix
 dataset = np.loadtxt(dataset, delimiter=",")
 # separate the data from the target attributes
@@ -45,3 +45,8 @@ print(metrics.confusion_matrix(Y_test, predicted))
 # Save model for later use
 file = open("svc_model.p", "wb")
 pickle.dump(svc_model, file)
+
+def predict(img_arr):
+    with open('svc_model.p', 'rb') as input_file:
+        predictor = pickle.load(input_file)
+    predictor.predict(img_arr)
