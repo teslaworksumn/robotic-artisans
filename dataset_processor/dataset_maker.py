@@ -6,13 +6,14 @@
 
 from __future__ import print_function
 from PIL import Image
+import cv2
 import numpy as np
 import os, sys
 
 SHAPE_LABELS = {'triangle': [1,0,0], 'square': [0,1,0], 'circle': [0,0,1]}
 
 # Resize all the images in the data folder and put them in a new sub-directory
-def batch_resize(folders, w, h):
+def batch_resize(folders, w, h, edges = False):
     for folder in folders:
         path = 'data/' + folder + '/'
         dirs = os.listdir( path )
@@ -22,16 +23,22 @@ def batch_resize(folders, w, h):
         for item in dirs:
             if os.path.isfile(path + item):
                 f, e = os.path.splitext(item)
+                print(e)
                 # make sure there only te right file types are used
-                if (e == 'png' or e == 'jpg'):
+                if (e == '.png' or e == '.jpg'):
                     # create a PIL Image with the file
-                    im = Image.open(path + item)
+                    ##im = Image.open(path + item)
+                    im = cv2.imread(path+item, 0)
                     # resize
-                    imResize = im.resize((w,h), Image.ANTIALIAS)
+                    ##imResize = im.resize((w,h), Image.ANTIALIAS)
+                    imResize = cv2.resize(im, (w,h), interpolation = cv2.INTER_AREA)
+                    if(edges == True):
+                        imResize = make_edge_img(imResize)
                     # save
                     filename = os.path.basename(path + item)
                     filename, extension = os.path.splitext(filename)
-                    imResize.save(resized_img_path + filename + '_resized.png', 'png')
+                    ##imResize.save(resized_img_path + filename + '_resized.png', 'png')
+                    cv2.imwrite(resized_img_path + filename + '_resized.png', imResize)
 
 # creates a file with all the pixels of each image written out with ' ' delimiter
 # images parameter is an array of PIL Images
@@ -80,11 +87,24 @@ def createImages(folders):
                 images = images + [(folder, new_image)]
     return images
 
+def make_edge_img(image):
+    edges = cv2.Canny(image,100,200)
+    return edges
 
 if __name__ == '__main__':
     # create a list of file names where the images are stored
     folders = ['triangle', 'circle', 'square']
 
-    # create new directories of images (500, 500) for the given directories of images
-    batch_resize(folders, 500, 500)
+    import argparse
+    parser = argparse.ArgumentParser(
+        description='resize the datasets in data folder, and create new training and testing files'
+    )
+    parser.add_argument('width', type=int, help='set the width you would like the dataset to be resized to')
+    parser.add_argument('height', type=int, help='set the height you would like the dataset to be resized to')
+    args = parser.parse_args()
+
+    # create new directories of images (width, height) for the given directories of images
+    batch_resize(folders, args.width, args.height, edges=True)
+
+    # find all resized data and make a train folder
     createDataset(createImages(folders))
