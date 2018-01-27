@@ -75,7 +75,7 @@ def try_to_open(filename, mode):
 
 def read_numbers(file):
     """ Take an open ptg file and transform it into a 2D integer array. """
-    return [map(int, line.split()) for line in file]
+    return [list(map(int, line.split())) for line in file]
 
 
 def try_to_read_numbers(file):
@@ -92,7 +92,6 @@ def main(iFileName, oFileName):
     iFile = open(iFileName, 'r')
     matrix = try_to_read_numbers(iFile)
     print("matrix made\n")
-    print(matrix)
     # Error-checking is done. We know the user input was valid.
     planner.left_right_output(matrix, oFile)
     oFile.close()
@@ -102,7 +101,7 @@ def main(iFileName, oFileName):
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(
-        description='generate burshstroke instructions')
+        description='generate brushstroke instructions')
     parser.add_argument('file_in', help='input ptg file')
     parser.add_argument('file_out', help='output txt file')
     args = parser.parse_args()

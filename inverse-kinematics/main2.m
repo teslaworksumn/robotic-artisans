@@ -1,6 +1,6 @@
 % Barebones solver, only finds the angles we need (angle1, angle2, angle3)
 %   This script uses InverseKinematicsSolverLITE and only needs the length
-%   of links 1 and 5, the two links with a full parallelogram and 3 bars 
+%   of links 1 and 5, the two links with a full parallelogram and 3 bars
 %   each. This script uses the original GCode Spitter.
 
 totalOutput = [0 0 0];
@@ -10,19 +10,19 @@ l5 = 279.4;%285.75;
 
  y = 40;
 % for i=1:150
-%     x = 270+i; 
+%     x = 270+i;
 %     z = -100 + (2 * i);
-%     
+%
 %     [angle1, angle2, angle3] = ...
 %         InverseKinematicsSolverLITE(l1, l5, x, y, z);
-%     
-%     totalOutput = GCodeSpitter2(totalOutput,[angle1 angle2 angle3],0); 
+%
+%     totalOutput = GCodeSpitter2(totalOutput,[angle1 angle2 angle3],0);
 % end
 %[a1, a2, a3] = InverseKinematicsSolverLITE(l1, l5, 18*25.4, 40, -5.5*25.4);
 %totalOutput = GCodeSpitter2(totalOutput, [a1, a2, a3], 0);
 
-% Reading in from a file 
-file_name = 'xyzi.txt';
+% Reading in from a file
+file_name = 'xyz.txt';
 file_in = fopen(file_name);
 tline = fgetl(file_in);
 while ischar(tline)

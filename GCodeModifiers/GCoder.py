@@ -4,6 +4,7 @@ This GCode still needs to be processed with code in inverse-kinematics.
 """
 
 LIFT = "2"  # z axis value, only has two possible values of 1 or 0
+R = 0.25
 
 # It will look something like this {"Red":(0,0),"Blue":(1,0),...}
 COLOR_POS = {
@@ -17,16 +18,6 @@ COLOR_POS = {
     "7": (11, 5),
     "8": (11, 7.5)
 }
-#
-
-# Read ratio from ratio file
-# TODO: this needs to be refactored into paramater-passing instead
-# of reading and writing from a file.
-ratio_file = open("Ratio.txt", 'r')
-string_ratio = ratio_file.readline()
-R = float(string_ratio)
-ratio_file.close()
-
 
 def make_gcode(input_file, output_file):
     """
@@ -42,7 +33,7 @@ def make_gcode(input_file, output_file):
         line = line.replace("\n", "")
         split_line = line.split(" ")
         if len(line) == 0:
-            print 'error: invalid, empty line'
+            print('error: invalid, empty line')
         elif line[1] == '1':  # Move
             out.write(move(split_line[1], split_line[2]))
             position_xy = int(split_line[1]), int(split_line[2])
@@ -66,7 +57,7 @@ def move(x, y):
     """
     s = "G1 X "+str(int(x)*R)+" Y "+str(int(y)*R)+" Z "+LIFT+' \n'
     # print("G1X"+str(x)+"Y"+str(y)+"Z"+LIFT+'\n')
-    return s
+    return(s)
 
 
 def lift(position_xy):
@@ -77,7 +68,6 @@ def lift(position_xy):
     LIFT = str(2)
     command = "G1 X " + str(position_xy[0]*R) + " Y " + \
               str(position_xy[1]*R) + " Z " + LIFT+' \n'
-    # print("G1X"+str(position_xy[0])+"Y"+str(position_xy[1])+"Z"+LIFT+'\n')
     return command
 
 
@@ -101,7 +91,7 @@ def refill(xi, yi, color, position_xy):
     s += drop((x, y))
     s += lift((x, y))
     s += move(xi, yi)
-    print s
+    print(s)
     return s
 
 
@@ -109,7 +99,7 @@ def change_color(xi, yi, colorf, position_xy):
     """
     Change the color of the brush.
     """
-    print colorf
+    print(colorf)
     command = lift(position_xy)
     command += move(COLOR_POS.get(colorf)[0], COLOR_POS.get(colorf)[1])
     command += drop(position_xy)
@@ -119,4 +109,4 @@ def change_color(xi, yi, colorf, position_xy):
 
 
 if __name__ == "__main__":
-    make_gcode("strokes.txt", "xyz.txt")
+    make_gcode("chris.txt", "xyz.txt")
