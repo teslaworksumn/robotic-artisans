@@ -10,7 +10,9 @@ def makeModel():
     # for sklearn, the labels need to be as an int, for Tensorflow its better as the file is
     def convertLabelsToInt(table):
         array = []
+        print(table)
         for y in table:
+            print(y)
             for x in range(len(y)):
                 if(y[x] == 1):
                     array += [x]
@@ -24,13 +26,10 @@ def makeModel():
     Y_test = convertLabelsToInt(np.loadtxt('train/labels_test.csv', delimiter=','))
 
     # Create the svc model
-    svc_model = svm.SVC(gamma = 0.001, C = 100., kernel = 'linear')
+    svc_model = svm.SVC(C = 1.00, kernel = 'linear')
 
     # Fit the data to the SVC model
     svc_model.fit(X_train, Y_train)
-
-    # Train and score a new classifier with the grid search parameters
-    print(svm.SVC(C=10, kernel = 'rbf', gamma = 0.001).fit(X_train, Y_train).score(X_test, Y_test))
 
     # Predict the label of `X_test`
     print(svc_model.predict(X_test))
@@ -55,7 +54,9 @@ def makeModel():
 def predict(img_arr):
     with open('svc_model.p', 'rb') as input_file:
         predictor = pickle.load(input_file)
-    return predictor.predict(img_arr)
+    x = predictor.predict(img_arr)
+    print(x)
+    return x
 
 if __name__ == '__main__':
     makeModel()

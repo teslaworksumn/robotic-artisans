@@ -3,21 +3,21 @@
     resize images and write out pixel values as a csv
 '''
 
-
 from __future__ import print_function
 from PIL import Image
 import cv2
 import numpy as np
 import os, sys
 
-SHAPE_LABELS = {'triangle': [1,0,0], 'square': [0,1,0], 'circle': [0,0,1]}
+SHAPE_LABELS = {'square': [1,0,0], 'circle': [0,1,0], 'triangle': [0,0,1]}
+dataFolder = 'data'
 
 # Resize all the images in the data folder and put them in a new sub-directory
-def batch_resize(folders, w, h, edges = False):
+def batch_resize(folders, w, h, color = 0, edges = False):
     for folder in folders:
-        path = 'data/' + folder + '/'
+        path = dataFolder + '/' + folder + '/'
         dirs = os.listdir( path )
-        resized_img_path = 'data/' + folder + '_resized/'
+        resized_img_path = dataFolder + '/' + folder + '_resized/'
         if not os.path.exists(resized_img_path):
             os.makedirs(resized_img_path)
         for item in dirs:
@@ -28,7 +28,7 @@ def batch_resize(folders, w, h, edges = False):
                 if (e == '.png' or e == '.jpg'):
                     # create a PIL Image with the file
                     ##im = Image.open(path + item)
-                    im = cv2.imread(path+item, 0)
+                    im = cv2.imread(path+item, color)
                     # resize
                     ##imResize = im.resize((w,h), Image.ANTIALIAS)
                     imResize = cv2.resize(im, (w,h), interpolation = cv2.INTER_AREA)
@@ -59,7 +59,7 @@ def createDataset(images):
             pixels = list(image[1].getdata())
             pixels_string = ','.join(map(str, pixels))
             classification = SHAPE_LABELS[image[0]]
-            if (index < len(images)*3/4):
+            if (index < len(images)*9/10):
                 a.write(pixels_string + '\n')
             else:
                 b.write(pixels_string + '\n')
@@ -70,7 +70,7 @@ def createDataset(images):
             image_index = random_train[index]
             image = images[image_index]
             classification = SHAPE_LABELS[image[0]]
-            if (index < len(images)*3/4):
+            if (index < len(images)*9/10):
                 a.write(','.join(repr(e) for e in classification) + '\n')
             else:
                 b.write(','.join(repr(e) for e in classification) + '\n')
@@ -79,7 +79,7 @@ def createDataset(images):
 def createImages(folders):
     images = []
     for folder in folders:
-        path = 'data/' + folder + '_resized/'
+        path = dataFolder + '/' + folder + '_resized/'
         if os.path.exists(path):
             for item in os.listdir(path):
                 new_image = Image.open(path + item)
@@ -93,7 +93,7 @@ def make_edge_img(image):
 
 if __name__ == '__main__':
     # create a list of file names where the images are stored
-    folders = ['triangle', 'circle', 'square']
+    folders = ['square', 'circle', 'triangle']
 
     import argparse
     parser = argparse.ArgumentParser(
@@ -104,7 +104,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # create new directories of images (width, height) for the given directories of images
-    batch_resize(folders, args.width, args.height, edges=True)
+    batch_resize(folders, args.width, args.height, color = 0, edges=True)
 
     # find all resized data and make a train folder
     createDataset(createImages(folders))

@@ -21,13 +21,14 @@ def split_pic(nrows, ncols, imgPath = None, PILimg = None, edges = False):
     imgArr = img_small
     ##width, height = img.size
     height_small, width_small = img_small.shape
-    split_width = width_small//nrows
-    split_height = height_small//ncols
+    split_width = width_small//ncols
+    split_height = height_small//nrows
     imgarr = imgArr.reshape((width_small, height_small))
     h, w = imgArr.shape
-    return (imgArr.reshape(h//split_width, split_width, -1, ncols)
+    split = (imgArr.reshape(h//split_height, split_height, -1, split_width)
                .swapaxes(1,2)
-               .reshape(-1, split_width, split_height))
+               .reshape(-1, split_height, split_width))
+    return split
 
 def make_edge_img(image):
     edges = cv2.Canny(image,100,200)
@@ -40,14 +41,17 @@ def predict_quadrant_shapes(nrows, ncols, imgPath = None, PILimg = None, edges =
         split_arr = split_pic(nrows, ncols, PILimg = PILimg, edges = edges)
     else:
         split_arr = split_pic(nrows, ncols, imgPath = imgPath, edges = edges)
-    split_arr.shape = [nrows*ncols, 2500]
+    print(split_arr.shape)
 
     # predict shapes in each quadrant
     shapes_arr = []
     i = 0
     while(i < split_arr.shape[0]):
-        prediction = model.predict([split_arr[[i]]])
-        cv2.imshow(str(prediction), split_arr[[i]])
+
+        test_img = split_arr[i]
+        test_img.shape = (1,-1)
+        print(test_img)
+        prediction = model.predict(test_img)
         shapes_arr += [prediction]
         i += 1
 
@@ -64,4 +68,4 @@ if __name__ == '__main__':
     parser.add_argument('columns',type=int, help='columns to be subdivided')
     parser.add_argument('image_path', help='path of the image to be subdivided')
     args = parser.parse_args()
-    print(predict_quadrant_shapes(args.rows, args.columns, imgPath = args.image_path, edges = False))
+    print(predict_quadrant_shapes(args.rows, args.columns, imgPath = args.image_path, edges = True))
