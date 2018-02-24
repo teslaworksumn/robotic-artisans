@@ -9,9 +9,6 @@ Codestyle: pylint linter should be used for all source files.
 **Arduino**:
 Holds the current code for the arduino to control the arms
 
-**Droids**:
-Will eventually be the repos for the droid automated and droid teleoperated
-
 **ImageProcessor**:
 Contains code for transforming a .jpg to .ptg (a matrix of numbers that correspond to a color to a brush placement)
 

@@ -274,7 +274,7 @@ class Tank(object):
     """
     Tracks the amount of paint left in the arm's tank of paint.
 
-    The robot's tank must be periodically refiled with the REFILL instruction,
+    The robot's tank must be periodically refilled with the REFILL instruction,
     so we have to keep track of the amount of paint left.
     """
 
