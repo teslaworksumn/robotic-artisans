@@ -9,7 +9,7 @@ import cv2
 import numpy as np
 import os, sys
 
-SHAPE_LABELS = {'square': [1,0,0], 'circle': [0,1,0], 'triangle': [0,0,1]}
+SHAPE_LABELS = {'square': 0, 'circle': 1, 'triangle': 2}
 dataFolder = 'data'
 
 # Resize all the images in the data folder and put them in a new sub-directory
@@ -57,6 +57,7 @@ def createDataset(images):
             image_index = random_train[index]
             image = images[image_index]
             pixels = list(image[1].getdata())
+            pixels = list(map((lambda x: x/255), pixels))
             pixels_string = ','.join(map(str, pixels))
             classification = SHAPE_LABELS[image[0]]
             if (index < len(images)*9/10):
@@ -71,9 +72,9 @@ def createDataset(images):
             image = images[image_index]
             classification = SHAPE_LABELS[image[0]]
             if (index < len(images)*9/10):
-                a.write(','.join(repr(e) for e in classification) + '\n')
+                a.write(str(classification) + '\n')
             else:
-                b.write(','.join(repr(e) for e in classification) + '\n')
+                b.write(str(classification) + '\n')
 
 # make a PIL Image instance for each image and return a list of images
 def createImages(folders):
@@ -104,7 +105,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # create new directories of images (width, height) for the given directories of images
-    batch_resize(folders, args.width, args.height, color = 0, edges=True)
+    batch_resize(folders, args.width, args.height, color = 0, edges=False)
 
     # find all resized data and make a train folder
     createDataset(createImages(folders))
