@@ -3,6 +3,7 @@ from PIL import Image
 import cv2
 import numpy as np
 import tensorflow as tf
+from CNN_model_creator import cnn_model_fn
 
 # split an image up into x quadrants, then check for a shape in that quadrant
 def split_pic(nrows, ncols, imgPath = None, PILimg = None, edges = False):
@@ -15,12 +16,12 @@ def split_pic(nrows, ncols, imgPath = None, PILimg = None, edges = False):
     height, width = img.shape
     ##img = img.convert('L')
     ##img = img.resize((nrows*50,ncols*50), PIL.Image.ANTIALIAS)
-    img_small = cv2.resize(img, (nrows*50, ncols*50), interpolation = cv2.INTER_AREA)
+    img_small = cv2.resize(img, (nrows*48, ncols*48), interpolation = cv2.INTER_AREA)
     if(edges == True):
         img_small = make_edge_img(img_small)
     imgArr = img_small
     #change image pizels from 0-255 to 0-1 float
-    imgArr = list(map((lambda x: x/255), imgArr))
+    imgArr = np.array(list(map((lambda x: x/255), imgArr)), dtype=np.float32)
     ##width, height = img.size
     height_small, width_small = img_small.shape
     split_width = width_small//ncols
@@ -57,16 +58,15 @@ def predict_quadrant_shapes(nrows, ncols, imgPath = None, PILimg = None, edges =
         #prediction = model.predict(test_img)
         sess = tf.Session()
         #load meta graph and restore weights
-        saver = tf.train.import_meta_graph("/tmp/model.ckpt")
-        saver.restore(sess, tf.train.latest_checkpoint('./'))
+        clf = tf.estimator.Estimator(model_fn=cnn_model_fn, model_dir="/tmp/model")
 
-        #access and create placeholder varaibles and create feed-dict to feed new data
-        graph = tf.get_default_graph()
-        x = graph.get_tensor_by_name("")
-        y = graph.get_tensor_by_name("clf")
-        feed_dict = {x: test_img}
-        y.eval(feed_dict)
-
+        #evaluate the model and print results
+        input_fn = tf.estimator.inputs.numpy_input_fn(
+            x={"x": test_img},
+            num_epochs=1,
+            shuffle=False
+        )
+        prediction = list(clf.predict(input_fn=input_fn))
         shapes_arr += [prediction]
         i += 1
 
