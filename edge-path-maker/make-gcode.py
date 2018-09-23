@@ -1,6 +1,9 @@
 import Edge_Detection
+import os
 
 scale_factor = 10
+imagesDirectory = "images/"
+gcodeDirectory = "gcode/"
 
 def makeGCode(edges, width, height):
     commands = []
@@ -27,14 +30,21 @@ def makeGCode(edges, width, height):
     return commands
 
 def writeToFile(fileName, gcode):
-    fin = open(fileName, "w+")
-    for line in gcode:
-        fin.write("%s\n" % line)
-    fin.close()
+    with open(os.path.join(gcodeDirectory, fileName), "w+") as fin:
+        for line in gcode:
+            fin.write("%s\n" % line)
 
 if __name__ == '__main__':
     imgName = input("Image name: ")
     fileName = input("GCode file name: ")
-    raw_drawing, width, height = Edge_Detection.prepEdgePainter(imgName)
+    if (imgName == ""):
+        imgName = "tesla_works_logo.png"
+        print("No image name given. Using default image")
+        if (fileName == ""):
+            fileName = "tesla_works_logo.gcode"
+            print("no file name given. Using default file name")
+    elif (fileName == ""):
+        raise ValueError("you must give a file name")
+    raw_drawing, width, height = Edge_Detection.prepEdgePainter(imagesDirectory + imgName)
     gcode = makeGCode(raw_drawing, width, height)
     writeToFile(fileName, gcode)
