@@ -21,14 +21,7 @@ def makeTurtle(edges, width, height):
 def testEdges(imageName):
     img = cv2.imread(imageName)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    def changeThreshold(threshold):
-        #threshold = cv2.getTrackbarPos("bar", "test")
-        raw_drawing, width, height = Edge_Detection.prepEdgePainter(imageName, threshold)
-        img = np.array(raw_drawing)
-        cv2.imshow("test", img)
-        cv2.waitKey(0)
-    cv2.namedWindow("test")
-    cv2.createTrackbar("bar", "test", 0, 500, changeThreshold)
+    cv2.StartWindowThread()
     cv2.imshow("test", img)
     cv2.waitKey(0)
 

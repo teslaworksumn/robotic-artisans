@@ -2,8 +2,8 @@ import Edge_Detection
 import os
 
 scale_factor = 40
-imagesDirectory = "images/"
-gcodeDirectory = "gcode/"
+imagesDirectory = "edge-path-maker/images/"
+gcodeDirectory = "edge-path-maker/gcode/"
 
 def makeGCode(edges, width, height):
     commands = []
