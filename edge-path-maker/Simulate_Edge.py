@@ -33,9 +33,11 @@ def testEdges(imageName):
     cv2.waitKey(0)
 
 
-
-
 if __name__ == "__main__":
     imgName = input("Input name of image to be drawn: ")
     raw_drawing, width, height = Edge_Detection.prepEdgePainter(imgName, 100)
     makeTurtle(raw_drawing, width, height)
+    img = cv2.imread(imgName, 0)
+    edges = cv2.Canny(img,100,100*2, False)
+    cv2.imshow("original" , edges)
+    cv2.waitKey(0)
