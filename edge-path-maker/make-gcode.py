@@ -1,4 +1,5 @@
 import Edge_Detection
+import gcode_postprocessing
 import os
 
 scale_factor = 40
@@ -8,8 +9,6 @@ gcodeDirectory = "edge-path-maker/gcode/"
 def makeGCode(edges, width, height):
     commands = []
     oldpoint = (0,0)
-    commands += ["G21 (set to mm units)\n"]
-    commands += ["M3 S0 (initalize servo control)"]
     for edge in edges:
         commands += ["S225"]
         i = 0
@@ -32,7 +31,11 @@ def makeGCode(edges, width, height):
 def writeToFile(fileName, gcode):
     with open(os.path.join(gcodeDirectory, fileName), "w+") as fin:
         for line in gcode:
-            fin.write("%s\n" % line)
+            fin.write("%s\n" %line)
+        gcodePrepend = gcode_postprocessing.prepend()
+        fileData = fin.read()
+        fin.seek(0,0)
+        fin.write(gcodePrepend.rstrip('\r\n') + '\n' + fileData)
 
 if __name__ == '__main__':
     imgName = input("Image name: ")

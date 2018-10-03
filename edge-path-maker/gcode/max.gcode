@@ -1,6 +1,11 @@
 G21 (set to mm units)
-M3 S225 (initalize servo control)
- Y0.05
+
+M3 S0 (initalize servo control)
+S225
+G91 G0 X1.3 Y0.05
+S255
+G91 G0 X0.0 Y0.0
+G91 G0 X0.0 Y0.05
 G91 G0 X-0.025 Y0.05
 G91 G0 X0.0 Y0.05
 G91 G0 X0.0 Y0.05

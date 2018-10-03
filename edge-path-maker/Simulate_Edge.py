@@ -3,6 +3,8 @@ import cv2
 import Edge_Detection
 import numpy as np
 
+imagesDirectory = "edge-path-maker/images/"
+gcodeDirectory = "edge-path-maker/gcode/"
 
 def makeTurtle(edges, width, height):
     turtle.setup(width = width, height = height)
