@@ -2,9 +2,7 @@ import turtle
 import cv2
 import Edge_Detection
 import numpy as np
-
-imagesDirectory = "edge-path-maker/images/"
-gcodeDirectory = "edge-path-maker/gcode/"
+import settings
 
 def makeTurtle(edges, width, height):
     turtle.setup(width = width, height = height)
@@ -30,7 +28,7 @@ def testEdges(imageName):
 
 if __name__ == "__main__":
     imgName = input("Input name of image to be drawn: ")
-    raw_drawing, width, height = Edge_Detection.prepEdgePainter(imgName, 100)
+    raw_drawing, width, height = Edge_Detection.prepEdgePainter(settings.IMAGES_DIRECTORY + imgName, 100)
     makeTurtle(raw_drawing, width, height)
     img = cv2.imread(imgName, 0)
     edges = cv2.Canny(img,100,100*2, False)

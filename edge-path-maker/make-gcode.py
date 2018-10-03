@@ -1,10 +1,7 @@
 import Edge_Detection
 import gcode_postprocessing
+import settings
 import os
-
-scale_factor = 40
-imagesDirectory = "edge-path-maker/images/"
-gcodeDirectory = "edge-path-maker/gcode/"
 
 def makeGCode(edges, width, height):
     commands = []
@@ -16,7 +13,7 @@ def makeGCode(edges, width, height):
             point = edge[i]
             x = point[0]# - oldpoint[0]
             y = point[1]# - oldpoint[1]
-            commands += ["G91 G0 " + "X" + str((x - oldpoint[0])/scale_factor) + " " + "Y" + str((y - oldpoint[1])/scale_factor)]
+            commands += ["G91 G0 " + "X" + str((x - oldpoint[0])/settings.SCALE_FACTOR) + " " + "Y" + str((y - oldpoint[1])/settings.SCALE_FACTOR)]
             oldpoint = point
             if(i == 0):
                 commands += ["S255"]
@@ -24,18 +21,15 @@ def makeGCode(edges, width, height):
             point = edge[i]
             x = point[0]# - oldpoint[0]
             y = point[1]# - oldpoint[1]
-            commands += ["G91 G0 " + "X" + str((x - oldpoint[0])/scale_factor) + " " + "Y" + str((y - oldpoint[1])/scale_factor)]
+            commands += ["G91 G0 " + "X" + str((x - oldpoint[0])/settings.SCALE_FACTOR) + " " + "Y" + str((y - oldpoint[1])/settings.SCALE_FACTOR)]
             oldpoint = point
     return commands
 
 def writeToFile(fileName, gcode):
-    with open(os.path.join(gcodeDirectory, fileName), "w+") as fin:
+    with open(os.path.join(settings.GCODE_DIRECTORY, fileName), "r+") as fin:
         for line in gcode:
             fin.write("%s\n" %line)
-        gcodePrepend = gcode_postprocessing.prepend()
-        fileData = fin.read()
-        fin.seek(0,0)
-        fin.write(gcodePrepend.rstrip('\r\n') + '\n' + fileData)
+    gcode_postprocessing.prepend(fileName)
 
 if __name__ == '__main__':
     imgName = input("Image name: ")
@@ -48,6 +42,6 @@ if __name__ == '__main__':
             print("no file name given. Using default file name")
     elif (fileName == ""):
         raise ValueError("you must give a file name")
-    raw_drawing, width, height = Edge_Detection.prepEdgePainter(imagesDirectory + imgName)
+    raw_drawing, width, height = Edge_Detection.prepEdgePainter(settings.IMAGES_DIRECTORY + imgName)
     gcode = makeGCode(raw_drawing, width, height)
     writeToFile(fileName, gcode)
