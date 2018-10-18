@@ -1,4 +1,4 @@
-import Edge_Detection
+import edge_detection
 import gcode_postprocessing
 import settings
 import os

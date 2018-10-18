@@ -1,6 +1,6 @@
 import turtle
 import cv2
-import Edge_Detection
+import edge_detection
 import numpy as np
 import settings
 
