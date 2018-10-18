@@ -1,4 +1,4 @@
 
-SCALE_FACTOR = 40
-IMAGES_DIRECTORY = "edge-path-maker/images/"
-GCODE_DIRECTORY = "edge-path-maker/gcode/"
+SCALE_FACTOR = 300
+IMAGES_DIRECTORY = "images/"
+GCODE_DIRECTORY = "gcode/"

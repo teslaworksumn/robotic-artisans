@@ -26,7 +26,7 @@ def makeGCode(edges, width, height):
     return commands
 
 def writeToFile(fileName, gcode):
-    with open(os.path.join(settings.GCODE_DIRECTORY, fileName), "r+") as fin:
+    with open(os.path.join(settings.GCODE_DIRECTORY, fileName), "w+") as fin:
         for line in gcode:
             fin.write("%s\n" %line)
     gcode_postprocessing.prepend(fileName)
