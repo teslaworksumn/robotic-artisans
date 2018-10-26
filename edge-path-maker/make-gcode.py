@@ -1,4 +1,4 @@
-import edge_detection
+import edge_bitmap_generator
 import gcode_postprocessing
 import settings
 import os
@@ -42,6 +42,6 @@ if __name__ == '__main__':
             print("no file name given. Using default file name")
     elif (fileName == ""):
         raise ValueError("you must give a file name")
-    raw_drawing, width, height = Edge_Detection.prepEdgePainter(settings.IMAGES_DIRECTORY + imgName)
+    raw_drawing, width, height = edge_bitmap_generator.prepEdgePainter(settings.IMAGES_DIRECTORY + imgName)
     gcode = makeGCode(raw_drawing, width, height)
     writeToFile(fileName, gcode)

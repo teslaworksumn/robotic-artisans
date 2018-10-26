@@ -1,6 +1,6 @@
 import turtle
 import cv2
-import edge_detection
+import edge_bitmap_generator
 import numpy as np
 import settings
 
@@ -25,10 +25,9 @@ def testEdges(imageName):
     cv2.imshow("test", img)
     cv2.waitKey(0)
 
-
 if __name__ == "__main__":
     imgName = input("Input name of image to be drawn: ")
-    raw_drawing, width, height = Edge_Detection.prepEdgePainter(settings.IMAGES_DIRECTORY + imgName, 100)
+    raw_drawing, width, height = edge_bitmap_generator.prepEdgePainter(settings.IMAGES_DIRECTORY + imgName, 100)
     makeTurtle(raw_drawing, width, height)
     img = cv2.imread(imgName, 0)
     edges = cv2.Canny(img,100,100*2, False)
