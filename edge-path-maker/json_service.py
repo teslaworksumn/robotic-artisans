@@ -11,7 +11,7 @@ def formatJSON(curve):
     }
     return data
 
-def bulkFormatJSON(curves, colors):
+def bulkFormatJSON(curves):
     data = {
         "strokes": []
     }
@@ -19,14 +19,17 @@ def bulkFormatJSON(curves, colors):
         data["strokes"].append(formatJSON(curve))
     return data
 
-def writeJSONtoFile(filename, json):
+def writeJSONtoFile(filename, jsonData):
     if fileCheck(filename):
-        confirm = userConfirmation("A file with this name already exists. Overwrite? (y/n)")
+        confirm = userConfirmation("A file with this name already exists. Overwrite?")
         if confirm:
             with open(os.path.join(settings.JSON_DIRECTORY, filename), "w+") as writeFile:
-                json.dump(data, writeFile)
+                json.dump(jsonData, writeFile)
         else:
             print("No files have been modified")
+    else:
+        with open(os.path.join(settings.JSON_DIRECTORY, filename), "w+") as writeFile:
+            json.dump(jsonData, writeFile)
 
 def readJSONfromFile(filename):
     if fileCheck(filename):
@@ -56,3 +59,10 @@ def userConfirmation(question):
         return False
     else:
         userConfirmation("please confirm...")
+
+
+sampleCurve1 = Curve([(1,1), (2,2), (3,1)])
+sampleCurve2 = Curve([(2,3), (1,7), (0,0)])
+
+curvesJSON = bulkFormatJSON([sampleCurve1, sampleCurve2])
+writeJSONtoFile("sampleCurves.json", curvesJSON)
