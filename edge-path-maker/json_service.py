@@ -59,10 +59,3 @@ def userConfirmation(question):
         return False
     else:
         userConfirmation("please confirm...")
-
-
-sampleCurve1 = Curve([(1,1), (2,2), (3,1)])
-sampleCurve2 = Curve([(2,3), (1,7), (0,0)])
-
-curvesJSON = bulkFormatJSON([sampleCurve1, sampleCurve2])
-writeJSONtoFile("sampleCurves.json", curvesJSON)
