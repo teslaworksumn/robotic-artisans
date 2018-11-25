@@ -1,13 +1,17 @@
+'''
+Copyright Max Omdal 2018. All Rights Reserved.
+'''
 
 import matplotlib.pyplot as plt
 
+# dictionary of all curves in image, with keys as the stroke ID
 curves = {}
 
 class Curve:
 
     currentStrokeCount = 0
 
-    def __init__(self, points=[], color="black", weight = 1):
+    def __init__(self, points=[], color=[0,0,0], weight = 1):
         self.POINTS = points
         self.color = color
         self.weight = weight
@@ -18,14 +22,23 @@ class Curve:
     # add a curve to the global collection of curves
     @staticmethod
     def addCurve(curve):
-        curves.append(curve)
+        curves[curve.STROKEID] = curve
     @staticmethod
     def addCurves(curves):
-        curves.extend(curves)
+        for curve in curves:
+            Curve.addCurve(curve)
     @staticmethod
     def removeCurve(curve):
-        curves.remove(curve)
-    
+        del curves[curve.STROKEID]
+    @staticmethod
+    def createAndAddCurves(pointSets, colors):
+        newCurves = []
+        for set in pointSets:
+            color = colors.pop(0)
+            newCurve = Curve(set, color)
+            newCurves.append(newCurve)
+        Curve.addCurves(newCurves)
+
     # provide only get accessor method. points should not be modified
     def getPoints(self):
         return self.POINTS
@@ -41,7 +54,7 @@ class Curve:
         self.weight = newWeight
     
     # Convert a list of control points into a list of points along the curve
-    def stroke2Coordinates(self, stepSize):
+    def stroke2Coordinates(self, stepSize=10):
         pointsOnCurve = []
         for i in range(0, 100 + stepSize, stepSize):
             coord = self.bezierCurveRecurse(self.POINTS, i/100)

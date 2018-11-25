@@ -1,3 +1,7 @@
+'''
+Copyright Max Omdal 2018. All Rights Reserved.
+'''
+
 import os
 import settings
 

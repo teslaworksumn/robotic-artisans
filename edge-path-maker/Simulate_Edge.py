@@ -1,3 +1,7 @@
+'''
+Copyright Max Omdal 2018. All Rights Reserved.
+'''
+
 import turtle
 import cv2
 import edge_bitmap_generator

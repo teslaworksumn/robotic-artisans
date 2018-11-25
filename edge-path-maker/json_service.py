@@ -1,3 +1,7 @@
+'''
+Copyright Max Omdal 2018. All Rights Reserved.
+'''
+
 import json
 from curve import Curve
 import os
@@ -15,8 +19,8 @@ def bulkFormatJSON(curves):
     data = {
         "strokes": []
     }
-    for curve in curves:
-        data["strokes"].append(formatJSON(curve))
+    for ID in curves:
+        data["strokes"].append(formatJSON(curves[ID]))
     return data
 
 def writeJSONtoFile(filename, jsonData):
